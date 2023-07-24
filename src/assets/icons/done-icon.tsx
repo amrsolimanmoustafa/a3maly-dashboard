@@ -3,9 +3,9 @@ import { SVGProps } from "react"
 const DoneIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={23}
-    height={23}
-    viewBox="0 0 48 48"
+    width={5}
+    height={5}
+    viewBox="0 0 5 5"
     {...props}
   >
     <path
