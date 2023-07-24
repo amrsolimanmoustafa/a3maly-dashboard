@@ -11,7 +11,6 @@ import { useTranslation } from "react-i18next";
 import getConfig from "next/config";
 import { useUser } from "@/hooks/use-users";
 import UserContextProvider from "@/contexts/user-context";
-const { website } = getConfig().publicRuntimeConfig;
 
 const Page = () => {
   const userContext = useUser();
@@ -47,7 +46,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>{t("User details") + "|"  + website?.title}</title>
+        <title>{t("User details") + "|"  + "A3maly"}</title>
       </Head>
       <Box
         component="main"
