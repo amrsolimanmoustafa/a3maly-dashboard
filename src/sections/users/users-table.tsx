@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types';
-import { format } from 'date-fns';
+import PropTypes from "prop-types";
+import { format } from "date-fns";
 import {
   Avatar,
   Box,
@@ -14,15 +14,20 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Typography
-} from '@mui/material';
-import React, { useState } from 'react';
-import { Scrollbar } from '../../components/scrollbar';
-import { getInitials } from '../../utils/get-initials';
-import CogIcon from '@heroicons/react/24/solid/CogIcon';
-import { MenuButton } from '@/components/button-menu';
-import { useRouter } from 'next/router';
-import { useTranslation } from 'react-i18next';
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import React, { useState } from "react";
+import { Scrollbar } from "../../components/scrollbar";
+import { getInitials } from "../../utils/get-initials";
+import CogIcon from "@heroicons/react/24/solid/CogIcon";
+import { MenuButton } from "@/components/button-menu";
+import { useRouter } from "next/router";
+import { useTranslation } from "react-i18next";
+import { Add, AddModerator, Delete, Edit } from "@mui/icons-material";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import IconButton from "@mui/material/IconButton";
 
 export const UsersTable = (props: any) => {
   const router = useRouter();
@@ -31,29 +36,40 @@ export const UsersTable = (props: any) => {
     items = [],
     onDeselectAll,
     onDeselectOne,
-    onPageChange = () => { },
+    onPageChange = () => {},
     onRowsPerPageChange,
     onSelectAll,
     onSelectOne,
     page,
-    handleSuspend = () => { },
+    handleSuspend = () => {},
+    handleEdit = () => {},
+    handleDelete = () => {},
     rowsPerPage,
     selected,
-    isAdmin=false
+    isAdmin = false,
   } = props;
 
   const { t } = useTranslation();
 
-  const selectedSome = (selected.length > 0) && (selected.length < items.length);
-  const selectedAll = items ? (items.length > 0) && selected.length === items.length : false;
-
+  const selectedSome = selected.length > 0 && selected.length < items.length;
+  const selectedAll = items ? items.length > 0 && selected.length === items.length : false;
+  const colerfullText = (text:string|null)=>{
+    if(text!=null){
+      if(text === "مشترك"){
+        return "#198a19"
+      }
+      else if(text === "غير مشترك"){
+        return "#c92e23"
+      }
+    }
+  }
   return (
     <Card>
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
-          <Table>
+          <Table sx={{ whiteSpace: "nowrap" }}>
             <TableHead>
-              <TableRow>
+              <TableRow >
                 <TableCell padding="checkbox">
                   <Checkbox
                     checked={selectedAll}
@@ -67,23 +83,24 @@ export const UsersTable = (props: any) => {
                     }}
                   />
                 </TableCell>
-                <TableCell>{t('Name')}</TableCell>
-                <TableCell>{t('Phone')}</TableCell>
-                <TableCell>{t('Created at')}</TableCell>
-                <TableCell>{t('Status')}</TableCell>
-                <TableCell>
-                  <SvgIcon fontSize="small">
-                    <CogIcon />
-                  </SvgIcon>
-                </TableCell>
+                <TableCell >{t("Account name")}</TableCell>
+                <TableCell>{t("NationalID")}</TableCell>
+                <TableCell>{t("City")}</TableCell>
+                <TableCell>{t("Phone")}</TableCell>
+                <TableCell>{t("Groups")}</TableCell>
+                <TableCell>{t("user category")}</TableCell>
+                <TableCell>{t("Roles")}</TableCell>
+                <TableCell>{t("Subscription status")}</TableCell>
+                <TableCell>{t("Subscription package")}</TableCell>
+                <TableCell>{t("Account state")}</TableCell>
+                <TableCell sx={{textAlign:"center"}}>{t("Actions")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {items.map((user: any) => {
-                const isSelected = selected.includes(user.id);
-                const created_at = format(Date.parse(user.created_at), "dd/MM/yyyy");
-                const deleted_at = user.deleted_at
-                  ? format(Date.parse(user.deleted_at), "dd/MM/yyyy")
+                const isSelected = selected.includes(user?.id);
+                const deleted_at = user?.deleted_at
+                  ? format(Date.parse(user?.deleted_at), "dd/MM/yyyy")
                   : null;
                 // const [checked, setChecked] = useState(user.deleted_at);
                 const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,12 +109,10 @@ export const UsersTable = (props: any) => {
                 };
 
                 const handleRoute = (event: React.ChangeEvent<HTMLInputElement>) => {
-                  if(isAdmin){
-                    router.push(`/admins/${user.id}`);
-                  }
-                  else{
-
-                    router.push(`/users-management/users/${user.account}`);
+                  if (isAdmin) {
+                    router.push(`/admins/${user?.id}`);
+                  } else {
+                    router.push(`/users/${user?.account}`);
                   }
                 };
 
@@ -105,8 +120,12 @@ export const UsersTable = (props: any) => {
                   router.push(`/admins/update-admin/${user?.id}`);
                 };
 
+                const showDetails = (user: any) => {
+                  router.push(`/users/${user?.id}`);
+                };
+
                 return (
-                  <TableRow hover key={user.id} selected={isSelected}>
+                  <TableRow hover key={user?.id} selected={isSelected}>
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={isSelected}
@@ -121,28 +140,42 @@ export const UsersTable = (props: any) => {
                     </TableCell>
                     <TableCell>
                       <Stack alignItems="center" direction="row" spacing={2}>
-                        <Avatar src={user.avatar}>{getInitials(user.name)}</Avatar>
-                        <Typography variant="subtitle2">{user.name}</Typography>
+                        <Avatar src={user?.avatar}>{getInitials(user?.name)}</Avatar>
+                        <Typography variant="subtitle2">{user?.name}</Typography>
                       </Stack>
                     </TableCell>
-                    <TableCell>{user.phone}</TableCell>
-                    <TableCell>{created_at}</TableCell>
+                    <TableCell>{user?.NationalID}</TableCell>
+                    <TableCell>{user?.city}</TableCell>
+                    <TableCell sx={{ direction: "rtl" }}>{user?.phone}</TableCell>
+                    <TableCell>{user?.group}</TableCell>
+                    <TableCell>{user?.user_category}</TableCell>
+                    <TableCell>{user?.roles}</TableCell>
+                    <TableCell sx={{color:`${colerfullText(user?.subscription_status)}`}}>{user?.subscription_status}</TableCell>
+                    <TableCell >{user?.subscription_package}</TableCell>
                     <TableCell>
                       <Switch
-                        checked={user?.deleted_at == null}
+                        checked={user?.state}
                         onChange={handleChange}
                         inputProps={{ "aria-label": "controlled" }}
-                        />
+                      />
                       {deleted_at}
                     </TableCell>
                     <TableCell>
-                      <MenuButton
-                        items={[
-                          { label: "View", onClick: handleRoute },
-                          { label: "Edit", onClick: handleRoute },
-                          // { label: "Delete", onClick: handleRoute },
-                        ]}
-                      />
+                      <Tooltip sx={{ borderRadius: 0 }} arrow placement="top" title="Show details">
+                        <IconButton onClick={() => showDetails(user)}>
+                          <RemoveRedEyeIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip arrow placement="top" title="Edit">
+                        <IconButton onClick={() => handleEdit(user)}>
+                          <Edit />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip arrow placement="top" title="Delete">
+                        <IconButton color="error" onClick={() => handleDelete(user)}>
+                          <Delete />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 );
@@ -175,7 +208,9 @@ UsersTable.propTypes = {
   onSelectOne: PropTypes.func,
   page: PropTypes.number,
   handleSuspend: PropTypes.func,
+  handleEdit: PropTypes.func,
+  handleDelete: PropTypes.func,
   rowsPerPage: PropTypes.number,
   isAdmin: PropTypes.any,
-  selected: PropTypes.array
+  selected: PropTypes.array,
 };

@@ -44,7 +44,7 @@ export const OverviewLatestOrders = (props: any) => {
 
   return (
     <Card sx={sx}>
-      <CardHeader title={t('Latest Orders')} />
+      <CardHeader title={t('Latest requests to join')} />
       <Scrollbar sx={{ flexGrow: 1 }}>
         <Box sx={{ minWidth: 800 }}>
           <Table>

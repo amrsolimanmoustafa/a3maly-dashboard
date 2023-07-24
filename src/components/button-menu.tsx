@@ -44,7 +44,7 @@ const StyledMenu = styled((props: MenuProps) => (
   },
 }));
 export const MenuButton = (props: any) => {
-  const { items } = props;
+  const { items,title } = props;
   const {t} = useTranslation();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -67,7 +67,7 @@ export const MenuButton = (props: any) => {
         onClick={handleClick}
         endIcon={<KeyboardArrowDownIcon />}
       >
-        {t('Actions')}
+        {t(title)}
       </Button>
       <StyledMenu
         id="demo-customized-menu"
@@ -78,14 +78,14 @@ export const MenuButton = (props: any) => {
         open={open}
         onClose={handleClose}
       >
-        {items?.length>0 && items.map((child: any, index: number) => {
-            return (
-                <MenuItem key={index} onClick={child.onClick}>
-                    {t(child.label)}
-                </MenuItem>
-            );
+        {items.map((child: any, index: number) => {
+          return (
+            <MenuItem key={index} onClick={()=>{child.onClick();handleClose();}} disabled={child.disabled} >
+              {t(child.label)}
+            </MenuItem>
+          );
         })}
-        
+
       </StyledMenu>
     </div>
   );
@@ -93,4 +93,5 @@ export const MenuButton = (props: any) => {
 
 MenuButton.propTypes = {
   items: PropTypes.array,
+  title: PropTypes.string,
 };

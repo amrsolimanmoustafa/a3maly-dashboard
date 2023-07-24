@@ -23,6 +23,30 @@ export const items = [
     external: false,
     disabled: false,
     menu: false,
+    title: "Package management",
+    path: "/package-management",
+    icon: (
+      <SvgIcon fontSize="small">
+        <UserIcon />
+      </SvgIcon>
+    ),
+  },
+  {
+    external: false,
+    disabled: false,
+    menu: false,
+    title: "Department management",
+    path: "/department-management",
+    icon: (
+      <SvgIcon fontSize="small">
+        <UserIcon />
+      </SvgIcon>
+    ),
+  },
+  {
+    external: false,
+    disabled: false,
+    menu: false,
     title: "Templates management",
     path: "/templates-management",
     icon: (

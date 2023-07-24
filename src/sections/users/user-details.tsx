@@ -52,11 +52,29 @@ export const UserDetails = (props: any) => {
     {
       icon: (
         <SvgIcon fontSize="small">
+          <InfoIcon />
+        </SvgIcon>
+      ),
+      label: t("NationalID"),
+      value: user.NationalID,
+    },
+    {
+      icon: (
+        <SvgIcon fontSize="small">
           <PhoneIcon />
         </SvgIcon>
       ),
       label: t("Phone"),
-      value: <span dir="ltr">{user.phone}</span>,
+      value: <span dir="ltr">{user?.phone}</span>,
+    },
+    {
+      icon: (
+        <SvgIcon fontSize="small">
+          <PhoneIcon />
+        </SvgIcon>
+      ),
+      label: t("Telephone"),
+      value: <span dir="ltr">{user?.telephone}</span>,
     },
     {
       icon: (
@@ -65,26 +83,19 @@ export const UserDetails = (props: any) => {
         </SvgIcon>
       ),
       label: t("Email"),
-      value: user.email,
+      value: user?.email,
     },
+
     {
       icon: (
         <SvgIcon fontSize="small">
-          <NoAccounts />
+          <InfoIcon />
         </SvgIcon>
       ),
-      label: t("Status"),
-      value: user.is_active ? t("Active") : t("Banned"),
+      label: t("City"),
+      value: user.city,
     },
-    {
-      icon: (
-        <SvgIcon fontSize="small">
-          <PersonAddIcon />
-        </SvgIcon>
-      ),
-      label: t("Is Occupied"),
-      value: user.is_occupied ? t("Occupied") : t("Avilable"),
-    },
+
   ];
   const AdditionalUserInfoList = [
     {
@@ -93,10 +104,8 @@ export const UserDetails = (props: any) => {
           <InfoIcon />
         </SvgIcon>
       ),
-      label: t("in_city"),
-      value:  <SvgIcon fontSize="small">
-      { user?.__setting__?.in_city?  <CheckIcon /> : <ClearIcon />  }
-     </SvgIcon>,
+      label: t("user category"),
+      value: user.user_category,
     },
     {
       icon: (
@@ -104,21 +113,8 @@ export const UserDetails = (props: any) => {
           <InfoIcon />
         </SvgIcon>
       ),
-      label: t("out_city"),
-      value:  
-      <SvgIcon fontSize="small">
-      { user?.__setting__?.out_city?  <CheckIcon /> : <ClearIcon />  }
-     </SvgIcon>,
-    },
-
-    {
-      icon: (
-        <SvgIcon fontSize="small">
-          <InfoIcon />
-        </SvgIcon>
-      ),
-      label: t("is_online"),
-      value: user?.__setting__?.is_online?t("is online"):t("is offline"),
+      label: t("Roles"),
+      value: user.roles,
     },
     {
       icon: (
@@ -126,8 +122,8 @@ export const UserDetails = (props: any) => {
           <InfoIcon />
         </SvgIcon>
       ),
-      label: t("join_status"),
-      value: t(user?.__setting__?.join_status),
+      label: t("Groups"),
+      value: user.group,
     },
     {
       icon: (
@@ -135,8 +131,8 @@ export const UserDetails = (props: any) => {
           <InfoIcon />
         </SvgIcon>
       ),
-      label: t("occupation_type"),
-      value: user?.__setting__?.occupation_type?user?.__setting__?.occupation_type:"-",
+      label: t("Subscription package"),
+      value: user.subscription_package,
     },
     {
       icon: (
@@ -144,53 +140,35 @@ export const UserDetails = (props: any) => {
           <InfoIcon />
         </SvgIcon>
       ),
-      label: t("delivery"),
-      value: <SvgIcon fontSize="small">
-      { user?.__setting__?.delivery?  <CheckIcon /> : <ClearIcon />  }
-     </SvgIcon>,
+      label: t("Subscription status"),
+      value: user.subscription_status,
     },
     {
       icon: (
         <SvgIcon fontSize="small">
-          <InfoIcon />
+          <NoAccounts />
         </SvgIcon>
       ),
-      label: t("shipping"),
-      value: 
-      <SvgIcon fontSize="small">
-       { user?.__setting__?.shipping?  <CheckIcon /> : <ClearIcon />  }
-      </SvgIcon>,
-    },
-    {
-      icon: (
-        <SvgIcon fontSize="small">
-          <InfoIcon />
-        </SvgIcon>
-      ),
-      label: t("transfers"),
-      value: 
-      <SvgIcon fontSize="small">
-       { user?.__setting__?.transfers?  <CheckIcon /> : <ClearIcon />  }
-      </SvgIcon>
-      ,
+      label: t("Account state"),
+      value: user?.state ? t("Active") : t("Banned"),
     },
   ];
 
   const addressesList = user.__addresses__
     ? user.__addresses__.map((address: any, index: number) => {
-        return {
-          icon: index + 1,
-          label: address.name,
-          value: address.address,
-        };
-      })
+      return {
+        icon: index + 1,
+        label: address.name,
+        value: address.address,
+      };
+    })
     : [];
   //mapping user.addresses to addresses list
 
   return (
     <div>
       <Card>
-        <CardHeader subheader={"#" + user.account} title={user.name} />
+        <CardHeader subheader={"#" + user?.id} title={user?.name} />
         <Divider />
         <CardContent>
           <Grid container spacing={12} wrap="wrap">
@@ -215,13 +193,13 @@ export const UserDetails = (props: any) => {
         <Divider />
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
-          <Grid container spacing={12} wrap="wrap">
-            <Grid xs={12} sm={6} md={4}>
-              <Stack spacing={1}>
-                <IndexedList items={AdditionalUserInfoList} />
-              </Stack>
+            <Grid container spacing={12} wrap="wrap">
+              <Grid xs={12} sm={6} md={4}>
+                <Stack spacing={1}>
+                  <IndexedList items={AdditionalUserInfoList} />
+                </Stack>
+              </Grid>
             </Grid>
-          </Grid>
           </CardContent>
         </Collapse>
       </Card>
