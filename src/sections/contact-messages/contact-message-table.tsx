@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types';
-import { format } from 'date-fns';
+import PropTypes from "prop-types";
+import { format } from "date-fns";
 import {
   Avatar,
   Box,
@@ -14,18 +14,18 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Typography
-} from '@mui/material';
-import React, { useState } from 'react';
-import { Scrollbar } from '../../components/scrollbar';
-import { getInitials } from '../../utils/get-initials';
-import CogIcon from '@heroicons/react/24/solid/CogIcon';
-import DeleteIcon from '@mui/icons-material/Delete'
-import { MenuButton } from '@/components/button-menu';
-import {useTranslation} from 'react-i18next';
-import { useRouter } from 'next/router';
-import ContactMessageDialog from './contact-message-dialog';
-import { IContactMessage } from '@/@types/contact-message';
+  Typography,
+} from "@mui/material";
+import React, { useState } from "react";
+import { Scrollbar } from "../../components/scrollbar";
+import { getInitials } from "../../utils/get-initials";
+import CogIcon from "@heroicons/react/24/solid/CogIcon";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { MenuButton } from "@/components/ButtonMenu";
+import { useTranslation } from "react-i18next";
+import { useRouter } from "next/router";
+import ContactMessageDialog from "./contact-message-dialog";
+import { IContactMessage } from "@/@types/contact-message";
 export const ContactMessagesTable = (props: any) => {
   const router = useRouter();
   const {
@@ -43,11 +43,11 @@ export const ContactMessagesTable = (props: any) => {
     selected,
   } = props;
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
-  const selectedSome = (selected.length > 0) && (selected.length < items.length);
-  const selectedAll = items?(items.length > 0) && selected.length === items.length: false;
-  const [selectedItem , setSelectedItem] = React.useState<IContactMessage>({} as IContactMessage);
+  const selectedSome = selected.length > 0 && selected.length < items.length;
+  const selectedAll = items ? items.length > 0 && selected.length === items.length : false;
+  const [selectedItem, setSelectedItem] = React.useState<IContactMessage>({} as IContactMessage);
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -78,9 +78,9 @@ export const ContactMessagesTable = (props: any) => {
                     }}
                   />
                 </TableCell>
-                <TableCell>{t('Name')}</TableCell>
-                <TableCell>{t('Phone')}</TableCell>
-                <TableCell>{t('Created at')}</TableCell>
+                <TableCell>{t("Name")}</TableCell>
+                <TableCell>{t("Phone")}</TableCell>
+                <TableCell>{t("Created at")}</TableCell>
                 <TableCell>
                   <SvgIcon fontSize="small">
                     <CogIcon />
@@ -100,7 +100,7 @@ export const ContactMessagesTable = (props: any) => {
                   // setChecked(event.target.checked);
                   handleSuspend(contactMessage.id);
                 };
-                
+
                 const handleRoute = (event: React.ChangeEvent<HTMLInputElement>) => {
                   setSelectedItem(contactMessage);
                   handleClickOpen();
@@ -112,7 +112,7 @@ export const ContactMessagesTable = (props: any) => {
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={isSelected}
-                        onChange={(event) =>  {
+                        onChange={(event) => {
                           if (event.target.checked) {
                             onSelectOne?.(contactMessage.id);
                           } else {
@@ -123,17 +123,19 @@ export const ContactMessagesTable = (props: any) => {
                     </TableCell>
                     <TableCell>
                       <Stack alignItems="center" direction="row" spacing={2}>
-                        <Avatar src={contactMessage.avatar}>{getInitials(contactMessage.name)}</Avatar>
+                        <Avatar src={contactMessage.avatar}>
+                          {getInitials(contactMessage.name)}
+                        </Avatar>
                         <Typography variant="subtitle2">{contactMessage.name}</Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>{contactMessage.phone}</TableCell>
                     <TableCell>{created_at}</TableCell>
                     <TableCell>
-                      <MenuButton 
+                      <MenuButton
                         items={[
-                          {label: "View", onClick: handleRoute},
-                          {label: "Delete", onClick: handleRoute}
+                          { label: "View", onClick: handleRoute },
+                          { label: "Delete", onClick: handleRoute },
                         ]}
                       />
                     </TableCell>
@@ -153,8 +155,8 @@ export const ContactMessagesTable = (props: any) => {
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
       />
-      <ContactMessageDialog 
-        item={selectedItem} 
+      <ContactMessageDialog
+        item={selectedItem}
         handleClose={handleClose}
         handleClickOpen={handleClickOpen}
         open={open}
@@ -175,5 +177,5 @@ ContactMessagesTable.propTypes = {
   page: PropTypes.number,
   handleSuspend: PropTypes.func,
   rowsPerPage: PropTypes.number,
-  selected: PropTypes.array
+  selected: PropTypes.array,
 };

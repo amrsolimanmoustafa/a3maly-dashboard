@@ -18,13 +18,13 @@ import {useTranslation} from "react-i18next";
 
 export default function ContactMessageDialog(props: any) {
   const {
-     item,
-     open,
-     handleClickOpen,
-     handleClose
-    } = props;
-    const { t } = useTranslation();
-  
+    item,
+    open,
+    handleClickOpen,
+    handleClose
+  } = props;
+  const { t } = useTranslation();
+
   const [fullWidth, setFullWidth] = React.useState(true);
   const [maxWidth, setMaxWidth] = React.useState<DialogProps['maxWidth']>('sm');
 
@@ -48,28 +48,28 @@ export default function ContactMessageDialog(props: any) {
         onClose={handleClose}
       >
         <DialogTitle>
-            <Typography>
-                {item.title}
-            </Typography>
+          <Typography>
+            {item.title}
+          </Typography>
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
             <List>
-                <ListItem>
-                    <ListItemText primary={t("Name")} secondary={item.name} />
-                </ListItem>
-                <ListItem>
-                    <ListItemText primary={t("Phone")} secondary={item.phone} />
-                </ListItem>
-                <ListItem>
-                    <ListItemText primary={t("Email")} secondary={item.email} />
-                </ListItem>
-                <ListItem>
-                    <ListItemText primary={t("Message")} secondary={item.message} />
-                </ListItem>
-                <ListItem>
-                    <ListItemText primary={t("Created_at")} secondary={item.created_at} />
-                </ListItem>
+              <ListItem>
+                <ListItemText primary={t("Name")} secondary={item.name} />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary={t("Phone")} secondary={item.phone} />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary={t("Email")} secondary={item.email} />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary={t("Message")} secondary={item.message} />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary={t("Created_at")} secondary={item.created_at} />
+              </ListItem>
             </List>
           </DialogContentText>
         </DialogContent>

@@ -97,3 +97,5 @@ export const suspend_admin = (id: string) => `/admins/${id}`;
 export const restore_admin = (id: string) => `/admins/restore/${id}`;
 export const add_admin = () => `/admins`;
 export const edit_admin = (id: string) => `/admins/${id}`;
+
+export const post_Notification = () => "/notifications/send";
