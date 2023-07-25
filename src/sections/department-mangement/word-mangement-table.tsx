@@ -37,6 +37,7 @@ export const WordMangementTable = (props: any) => {
     onSelectAll,
     onSelectOne,
     page,
+    handleEdit = () => {},
     handleSuspend = () => {},
     handleDelete = () => {},
     rowsPerPage,
@@ -115,6 +116,11 @@ export const WordMangementTable = (props: any) => {
                       {deleted_at}
                     </TableCell>
                     <TableCell>
+                      <Tooltip arrow placement="top" title="Edit">
+                        <IconButton onClick={() => handleEdit(department)}>
+                          <Edit />
+                        </IconButton>
+                      </Tooltip>
                       <Tooltip arrow placement="top" title="Delete">
                         <IconButton color="error" onClick={() => handleDelete(department)}>
                           <Delete />
@@ -151,6 +157,7 @@ WordMangementTable.propTypes = {
   onSelectAll: PropTypes.func,
   onSelectOne: PropTypes.func,
   page: PropTypes.number,
+  handleEdit: PropTypes.func,
   handleSuspend: PropTypes.func,
   handleDelete: PropTypes.func,
   rowsPerPage: PropTypes.number,

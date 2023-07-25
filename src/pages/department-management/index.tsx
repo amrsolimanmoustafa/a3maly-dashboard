@@ -1,7 +1,7 @@
 import { DashboardLayout } from '../../layouts/dashboard/layout';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
-import { Box, Container, Stack, Typography } from '@mui/material';
+import { Box, Button, Container, Stack, Typography } from '@mui/material';
 import { DepartmentMangementSearch } from '@/sections/department-mangement/department-mangement-search';
 import { usePageUtilities } from '@/hooks/use-page-utilities';
 import DepartmentContextProvider from '@/contexts/departmentContext';
@@ -11,6 +11,8 @@ import useAlert from '@/hooks/useAlert';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelection } from '@/hooks/use-selection';
 import { WordMangementTable } from '@/sections/department-mangement/word-mangement-table';
+import ConfirmationPopup from '@/components/confirmation-popup';
+import DepartmentForm from '@/@forms/department';
 const Page = () => {
   const { t } = useTranslation();
   const departmentContext = useDepartment();
@@ -52,6 +54,12 @@ const Page = () => {
     // setOpen(false);
   };
 
+  const handleEditUser = (role: any) => {
+    setRecord(role);
+    setEditMode(true);
+    setOpen(true);
+  };
+
   const handleAddUser = () => {
     setEditMode(false);
     setRecord({});
@@ -82,11 +90,27 @@ const Page = () => {
         }}
       >
         <Container maxWidth="xl">
+          <ConfirmationPopup
+            message={"Are you sure to delete this User?"}
+            confirmFuntion={DeleteUser}
+            open={openConfirm}
+            setOpen={setOpenConfirm}
+          />
           <Stack spacing={3}>
             <Stack direction="row" justifyContent="space-between" spacing={4}>
               <Stack spacing={1}>
                 <Typography variant="h4">{t("Department management")}</Typography>
               </Stack>
+              <Button
+                onClick={() => {
+                  handleAddUser();
+                }}
+                variant="contained"
+                sx={{ borderRadius: 0.5 }}
+              >
+                {t("Add")}
+              </Button>
+
             </Stack>
             <DepartmentMangementSearch
               onSearchChange={handleSearch}
@@ -105,12 +129,22 @@ const Page = () => {
                 rowsPerPage={controller.rowsPerPage}
                 selected={departmentsSelection.selected}
                 handleSuspend={departmentContext?.suspendDepartment}
+                handleEdit={handleEditUser}
                 handleDelete={handleDeleteUser}
               />
             )}
           </Stack>
         </Container>
+        <DepartmentForm
+          handleSubmit={handleSubmit}
+          editMood={editMood}
+          open={open}
+          onClose={onClose}
+          record={record}
+          formItem={"department"}
+        />
       </Box>
+      {renderForAlert()}
     </>
   );
 }
