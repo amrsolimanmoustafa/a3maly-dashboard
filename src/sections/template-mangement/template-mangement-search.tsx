@@ -4,12 +4,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-export const DepartmentMangementSearch = (props: any) => {
+export const TemplateMangementSearch = (props: any) => {
   const {
     filter,
     onSearchChange,
-
   } = props;
   const { t } = useTranslation();
   return (
@@ -33,7 +33,7 @@ export const DepartmentMangementSearch = (props: any) => {
   );
 };
 
-DepartmentMangementSearch.propTypes = {
+TemplateMangementSearch.propTypes = {
   filter: PropTypes.string,
   onSearchChange: PropTypes.func,
 };

@@ -12,6 +12,8 @@ import {
   TablePagination,
   TableRow,
   Tooltip,
+  Chip,
+  Button
 } from "@mui/material";
 import React from "react";
 import { Scrollbar } from "../../components/scrollbar";
@@ -19,14 +21,17 @@ import { Scrollbar } from "../../components/scrollbar";
 import { useTranslation } from "react-i18next";
 import { Delete, Edit } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
+import { WordMangementTable } from '@/sections/department-mangement/word-mangement-table';
+import FieldsForm from '@/@forms/fields';
 
-export const WordMangementTable = (props: any) => {
+export const TemplateMangementTable = (props: any) => {
   const {
     count,
     items = [],
     onDeselectAll,
     onDeselectOne,
     onPageChange = () => {},
+    openField = () => {},
     onRowsPerPageChange,
     onSelectAll,
     onSelectOne,
@@ -63,47 +68,50 @@ export const WordMangementTable = (props: any) => {
                     }}
                   />
                 </TableCell>
-                <TableCell >{t("Department name")}</TableCell>
-                <TableCell>{t("Department Owner")}</TableCell>
-                <TableCell>{t("templates Number")}</TableCell>
+                <TableCell >{t("Template name")}</TableCell>
+                <TableCell>{t("Department name")}</TableCell>
                 <TableCell>{t("number of used word")}</TableCell>
-                <TableCell>{t("Department state")}</TableCell>
+                <TableCell>{t("GPT Model")}</TableCell>
+                <TableCell>{t("Fields")}</TableCell>
+                <TableCell>{t("Template state")}</TableCell>
                 <TableCell sx={{textAlign:"center"}}>{t("Actions")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {items.map((department: any) => {
-                const isSelected = selected.includes(department?.id);
-                const deleted_at = department?.deleted_at
-                  ? format(Date.parse(department?.deleted_at), "dd/MM/yyyy")
+              {items.map((template: any) => {
+                const isSelected = selected.includes(template?.id);
+                const deleted_at = template?.deleted_at
+                  ? format(Date.parse(template?.deleted_at), "dd/MM/yyyy")
                   : null;
                 // const [checked, setChecked] = useState(user.deleted_at);
                 const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
                   // setChecked(event.target.checked);
-                  handleSuspend(department.id);
+                  handleSuspend(template.id);
                 };
 
                 return (
-                  <TableRow hover key={department?.id} selected={isSelected}>
+                  <TableRow hover key={template?.id} selected={isSelected}>
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={isSelected}
                         onChange={(event) => {
                           if (event.target.checked) {
-                            onSelectOne?.(department.id);
+                            onSelectOne?.(template.id);
                           } else {
-                            onDeselectOne?.(department.id);
+                            onDeselectOne?.(template.id);
                           }
                         }}
                       />
                     </TableCell>
-                    <TableCell>{department?.departmentName}</TableCell>
-                    <TableCell>{department?.departmentOwner}</TableCell>
-                    <TableCell>{department?.templatesNumer}</TableCell>
-                    <TableCell>{department?.wordUsed}</TableCell>
+
+                    <TableCell>{template?.templateName}</TableCell>
+                    <TableCell>{template?.templateName}</TableCell>
+                    <TableCell>{template?.wordUsed}</TableCell>
+                    <TableCell>{template?.gptModel}</TableCell>
+                    <TableCell sx={{ width: 50, height: "auto", display: "wrap" }}>{template?.fields.map((item: any, index: number) => <Chip key={index} label={item} onClick={() => openField()}  onDelete={() => null} />)}</TableCell>
                     <TableCell>
                       <Switch
-                        checked={department?.state}
+                        checked={template?.state}
                         onChange={handleChange}
                         inputProps={{ "aria-label": "controlled" }}
                       />
@@ -111,18 +119,18 @@ export const WordMangementTable = (props: any) => {
                     </TableCell>
                     <TableCell>
                       <Tooltip arrow placement="top" title="Edit">
-                        <IconButton onClick={() => handleEdit(department)}>
+                        <IconButton onClick={() => handleEdit(template)}>
                           <Edit />
                         </IconButton>
                       </Tooltip>
                       <Tooltip arrow placement="top" title="Delete">
-                        <IconButton color="error" onClick={() => handleDelete(department)}>
+                        <IconButton color="error" onClick={() => handleDelete(template)}>
                           <Delete />
                         </IconButton>
                       </Tooltip>
                     </TableCell>
                   </TableRow>
-                )
+                );
               })}
             </TableBody>
           </Table>
@@ -141,7 +149,7 @@ export const WordMangementTable = (props: any) => {
   );
 }
 
-WordMangementTable.propTypes = {
+TemplateMangementTable.propTypes = {
   count: PropTypes.number,
   items: PropTypes.array,
   onDeselectAll: PropTypes.func,
@@ -149,6 +157,7 @@ WordMangementTable.propTypes = {
   onPageChange: PropTypes.func,
   onRowsPerPageChange: PropTypes.func,
   onSelectAll: PropTypes.func,
+  openField: PropTypes.func,
   onSelectOne: PropTypes.func,
   page: PropTypes.number,
   handleEdit: PropTypes.func,

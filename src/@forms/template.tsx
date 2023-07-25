@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -22,17 +21,17 @@ import { useUserCategory } from "@/hooks/use-userCategory";
 import GroupContextProvider from "@/contexts/group-context";
 import { SelectChangeEvent } from '@mui/material/Select';
 
-
-const DepartmentForm = (props: any) => {
+const TemplateForm = (props: any) => {
   const { handleSubmit, editMood, open, onClose, record, formItem } = props;
   const rolesContext = useRole();
   const { t } = useTranslation();
   const [formState, setFormState] = useState<any>({
     id: Math.floor(Math.random() * 1032),
+    templateName: "",
     departmentName: "",
-    templatesNumer: "",
     wordUsed: "",
-    departmentOwner: "",
+    gptModel: "",
+    fields: [],
     state: false,
   });
   useEffect(() => {
@@ -45,20 +44,21 @@ const DepartmentForm = (props: any) => {
     } else {
       setFormState({
         id: Math.floor(Math.random() * 1032),
+        templateName: "",
         departmentName: "",
-        templatesNumer: "",
         wordUsed: "",
-        departmentOwner: "",
+        gptModel: "",
+        fields: [],
         state: false,
       });
     }
   }, [record, editMood]);
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setFormState({
-      ...formState,
-      [name]: value,
-    });
+      setFormState({
+        ...formState,
+        [name]: value,
+      });
   };
   const handleSelectChange = (event: SelectChangeEvent) => {
     const { name, value } = event.target;
@@ -70,14 +70,16 @@ const DepartmentForm = (props: any) => {
   const RestForm = () => {
     setFormState({
       id: Math.floor(Math.random() * 1032),
+      templateName: "",
       departmentName: "",
-      templatesNumer: "",
       wordUsed: "",
-      departmentOwner: "",
+      gptModel: "",
+      fields: [],
       state: false,
     });
   };
-  return(
+
+  return (
     <>
       <GroupContextProvider>
         <Dialog open={open}>
@@ -112,10 +114,11 @@ const DepartmentForm = (props: any) => {
                 <Box>
                   <TextField
                     sx={{ mt: 1, width: "100%" }}
-                    name="templatesNumer"
-                    value={formState?.templatesNumer}
-                    label={t("templates numer")}
+                    name="departmentName"
+                    value={formState?.departmentName}
+                    label={t("department name")}
                     onChange={handleInputChange}
+                    required={true}
                   />
                 </Box>
                 <Box>
@@ -125,40 +128,28 @@ const DepartmentForm = (props: any) => {
                     value={formState?.wordUsed}
                     label={t("word used")}
                     onChange={handleInputChange}
+                    required={true}
                   />
                 </Box>
                 <Box>
                   <TextField
                     sx={{ mt: 1, width: "100%" }}
-                    name="departmentOwner"
-                    value={formState?.departmentOwner}
-                    label={t("department owner")}
+                    name="gptModel"
+                    value={formState?.gptModel}
+                    label={t("gpt model")}
                     onChange={handleInputChange}
+                    required={true}
                   />
                 </Box>
                 <Box>
-                  <Stack direction="row" spacing={2} sx={{ mt: 1 }}>
-                    <FormControl>
-                      <FormLabel id="demo-controlled-radio-buttons-group">{t(`Status`)}</FormLabel>
-                      <RadioGroup
-                        aria-labelledby="demo-controlled-radio-buttons-group"
-                        value={formState?.state} // Use the actual value from the state
-                        name="state"
-                        onChange={handleInputChange}
-                      >
-                        <FormControlLabel
-                          value={true}
-                          control={<Radio />}
-                          label={t("Active")}
-                        />
-                        <FormControlLabel
-                          value={false}
-                          control={<Radio />}
-                          label={t("Inactive")}
-                        />
-                      </RadioGroup>
-                    </FormControl>
-                  </Stack>
+                  <TextField
+                    sx={{ mt: 1, width: "100%" }}
+                    name="fields"
+                    value={formState?.fields}
+                    label={t("fields")}
+                    onChange={handleInputChange}
+                    required={true}
+                  />
                 </Box>
               </Stack>
             </DialogContent>
@@ -180,4 +171,4 @@ const DepartmentForm = (props: any) => {
   );
 }
 
-export default DepartmentForm;
+export default TemplateForm;

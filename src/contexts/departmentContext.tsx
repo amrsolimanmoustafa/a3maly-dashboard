@@ -35,7 +35,7 @@ const DepartmentContextProvider = ({ children }: any) => {
 
   const fetchDepartmets = (page: number, rowsPerPage: number, filter?: string) => {
     setDepartments(initialDepartment);
-    setCount(1);
+    setCount(2);
   };
 
   const AddDepartment = (department: any) => {
