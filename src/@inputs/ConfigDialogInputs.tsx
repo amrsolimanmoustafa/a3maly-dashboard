@@ -40,15 +40,13 @@ export type TInput = {
   onClick?: (event: any) => void;
   onBlur?: (event: any) => void;
   sx?: SxProps;
-  radioButtons?: TRadioButton[];
   disabled?: boolean;
 };
 
 export const CreateCategoryInputs = (inputsFor: IFormTitle): TInput[] => {
-  const {category, department, employee, currency, userEndPoint} = useApi();
 
-  const [currencies, setCurrencies] = React.useState<CurrencyType[]>([]);
-  const [users, setUsers] = React.useState<IUser[]>();
+  const [currencies, setCurrencies] = React.useState([]);
+  const [users, setUsers] = React.useState();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string | null>(null);
   const [categories, setCategories] = useState<any>();
@@ -235,7 +233,6 @@ export const CreateCategoryInputs = (inputsFor: IFormTitle): TInput[] => {
       type: 'input',
       inputType: 'datetime-local',
       required: true,
-      value: moment().toISOString(true).slice(0, 19),
       prependIcon: <DateRangeOutlinedIcon/>
     }
   ];
