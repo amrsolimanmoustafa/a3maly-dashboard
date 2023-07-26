@@ -5,7 +5,6 @@ import SelectHandler from "./handlers/SelectHandler";
 import { ImageHandler } from "./handlers/ImageHandler";
 import ImagesArrayHandler from "./handlers/ImagesArrayHandler";
 import StatusHandler from "./handlers/StatusHandler";
-import RowRadioButtonsGroup from "./handlers/RadioHandler";
 import { SxProps } from "@mui/material/styles";
 import { TInput } from "@/@inputs/ConfigDialogInputs";
 import MultipleSelect from "./MultipleSelect";
@@ -36,16 +35,6 @@ function CreateElementFromType({
   return (
     input && (
       <>
-        {input.type === "radio" && (
-          <RowRadioButtonsGroup
-            value={input?.value}
-            label={input?.label}
-            input={input}
-            sx={input.sx}
-            handleChange={handleChange}
-            required={input?.required}
-          />
-        )}
         {input.type === "status" && (
           <StatusHandler input={input} styles={styles} handleChange={handleChange} />
         )}

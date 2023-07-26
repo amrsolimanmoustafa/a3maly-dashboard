@@ -15,7 +15,7 @@ const StatusHandler = ({ input, styles, handleChange }: any) => {
           key={status.id}
           onClick={() => {
             setSelectedStatus(status.id);
-            setStatus(status.id);
+
           }}
           variant={selectedStatus === status.id ? 'contained' : 'outlined'}
         >
