@@ -8,8 +8,10 @@
 
 .inputInput * {
   border-radius: 4px !important;
-  border-color: rgba($color: #E5E7EB, $alpha: 1) !important;
+  border-color: rgba(229, 231, 235, 1) !important; /* #E5E7EB converted to RGBA */
 }
-.inputInput *::placeholder{
-  color: rgba($color: #9CA3AF, $alpha: 1) !important;
+
+/* Apply placeholder color to all elements inside .inputInput */
+.inputInput *::placeholder {
+  color: rgba(156, 163, 175, 1) !important; /* #9CA3AF converted to RGBA */
 }
