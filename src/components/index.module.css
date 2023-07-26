@@ -1,0 +1,17 @@
+.inputLabel{
+  font-size: 14px;
+  font-weight: 700!important;
+  color: black !important;
+  max-width: 327px !important;
+  margin-bottom: 15px;
+}
+
+.inputInput * {
+  border-radius: 4px !important;
+  border-color: rgba(229, 231, 235, 1) !important; /* #E5E7EB converted to RGBA */
+}
+
+/* Apply placeholder color to all elements inside .inputInput */
+.inputInput *::placeholder {
+  color: rgba(156, 163, 175, 1) !important; /* #9CA3AF converted to RGBA */
+}

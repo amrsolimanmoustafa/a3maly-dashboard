@@ -117,7 +117,6 @@ const UserForm = (props: any) => {
             onSubmit={(event) => {
               event.preventDefault();
               handleSubmit();
-
             }}
           >
             <DialogContent sx={{ maxHeight: "55vh" }}>
