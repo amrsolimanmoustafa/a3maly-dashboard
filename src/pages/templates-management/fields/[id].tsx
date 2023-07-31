@@ -33,7 +33,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>{t("Template Details")} | A3maly</title>
+        <title>{t("Template Details")} | {t('app_name')}</title>
       </Head>
       <Box
         component="main"

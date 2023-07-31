@@ -46,7 +46,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>{t("User details") + "|"  + "A3maly"}</title>
+        <title>{t("User details")} | {t("app_name")}</title>
       </Head>
       <Box
         component="main"

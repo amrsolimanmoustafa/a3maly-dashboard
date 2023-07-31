@@ -80,7 +80,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>{t("Department management")} | A3maly</title>
+        <title>{t("Department management")} | {t('app_name')}</title>
       </Head>
       <Box
         component="main"

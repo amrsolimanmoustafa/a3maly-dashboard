@@ -73,7 +73,7 @@ const Page = () => {
     <>
       <Head>
         <title>
-          Login | Pronto
+          Login | {t('app_name')}
         </title>
       </Head>
       <Box

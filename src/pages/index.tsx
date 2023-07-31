@@ -8,8 +8,10 @@ import StatsCard from '@/components/stats-card';
 import PersonIcon from '@mui/icons-material/Person';
 import UserIcon from '@/assets/icons/user-icon';
 import WordIcon from '@/assets/icons/word-icon';
+import { useTranslation } from "react-i18next";
 
 const Page = () => {
+  const { t } = useTranslation();
 
   const stats = [
     {
@@ -48,7 +50,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>Overview | Pronto</title>
+        <title>Overview | {t('app_name')}</title>
       </Head>
       <Box
         component="main"

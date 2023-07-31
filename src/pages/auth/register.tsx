@@ -7,10 +7,12 @@ import { Box, Button, Link, Stack, TextField, Typography } from '@mui/material';
 import React from 'react';
 import { useAuth } from '../../hooks/use-auth';
 import { AuthLayout } from '../../layouts/auth/layout';
+import { useTranslation } from 'react-i18next';
 
 const Page = () => {
   const router = useRouter();
   const auth = useAuth();
+  const { t } = useTranslation();
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -49,7 +51,7 @@ const Page = () => {
     <>
       <Head>
         <title>
-          Register | Pronto
+          Register | {t('app_name')}
         </title>
       </Head>
       <Box

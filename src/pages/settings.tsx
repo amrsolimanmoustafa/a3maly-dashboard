@@ -4,12 +4,15 @@ import React from 'react';
 import { DashboardLayout } from '../layouts/dashboard/layout';
 import { SettingsNotifications } from '../sections/settings/settings-notifications';
 import { SettingsPassword } from '../sections/settings/settings-password';
+import { useTranslation } from 'react-i18next';
 
-const Page = () => (
+const Page = () => {
+  const { t } = useTranslation();
+  return (
   <>
     <Head>
       <title>
-        Settings | Pronto
+        Settings | {t('app_name')}
       </title>
     </Head>
     <Box
@@ -30,7 +33,8 @@ const Page = () => (
       </Container>
     </Box>
   </>
-);
+)
+};
 
 Page.getLayout = (page: any) => (
   <DashboardLayout>

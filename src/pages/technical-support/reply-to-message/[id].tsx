@@ -106,7 +106,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>{t("Messages") + "|" + "A3maly"}</title>
+        <title>{t("Messages")} | {t("app_name")}</title>
       </Head>
       <Box
         component="main"

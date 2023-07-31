@@ -93,7 +93,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>{t("Templates management")} | A3maly</title>
+        <title>{t("Templates management")} | {t('app_name')}</title>
       </Head>
       <Box
         component="main"

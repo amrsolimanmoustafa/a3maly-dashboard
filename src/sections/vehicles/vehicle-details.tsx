@@ -110,7 +110,7 @@ export const VehicleDetails = (props: any) => {
   };
   const vehicleImages = vehicle?.__images__;
   const licenseImages = vehicle?.__license_images__;
-  const galleryPath = "https://pronto.zbony.com/v1/";
+  const galleryPath = "";
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Card>

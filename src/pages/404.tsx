@@ -3,12 +3,15 @@ import NextLink from 'next/link';
 import ArrowLeftIcon from '@heroicons/react/24/solid/ArrowLeftIcon';
 import { Box, Button, Container, SvgIcon, Typography } from '@mui/material';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
-const Page = () => (
+const Page = () => {
+  const { t } = useTranslation();
+  return (
   <>
     <Head>
       <title>
-        404 | Pronto
+        404 | {t('app_name')}
       </title>
     </Head>
     <Box
@@ -76,6 +79,7 @@ const Page = () => (
       </Container>
     </Box>
   </>
-);
+)
+};
 
 export default Page;
