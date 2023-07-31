@@ -33,7 +33,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>{t("Templates management")} | A3maly</title>
+        <title>{t("Template Details")} | A3maly</title>
       </Head>
       <Box
         component="main"
@@ -47,20 +47,7 @@ const Page = () => {
             <Typography variant="h4">{t("Templates management")}</Typography>
           </Box>
           <Box sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
-            <Box sx={{ width: '45%', bgcolor: '#f5f5f5', borderRadius: 2, padding: '20px' }}>
-              {inputs.map((item: any, index: number) => (
-                <Box key={index} sx={{ py: 3 }}>
-                  <Typography variant="h6">{item.title}</Typography>
-                  <CreateElementFromType
-                    input={{
-                      type: item.type,
-                    }}
-                    handleChange={() => null}
-                  />
-                </Box>
-              ))}
-            </Box>
-            <Box sx={{ width: '45%', bgcolor: '#f5f5f5', borderRadius: 2, padding: '20px' }}>
+            <Box sx={{ bgcolor: '#f5f5f5', borderRadius: 2, padding: '20px' }}>
               <form onSubmit={handleAddInput}>
                 <Box sx={{ py: 3 }}>
                   <Typography variant="h6">Enter title for Input</Typography>

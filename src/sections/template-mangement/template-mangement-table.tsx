@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { format } from "date-fns";
 import {
   Box,
@@ -155,21 +154,3 @@ export const TemplateMangementTable = (props: any) => {
     </Card>
   );
 }
-
-TemplateMangementTable.propTypes = {
-  count: PropTypes.number,
-  items: PropTypes.array,
-  onDeselectAll: PropTypes.func,
-  onDeselectOne: PropTypes.func,
-  onPageChange: PropTypes.func,
-  onRowsPerPageChange: PropTypes.func,
-  onSelectAll: PropTypes.func,
-  openField: PropTypes.func,
-  onSelectOne: PropTypes.func,
-  page: PropTypes.number,
-  handleEdit: PropTypes.func,
-  handleSuspend: PropTypes.func,
-  handleDelete: PropTypes.func,
-  rowsPerPage: PropTypes.number,
-  selected: PropTypes.array,
-};
