@@ -17,7 +17,7 @@ const Page = () => {
   const { t } = useTranslation();
   const departmentContext = useDepartment();
   const { showAlert, renderForAlert } = useAlert();
-  const [editMood, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const [open, setOpen] = useState(false);
   const [record, setRecord] = useState<any>(null);
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<string>("");
@@ -40,7 +40,7 @@ const Page = () => {
   }, [controller])
 
   const handleSubmit = async (formdata: any) => {
-    if (editMood) {
+    if (editMode) {
       // departmentContext?.EditUser(formdata);
       showAlert(t("Department has been edited successfully").toString(), "success");
     } else {
@@ -137,7 +137,7 @@ const Page = () => {
         </Container>
         <DepartmentForm
           handleSubmit={handleSubmit}
-          editMood={editMood}
+          editMode={editMode}
           open={open}
           onClose={onClose}
           record={record}

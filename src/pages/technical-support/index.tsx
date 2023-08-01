@@ -16,7 +16,7 @@ const Page = () => {
   const { t } = useTranslation();
   const title = t("technical support");
   const { showAlert, renderForAlert } = useAlert()
-  const [editMood, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const [open, setOpen] = useState(false);
   const [record, setRecord] = useState<any>(null);
   const [selectedMessageId, setselectedMessageId] = useState<string>("");
@@ -46,7 +46,7 @@ const Page = () => {
 
   const handleSubmit = async (formdata: any) => {
     console.log(formdata);
-    if (editMood) {
+    if (editMode) {
       messagesContext?.EditMessage(formdata);
       showAlert(t("Message has been edited successfully").toString(), "success");
     } else {

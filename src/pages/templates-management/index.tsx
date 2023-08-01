@@ -23,7 +23,7 @@ const Page = () => {
   const { t } = useTranslation();
   const templateContext = useTemplates();
   const { showAlert, renderForAlert } = useAlert();
-  const [editMood, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const [open, setOpen] = useState(false);
   const [openField, setOpenField] = useState(false);
   const [record, setRecord] = useState<any>(null);
@@ -47,7 +47,7 @@ const Page = () => {
   }, [controller])
 
   const handleSubmit = async (formdata: any) => {
-    if (editMood) {
+    if (editMode) {
       // departmentContext?.EditUser(formdata);
       showAlert(t("Templates has been edited successfully").toString(), "success");
     } else {
@@ -150,7 +150,7 @@ const Page = () => {
         </Container>
         <TemplateForm
           handleSubmit={handleSubmit}
-          editMood={editMood}
+          editMode={editMode}
           open={open}
           onClose={onClose}
           record={record}
@@ -158,7 +158,7 @@ const Page = () => {
         />
         <FieldsForm
           handleSubmit={() => null}
-          editMood={editMood}
+          editMode={editMode}
           open={openField}
           onClose={onClose}
           record={record}

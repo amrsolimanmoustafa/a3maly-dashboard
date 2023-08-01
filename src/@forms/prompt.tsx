@@ -25,7 +25,7 @@ import GroupContextProvider from "@/contexts/group-context";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 const Form = (props: any) => {
-  const { handleSubmit, editMood, open, onClose, record, formItem } = props;
+  const { handleSubmit, editMode, open, onClose, record, formItem } = props;
   const rolesContext = useRole();
   const { t } = useTranslation();
   const [formState, setFormState] = useState<any>({
@@ -49,7 +49,7 @@ const Form = (props: any) => {
       //fetch all data related to add user
       await rolesContext?.fetchRoles(1, 100, "");
     })();
-    if (editMood) {
+    if (editMode) {
       setFormState(record);
     } else {
       setFormState({
@@ -64,7 +64,7 @@ const Form = (props: any) => {
         templateId: "",
       });
     }
-  }, [record, editMood]);
+  }, [record, editMode]);
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormState({
@@ -98,7 +98,7 @@ const Form = (props: any) => {
       <GroupContextProvider>
         <Dialog open={open}>
           <DialogTitle textAlign="center">
-            {!editMood ? t(`Add ${formItem}`) : t(`Edit ${formItem}`)}
+            {!editMode ? t(`Add ${formItem}`) : t(`Edit ${formItem}`)}
           </DialogTitle>
           <form
             onSubmit={(event) => {
@@ -210,7 +210,7 @@ const Form = (props: any) => {
                 variant="contained"
                 sx={{ borderRadius: 0.5 }}
               >
-                {!editMood ? t("Add") : t("Edit")}
+                {!editMode ? t("Add") : t("Edit")}
               </Button>
               <Button onClick={onClose}>{t("Cancel")}</Button>
             </DialogActions>
