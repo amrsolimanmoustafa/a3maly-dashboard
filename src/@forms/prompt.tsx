@@ -16,6 +16,7 @@ import {
   DialogTitle,
   MenuItem,
   InputLabel,
+  Checkbox,
 } from "@mui/material";
 import { AddModerator, Delete, Edit } from "@mui/icons-material";
 import { useRole } from "@/hooks/use-role";
@@ -32,13 +33,16 @@ const Form = (props: any) => {
     textEn: "",
     textAr: "",
     param: "",
+    isInput: false,
+    inputName: "",
+    inputLabel: "",
     typeId: "",
     templateId: "",
   });
   const promptTypes = [
-    {id: '1a', name: 'My Project'},
-    {id: '1a', name: 'My Product'},
-    {id: '1a', name: 'Free Context'},
+    { id: '1a', name: 'My Project' },
+    { id: '1a', name: 'My Product' },
+    { id: '1a', name: 'Free Context' },
   ]
   useEffect(() => {
     (async () => {
@@ -53,6 +57,9 @@ const Form = (props: any) => {
         textEn: "",
         textAr: "",
         param: "",
+        isInput: false,
+        inputName: "",
+        inputLabel: "",
         typeId: "",
         templateId: "",
       });
@@ -60,10 +67,10 @@ const Form = (props: any) => {
   }, [record, editMood]);
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-      setFormState({
-        ...formState,
-        [name]: value,
-      });
+    setFormState({
+      ...formState,
+      [name]: value,
+    });
   };
   const handleSelectChange = (event: SelectChangeEvent) => {
     const { name, value } = event.target;
@@ -78,6 +85,9 @@ const Form = (props: any) => {
       textEn: "",
       textAr: "",
       param: "",
+      isInput: false,
+      inputName: "",
+      inputLabel: "",
       typeId: "",
       templateId: "",
     });
@@ -125,16 +135,6 @@ const Form = (props: any) => {
                     required={true}
                   />
                 </Box>
-                <Box>
-                  <TextField
-                    sx={{ mt: 1, width: "100%" }}
-                    name="param"
-                    value={formState?.param}
-                    label={t("Param to be Replaced")}
-                    onChange={handleInputChange}
-                    required={true}
-                  />
-                </Box>
                 <Box sx={{ minWidth: 120, mt: 2 }}>
                   <FormControl fullWidth>
                     <InputLabel>{t("Prompt Type")}</InputLabel>
@@ -163,6 +163,44 @@ const Form = (props: any) => {
                     </Select>
                   </FormControl>
                 </Box>
+                <Box sx={{ minWidth: 120, mt: 2 }}>
+                  <Checkbox
+                    name="isInput"
+                    value={formState?.isInput}
+                    checked={formState?.isInput}
+                    onChange={handleInputChange}
+                  />
+                </Box>
+                {formState?.isInput && <Box>
+                  <TextField
+                    sx={{ mt: 1, width: "100%" }}
+                    name="param"
+                    value={formState?.param}
+                    label={t("Param to be Replaced")}
+                    onChange={handleInputChange}
+                    required={true}
+                  />
+                </Box>}
+                {formState?.isInput && <Box>
+                  <TextField
+                    sx={{ mt: 1, width: "100%" }}
+                    name="inputLabel"
+                    value={formState?.inputLabel}
+                    label={t("Label")}
+                    onChange={handleInputChange}
+                    required={true}
+                  />
+                </Box>}
+                {formState?.isInput && <Box>
+                  <TextField
+                    sx={{ mt: 1, width: "100%" }}
+                    name="inputName"
+                    value={formState?.inputName}
+                    label={t("name")}
+                    onChange={handleInputChange}
+                    required={true}
+                  />
+                </Box>}
               </Stack>
             </DialogContent>
             <DialogActions sx={{ p: "1.25rem" }}>
