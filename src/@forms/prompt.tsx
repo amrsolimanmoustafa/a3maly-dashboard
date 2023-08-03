@@ -14,26 +14,36 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  MenuItem,
+  InputLabel,
+  Checkbox,
 } from "@mui/material";
 import { AddModerator, Delete, Edit } from "@mui/icons-material";
 import { useRole } from "@/hooks/use-role";
 import { useUserCategory } from "@/hooks/use-userCategory";
 import GroupContextProvider from "@/contexts/group-context";
-import { SelectChangeEvent } from '@mui/material/Select';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 
-const TemplateForm = (props: any) => {
+const Form = (props: any) => {
   const { handleSubmit, editMode, open, onClose, record, formItem } = props;
   const rolesContext = useRole();
   const { t } = useTranslation();
   const [formState, setFormState] = useState<any>({
     id: Math.floor(Math.random() * 1032),
-    templateName: "",
-    departmentName: "",
-    wordUsed: "",
-    gptModel: "",
-    fields: [],
-    state: false,
+    textEn: "",
+    textAr: "",
+    param: "",
+    isInput: false,
+    inputName: "",
+    inputLabel: "",
+    typeId: "",
+    templateId: "",
   });
+  const promptTypes = [
+    { id: '1a', name: 'My Project' },
+    { id: '1a', name: 'My Product' },
+    { id: '1a', name: 'Free Context' },
+  ]
   useEffect(() => {
     (async () => {
       //fetch all data related to add user
@@ -44,21 +54,23 @@ const TemplateForm = (props: any) => {
     } else {
       setFormState({
         id: Math.floor(Math.random() * 1032),
-        templateName: "",
-        departmentName: "",
-        wordUsed: "",
-        gptModel: "",
-        fields: [],
-        state: false,
+        textEn: "",
+        textAr: "",
+        param: "",
+        isInput: false,
+        inputName: "",
+        inputLabel: "",
+        typeId: "",
+        templateId: "",
       });
     }
   }, [record, editMode]);
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-      setFormState({
-        ...formState,
-        [name]: value,
-      });
+    setFormState({
+      ...formState,
+      [name]: value,
+    });
   };
   const handleSelectChange = (event: SelectChangeEvent) => {
     const { name, value } = event.target;
@@ -70,12 +82,14 @@ const TemplateForm = (props: any) => {
   const RestForm = () => {
     setFormState({
       id: Math.floor(Math.random() * 1032),
-      templateName: "",
-      departmentName: "",
-      wordUsed: "",
-      gptModel: "",
-      fields: [],
-      state: false,
+      textEn: "",
+      textAr: "",
+      param: "",
+      isInput: false,
+      inputName: "",
+      inputLabel: "",
+      typeId: "",
+      templateId: "",
     });
   };
 
@@ -104,9 +118,9 @@ const TemplateForm = (props: any) => {
                 <Box>
                   <TextField
                     sx={{ mt: 1, width: "100%" }}
-                    name="departmentName"
-                    value={formState?.departmentName}
-                    label={t("department name")}
+                    name="textEn"
+                    value={formState?.textEn}
+                    label={t("English Text")}
                     onChange={handleInputChange}
                     required={true}
                   />
@@ -114,43 +128,79 @@ const TemplateForm = (props: any) => {
                 <Box>
                   <TextField
                     sx={{ mt: 1, width: "100%" }}
-                    name="departmentName"
-                    value={formState?.departmentName}
-                    label={t("department name")}
+                    name="textAr"
+                    value={formState?.textAr}
+                    label={t("Arabic Text")}
                     onChange={handleInputChange}
                     required={true}
                   />
                 </Box>
-                <Box>
+                <Box sx={{ minWidth: 120, mt: 2 }}>
+                  <FormControl fullWidth>
+                    <InputLabel>{t("Prompt Type")}</InputLabel>
+                    <Select
+                      value={formState?.typeId}
+                      label={t('Prompt Type')}
+                      name="typeId"
+                      onChange={handleSelectChange}
+                      variant="outlined"
+                      defaultValue={formState.typeId}
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: "24em",
+                          },
+                        },
+                      }}
+                    >
+                      {promptTypes.map((type, i) => {
+                        return (
+                          <MenuItem key={i} value={type.id}>
+                            {type.name}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </FormControl>
+                </Box>
+                <Box sx={{ minWidth: 120, mt: 2 }}>
+                  <Checkbox
+                    name="isInput"
+                    value={formState?.isInput}
+                    checked={formState?.isInput}
+                    onChange={handleInputChange}
+                  />
+                </Box>
+                {formState?.isInput && <Box>
                   <TextField
                     sx={{ mt: 1, width: "100%" }}
-                    name="wordUsed"
-                    value={formState?.wordUsed}
-                    label={t("word used")}
+                    name="param"
+                    value={formState?.param}
+                    label={t("Param to be Replaced")}
                     onChange={handleInputChange}
                     required={true}
                   />
-                </Box>
-                <Box>
+                </Box>}
+                {formState?.isInput && <Box>
                   <TextField
                     sx={{ mt: 1, width: "100%" }}
-                    name="gptModel"
-                    value={formState?.gptModel}
-                    label={t("gpt model")}
+                    name="inputLabel"
+                    value={formState?.inputLabel}
+                    label={t("Label")}
                     onChange={handleInputChange}
                     required={true}
                   />
-                </Box>
-                <Box>
+                </Box>}
+                {formState?.isInput && <Box>
                   <TextField
                     sx={{ mt: 1, width: "100%" }}
-                    name="fields"
-                    value={formState?.fields}
-                    label={t("fields")}
+                    name="inputName"
+                    value={formState?.inputName}
+                    label={t("name")}
                     onChange={handleInputChange}
                     required={true}
                   />
-                </Box>
+                </Box>}
               </Stack>
             </DialogContent>
             <DialogActions sx={{ p: "1.25rem" }}>
@@ -171,4 +221,4 @@ const TemplateForm = (props: any) => {
   );
 }
 
-export default TemplateForm;
+export default Form;

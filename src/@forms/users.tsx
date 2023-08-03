@@ -34,7 +34,7 @@ const roles = ["المدن", "ادارة العمولات", "ادارة الاش
 const categories = ["الادارة", "العملاء", "المندوبين", "الورش", "المتاجر","مستخدمين"];
 
 const UserForm = (props: any) => {
-  const { handleSubmit, editMood, open, onClose, record, formItem } = props;
+  const { handleSubmit, editMode, open, onClose, record, formItem } = props;
   const groupContext = useGroup();
   const userCategoriesContext = useUserCategory();
   const rolesContext = useRole();
@@ -59,7 +59,7 @@ const UserForm = (props: any) => {
       await userCategoriesContext?.fetchUserCategories(1, 100, "");
       await rolesContext?.fetchRoles(1, 100, "");
     })();
-    if (editMood) {
+    if (editMode) {
       setFormState(record);
     } else {
       setFormState({
@@ -76,7 +76,7 @@ const UserForm = (props: any) => {
         subscription_status: "جديد",
         state: false,});
     }
-  }, [record, editMood]);
+  }, [record, editMode]);
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormState({
@@ -111,7 +111,7 @@ const UserForm = (props: any) => {
       <GroupContextProvider>
         <Dialog open={open}>
           <DialogTitle textAlign="center">
-            {!editMood ? t(`Add ${formItem}`) : t(`Edit ${formItem}`)}
+            {!editMode ? t(`Add ${formItem}`) : t(`Edit ${formItem}`)}
           </DialogTitle>
           <form
             onSubmit={(event) => {
@@ -310,7 +310,7 @@ const UserForm = (props: any) => {
                 variant="contained"
                 sx={{ borderRadius: 0.5 }}
               >
-                {!editMood ? t("Add") : t("Edit")}
+                {!editMode ? t("Add") : t("Edit")}
               </Button>
               <Button onClick={onClose}>{t("Cancel")}</Button>
             </DialogActions>

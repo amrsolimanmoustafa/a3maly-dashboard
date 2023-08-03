@@ -24,7 +24,7 @@ import { WordMangementTable } from '@/sections/department-mangement/word-mangeme
 import FieldsForm from '@/@forms/fields';
 import { useRouter } from 'next/router';
 
-export const TemplateMangementTable = (props: any) => {
+const Page = (props: any) => {
   const {
     count,
     items = [],
@@ -74,12 +74,11 @@ export const TemplateMangementTable = (props: any) => {
                     }}
                   />
                 </TableCell>
-                <TableCell >{t("Template name")}</TableCell>
-                <TableCell>{t("Department name")}</TableCell>
-                <TableCell>{t("number of used word")}</TableCell>
-                <TableCell>{t("GPT Model")}</TableCell>
-                <TableCell>{t("Fields")}</TableCell>
-                <TableCell>{t("Template state")}</TableCell>
+                <TableCell >{t("name")}</TableCell>
+                <TableCell>{t("type")}</TableCell>
+                <TableCell>{t("isInput")}</TableCell>
+                <TableCell>{t("text en")}</TableCell>
+                <TableCell>{t("text ar")}</TableCell>
                 <TableCell sx={{textAlign:"center"}}>{t("Actions")}</TableCell>
               </TableRow>
             </TableHead>
@@ -154,3 +153,5 @@ export const TemplateMangementTable = (props: any) => {
     </Card>
   );
 }
+
+export default Page;

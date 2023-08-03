@@ -1,14 +1,18 @@
 import { DashboardLayout } from '@/layouts/dashboard/layout';
 import TemplatesContextProvider from '@/contexts/template-context';
 import { Box, Typography, OutlinedInput, Button, Container } from '@mui/material';
-import { CreateElementFromType } from '@/components/CreateElementFromType';
 import React, { FormEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Head from 'next/head';
+import TemplateDetailsTable from '@/sections/template-mangement/template-details-table';
+import { usePageUtilities } from '@/hooks/use-page-utilities';
 
 const Page = () => {
   const { t } = useTranslation();
+  const { handlePageChange, handleRowsPerPageChange, handleSearch, controller } =
+  usePageUtilities();
   const [title, setTitle] = useState('');
+  const [templateDetails, setTemplateDetails] = useState({meta: {count:1, page:1}, data:[]});
   const [inputs, setInputs] = useState([
     {
       title: 'Number of words',
@@ -33,7 +37,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>{t("Templates management")} | A3maly</title>
+        <title>{t("Template Details")} | {t('app_name')}</title>
       </Head>
       <Box
         component="main"
@@ -47,34 +51,24 @@ const Page = () => {
             <Typography variant="h4">{t("Templates management")}</Typography>
           </Box>
           <Box sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
-            <Box sx={{ width: '45%', bgcolor: '#f5f5f5', borderRadius: 2, padding: '20px' }}>
-              {inputs.map((item: any, index: number) => (
-                <Box key={index} sx={{ py: 3 }}>
-                  <Typography variant="h6">{item.title}</Typography>
-                  <CreateElementFromType
-                    input={{
-                      type: item.type,
-                    }}
-                    handleChange={() => null}
-                  />
-                </Box>
-              ))}
-            </Box>
-            <Box sx={{ width: '45%', bgcolor: '#f5f5f5', borderRadius: 2, padding: '20px' }}>
-              <form onSubmit={handleAddInput}>
-                <Box sx={{ py: 3 }}>
-                  <Typography variant="h6">Enter title for Input</Typography>
-                  <OutlinedInput
-                    value={title}
-                    onChange={(event) => setTitle(event.target.value)}
-                    fullWidth
-                    label="Title"
-                  />
-                  <Button type="submit" variant="contained" sx={{ mt: 2 }}>
-                    Add
-                  </Button>
-                </Box>
-              </form>
+            <Box sx={{ bgcolor: '#f5f5f5', borderRadius: 2, padding: '20px' }}>
+            <TemplateDetailsTable
+                count={templateDetails.meta.count}
+                items={templateDetails.data}
+                // onDeselectAll={templatesSelection.handleDeselectAll}
+                // onDeselectOne={templatesSelection.handleDeselectOne}
+                // onPageChange={handlePageChange}
+                // onRowsPerPageChange={handleRowsPerPageChange}
+                // onSelectAll={templatesSelection.handleSelectAll}
+                // onSelectOne={templatesSelection.handleSelectOne}
+                // openField={handleEditEditTemplate}
+                page={controller.page}
+                rowsPerPage={controller.rowsPerPage}
+                // selected={templatesSelection.selected}
+                // handleSuspend={templateContext?.suspendTemplate}
+                // handleEdit={handleEditTemplate}
+                // handleDelete={handleDeleteTEmplate}
+              />
             </Box>
           </Box>
         </Container>

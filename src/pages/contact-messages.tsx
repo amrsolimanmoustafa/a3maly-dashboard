@@ -56,7 +56,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>Contact messages | Pronto</title>
+        <title>Contact messages | {t('app_name')}</title>
       </Head>
       <Box
         component="main"

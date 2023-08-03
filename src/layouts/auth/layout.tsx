@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 export const AuthLayout = (props: { children: any; }) => {
   const { children } = props;
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <Box
@@ -88,7 +88,7 @@ export const AuthLayout = (props: { children: any; }) => {
                 sx={{ color: '#15B79E' }}
                 target="_blank"
               >
-                A3maly
+                {t('app_name')}
               </Box>
             </Typography>
             <Typography

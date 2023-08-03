@@ -20,11 +20,9 @@ import { Scrollbar } from "../../components/scrollbar";
 import { useTranslation } from "react-i18next";
 import { Delete, Edit } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
-import { WordMangementTable } from '@/sections/department-mangement/word-mangement-table';
-import FieldsForm from '@/@forms/fields';
 import { useRouter } from 'next/router';
 
-export const TemplateMangementTable = (props: any) => {
+const PackageManagementTable = (props: any) => {
   const {
     count,
     items = [],
@@ -74,63 +72,51 @@ export const TemplateMangementTable = (props: any) => {
                     }}
                   />
                 </TableCell>
-                <TableCell >{t("Template name")}</TableCell>
-                <TableCell>{t("Department name")}</TableCell>
-                <TableCell>{t("number of used word")}</TableCell>
-                <TableCell>{t("GPT Model")}</TableCell>
-                <TableCell>{t("Fields")}</TableCell>
-                <TableCell>{t("Template state")}</TableCell>
+                <TableCell >{t("Name En")}</TableCell>
+                <TableCell>{t("Name Ar")}</TableCell>
+                <TableCell>{t("Price")}</TableCell>
+                <TableCell>{t("No of Words")}</TableCell>
                 <TableCell sx={{textAlign:"center"}}>{t("Actions")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {items.map((template: any) => {
-                const isSelected = selected.includes(template?.id);
-                const deleted_at = template?.deleted_at
-                  ? format(Date.parse(template?.deleted_at), "dd/MM/yyyy")
+              {items.map((item: any) => {
+                const isSelected = selected.includes(item?.id);
+                const deleted_at = item?.deleted_at
+                  ? format(Date.parse(item?.deleted_at), "dd/MM/yyyy")
                   : null;
                 // const [checked, setChecked] = useState(user.deleted_at);
                 const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
                   // setChecked(event.target.checked);
-                  handleSuspend(template.id);
+                  handleSuspend(item.id);
                 };
-
                 return (
-                  <TableRow hover key={template?.id} selected={isSelected}>
+                  <TableRow hover key={item?.id} selected={isSelected}>
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={isSelected}
                         onChange={(event) => {
                           if (event.target.checked) {
-                            onSelectOne?.(template.id);
+                            onSelectOne?.(item.id);
                           } else {
-                            onDeselectOne?.(template.id);
+                            onDeselectOne?.(item.id);
                           }
                         }}
                       />
                     </TableCell>
 
-                    <TableCell>{template?.templateName}</TableCell>
-                    <TableCell>{template?.templateName}</TableCell>
-                    <TableCell>{template?.wordUsed}</TableCell>
-                    <TableCell>{template?.gptModel}</TableCell>
-                    <TableCell><Button onClick={() => handleFields(template?.id)}>Fields</Button></TableCell>
-                    <TableCell>
-                      <Switch
-                        checked={template?.state}
-                        onChange={handleChange}
-                        inputProps={{ "aria-label": "controlled" }}
-                      />
-                      {deleted_at}
-                    </TableCell>
+                    <TableCell>{item.name_en}</TableCell>
+                    <TableCell>{item.name_ar}</TableCell>
+                    <TableCell>{item.price}</TableCell>
+                    <TableCell>{item.words}</TableCell>
                     <TableCell>
                       <Tooltip arrow placement="top" title="Edit">
-                        <IconButton onClick={() => handleEdit(template)}>
+                        <IconButton onClick={() => handleEdit(item)}>
                           <Edit />
                         </IconButton>
                       </Tooltip>
                       <Tooltip arrow placement="top" title="Delete">
-                        <IconButton color="error" onClick={() => handleDelete(template)}>
+                        <IconButton color="error" onClick={() => handleDelete(item)}>
                           <Delete />
                         </IconButton>
                       </Tooltip>
@@ -154,3 +140,5 @@ export const TemplateMangementTable = (props: any) => {
     </Card>
   );
 }
+
+export default PackageManagementTable

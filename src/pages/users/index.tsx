@@ -31,7 +31,7 @@ const Page = () => {
   const router = useRouter();
   const userContext = useUser();
   const { showAlert, renderForAlert } = useAlert();
-  const [editMood, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const [open, setOpen] = useState(false);
   const [record, setRecord] = useState<any>(null);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
@@ -56,7 +56,7 @@ const Page = () => {
   }, [controller]);
 
   const handleSubmit = async (formdata: any) => {
-    if (editMood) {
+    if (editMode) {
       userContext?.EditUser(formdata);
       showAlert(t("User has been edited successfully").toString(), "success");
     } else {
@@ -113,7 +113,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>{t("Users")} | A3maly</title>
+        <title>{t("Users")} | {t('app_name')}</title>
       </Head>
       <Box
         component="main"
@@ -206,7 +206,7 @@ const Page = () => {
         }
         <UserForm
           handleSubmit={handleSubmit}
-          editMood={editMood}
+          editMode={editMode}
           open={open}
           onClose={onClose}
           record={record}

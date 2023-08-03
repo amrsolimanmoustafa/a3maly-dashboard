@@ -24,7 +24,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>{t('Word management')} | A3maly</title>
+        <title>{t('Word management')} | {t('app_name')}</title>
       </Head>
       <Box
         component="main"

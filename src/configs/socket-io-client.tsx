@@ -2,7 +2,7 @@ import { io } from 'socket.io-client';
 
 const createSocketConnection = (token: string | null) => {
   if (typeof window !== 'undefined') {
-    const socket = io('https://pronto.zbony.com/order', {
+    const socket = io('', {
       extraHeaders: {
         'Authorization': `Bearer ${token}`,
       },

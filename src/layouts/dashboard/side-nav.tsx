@@ -21,12 +21,14 @@ import { items } from './config';
 import { SideNavItem } from './side-nav-item';
 import { Theme } from '@mui/material';
 import { useAuth } from '@/hooks/use-auth';
+import { useTranslation } from 'react-i18next';
 
 export const SideNav = (props: { open: any; onClose: any; }) => {
   const { open, onClose } = props;
   const pathname = usePathname();
   const lgUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
   const authContext = useAuth();
+  const { t } = useTranslation();
 
   const content = (
     <Scrollbar
@@ -77,7 +79,7 @@ export const SideNav = (props: { open: any; onClose: any; }) => {
                 color="inherit"
                 variant="subtitle1"
               >
-                A3maly
+                {t('app_name')}
               </Typography>
               <Typography
                 color="grey.200"
