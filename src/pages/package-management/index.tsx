@@ -1,31 +1,84 @@
 import { usePageUtilities } from '@/hooks/use-page-utilities';
 import { DashboardLayout } from '../../layouts/dashboard/layout';
 import { useTranslation } from 'react-i18next';
-import useAlert from '@/hooks/useAlert';
-import { useState } from 'react';
 import Head from 'next/head';
+import { useMemo, useState } from 'react';
+import useAlert from '@/hooks/useAlert';
+import { useSelection } from '@/hooks/use-selection';
 import { Box, Button, Container, Stack, Typography } from '@mui/material';
+import PackageManagementTable from '@/sections/package-management/package-management-table';
+import ConfirmationPopup from '@/components/confirmation-popup';
+import PackageForm from '@/@forms/package';
 const Page = () => {
   const { t } = useTranslation();
   const { showAlert, renderForAlert } = useAlert();
   const [editMode, setEditMode] = useState(false);
   const [open, setOpen] = useState(false);
+  const [openConfirm, setOpenConfirm] = useState(false);
   const [record, setRecord] = useState<any>(null);
+  const [selectedRecord, setSelectedRecord] = useState<any>(null);
+  const [packages, setPackages] = useState<any>({ 
+    data: [
+      {
+        id: 1,
+        name_en: "package one",
+        name_ar: "الباكدج الاول",
+        price: 10,
+        words: 1500,
+      },
+      {
+        id: 2,
+        name_en: "package Two",
+        name_ar: "الباكدج الثاني",
+        price: 18,
+        words: 3000,
+      }
+    ],
+    meta: {
+    count: 2
+  } });
+  const packageIds: any[] | undefined = useMemo(
+    () => packages.data?.map((item: any) => item.id),
+    [packages.data]
+  );
+  const packagesSelection = useSelection(packageIds);
   const { handlePageChange, handleRowsPerPageChange, handleSearch, controller } =
     usePageUtilities();
-  
-    const handleSubmit = async (formdata: any) => {
-      if (editMode) {
-        showAlert(t("Department has been edited successfully").toString(), "success");
-      } else {
-        showAlert(t("Department has been added successfully").toString(), "success");
-      }
-      (async () => {
-        await setEditMode(false);
-        await setRecord({});
-      })();
-      // setOpen(false);
-    };
+
+  const handleEditRecord = (role: any) => {
+    setRecord(role);
+    setEditMode(true);
+    setOpen(true);
+  };
+
+  const handleAddRecord = () => {
+    setEditMode(false);
+    setRecord({});
+    setOpen(true);
+  };
+
+  const handleDeleteRecord = (id: string) => {
+    setSelectedRecord(id);
+    setOpenConfirm(true);
+  };
+
+  const DeleteRecord = () => {
+    setOpenConfirm(false);
+    setPackages(packages.filter((item : any) => item.id !== selectedRecord));
+    showAlert(t("Package has been deleted successfully").toString(), "success");
+  };
+  const handleSubmit = async (formdata: any) => {
+    if (editMode) {
+      showAlert(t("Package has been edited successfully").toString(), "success");
+    } else {
+      showAlert(t("Package has been added successfully").toString(), "success");
+    }
+    (async () => {
+      await setEditMode(false);
+      await setRecord({});
+    })();
+    // setOpen(false);
+  };
   return (
     <>
       <Head>
@@ -39,6 +92,12 @@ const Page = () => {
         }}
       >
         <Container maxWidth="xl">
+          <ConfirmationPopup
+            message={"Are you sure to delete this User?"}
+            confirmFuntion={DeleteRecord}
+            open={openConfirm}
+            setOpen={setOpenConfirm}
+          />
           <Stack spacing={3}>
             <Stack direction="row" justifyContent="space-between" spacing={4}>
               <Stack spacing={1}>
@@ -46,6 +105,7 @@ const Page = () => {
               </Stack>
               <Button
                 onClick={() => {
+                  handleAddRecord()
                 }}
                 variant="contained"
                 sx={{ borderRadius: 0.5 }}
@@ -54,36 +114,29 @@ const Page = () => {
               </Button>
 
             </Stack>
-            <DepartmentMangementSearch
-              onSearchChange={handleSearch}
+            <PackageManagementTable
+              items={packages.data}
+              onDeselectAll={packagesSelection.handleDeselectAll}
+              onDeselectOne={packagesSelection.handleDeselectOne}
+              onPageChange={handlePageChange}
+              onRowsPerPageChange={handleRowsPerPageChange}
+              onSelectAll={packagesSelection.handleSelectAll}
+              onSelectOne={packagesSelection.handleSelectOne}
+              count={packages.meta?.count}
+              page={controller.page}
+              rowsPerPage={controller.rowsPerPage}
+              selected={packagesSelection.selected}
+              handleEdit={handleEditRecord}
+              handleDelete={handleDeleteRecord}
             />
-            {(package?.count > 0) && (
-              <WordMangementTable
-                count={departmentContext?.count}
-                items={departmentContext?.departments}
-                onDeselectAll={departmentsSelection.handleDeselectAll}
-                onDeselectOne={departmentsSelection.handleDeselectOne}
-                onPageChange={handlePageChange}
-                onRowsPerPageChange={handleRowsPerPageChange}
-                onSelectAll={departmentsSelection.handleSelectAll}
-                onSelectOne={departmentsSelection.handleSelectOne}
-                page={controller.page}
-                rowsPerPage={controller.rowsPerPage}
-                selected={departmentsSelection.selected}
-                handleSuspend={departmentContext?.suspendDepartment}
-                handleEdit={handleEditUser}
-                handleDelete={handleDeleteUser}
-              />
-            )}
           </Stack>
         </Container>
-        <DepartmentForm
+        <PackageForm
           handleSubmit={handleSubmit}
           editMode={editMode}
           open={open}
           onClose={() => setOpen(false)}
           record={record}
-          formItem={"department"}
         />
       </Box>
       {renderForAlert()}
