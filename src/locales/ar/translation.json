@@ -269,6 +269,10 @@
   "is online": "متصل",
   "is offline": "غير متصل",
   "transfers": "التحولات",
+  "Name En": "الاسم بالانجليزية",
+  "Name Ar": "الاسم بالعربية",
+  "No of Words": "عدد الكلمات",
+  "Rows Per Page": "عدد الصفوف للصفحة",
   "Enter Time (days:hours:minutes)": "أدخل الوقت (الدقائق: الساعات: الأيام)",
   "Please enter time in the format (days:hours:minutes)": "الرجاء إدخال الوقت بالصيغة (الدقائق: الساعات: الأيام)"
 }
