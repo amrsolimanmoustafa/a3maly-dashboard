@@ -29,8 +29,8 @@ const basicTable = (props: any) => {
     selected,
     selectable
   } = props
-  const selectedSome = selected.length > 0 && selected.length < items.length
-  const selectedAll = items ? items.length > 0 && selected.length === items.length : false
+  const selectedSome = selected?.length > 0 && selected?.length < items.length
+  const selectedAll = items ? items.length > 0 && selected?.length === items.length : false
   return (
     <Card>
       <Scrollbar>
@@ -53,7 +53,7 @@ const basicTable = (props: any) => {
             </TableHead>
             <TableBody>
               {items.map((item: any) => {
-                const isSelected = selected.includes(item?.id)
+                const isSelected = selected?.includes(item?.id)
                 return (
                   <TableRow hover key={item?.id} selected={isSelected}>
                     {selectable && <TableCell padding="checkbox">
