@@ -34,7 +34,7 @@ const TextBox = ({ handleSubmit,intialArTitle="", intialArcontent="" }: Props) =
   const handleLanguageChange = (event: React.SyntheticEvent, language: string) => {
     setLanguage(language);
   };
-  const { arTitle, arContent, enTitle, enContent, updateData, handleChange } = { arTitle: "", arContent:"",  enTitle:"",  enContent:"",  updateData:() => {},  handleChange: (x, y) => {} };
+  const { arTitle, arContent, enTitle, enContent, updateData, handleChange } = { arTitle: "", arContent:"",  enTitle:"",  enContent:"",  updateData:() => {},  handleChange: (x:any, y:any) => {} };
 
   const ref = useRef<TMUIRichTextEditorRef>(null);
 
