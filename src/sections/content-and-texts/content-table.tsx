@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import { format } from "date-fns";
 import {
-  Avatar,
   Box,
   Card,
   Checkbox,
@@ -18,22 +17,23 @@ import {
   Tooltip,
   IconButton,
 } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
 import { AddModerator, Delete, Edit } from '@mui/icons-material';
-import ReplyIcon from '@mui/icons-material/Reply';
 import React, { useState } from "react";
 import { Scrollbar } from "../../components/scrollbar";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
+import { dictionary } from "@/configs/i18next";
 
-export type message = {
+export type Group = {
   id: number;
   type: 'admin' | 'moderator' | 'financial';
-  title: string;
-  content: string;
-  sender: string,
+  arName: string;
+  enName: string;
   status: boolean;
+  notes: string;
 };
-export const MessagesTable = (props: any) => {
+export const ContentTable = (props: any) => {
   const router = useRouter();
   const {
     count,
@@ -61,7 +61,7 @@ export const MessagesTable = (props: any) => {
     <Card>
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
-          <Table sx={{ whiteSpace: "nowrap"}}>
+          <Table>
             <TableHead>
               <TableRow>
                 <TableCell padding="checkbox">
@@ -77,79 +77,87 @@ export const MessagesTable = (props: any) => {
                     }}
                   />
                 </TableCell>
-                <TableCell>{t('Message Title')}</TableCell>
-                <TableCell>{t('Message Content')}</TableCell>
-                <TableCell>{t('The Sender')}</TableCell>
-                <TableCell>{t("Message Status")}</TableCell>
+                <TableCell>{t(dictionary('Id'))}</TableCell>
+                <TableCell>{t(('Text in Arabic'))}</TableCell>
+                <TableCell>{t(('Text in English'))}</TableCell>
+                <TableCell>{t("Icon")}</TableCell>
                 <TableCell>{t("Actions")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {items.map((message: any) => {
-                const isSelected = selected.includes(message.id);
-                const created_at = format(Date.parse(message.created_At), "dd/MM/yyyy");
-                const deleted_At = message.deleted_At
-                  ? format(Date.parse(message.deleted_At), "dd/MM/yyyy")
-                  : null;
-                // const [checked, setChecked] = useState(message.deleted_at);
+              {items.map((item: any) => {
+                const isSelected = selected.includes(item.id);
                 const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
                   // setChecked(event.target.checked);
-                  handleSuspend(message.id);
+                  handleSuspend(item.id);
                 };
 
                 const handleRoute = (event: React.ChangeEvent<HTMLInputElement>) => {
-                  router.push(`/technical-support/reply-to-message/${message.id}`);
+                  router.push(`/groups/${item.id}`);
                 };
                 return (
-                  <TableRow hover key={message.id} selected={isSelected}>
+                  <TableRow hover key={item.id} selected={isSelected}>
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={isSelected}
                         onChange={(event) => {
                           if (event.target.checked) {
-                            onSelectOne?.(message.id);
+                            onSelectOne?.(item.id);
                           } else {
-                            onDeselectOne?.(message.id);
+                            onDeselectOne?.(item.id);
                           }
                         }}
                       />
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <Stack alignItems="center" direction="row" spacing={2}>
-                        <Typography variant="subtitle2"   sx={{ overflow: 'hidden', textOverflow: 'ellipsis',maxWidth: 200   }}>{message?.title}</Typography>
+                        <Typography variant="subtitle2">{item?.id}</Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
                       <Stack alignItems="center" direction="row" spacing={2}>
-                        <Typography variant="subtitle2"   sx={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 200 }}>{message.content}</Typography>
+                        <Typography variant="subtitle2">{item.arText}</Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
                       <Stack alignItems="center" direction="row" spacing={2}>
-                        <Typography variant="subtitle2">{message.sender}</Typography>
+                        <Typography variant="subtitle2">{item.enText}</Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
+                      <Stack alignItems="center" direction="row" spacing={2}>
+                      <Avatar
+                      variant="rounded"
+                        src={
+                          typeof item?.icon == "string"
+                            ? item?.icon
+                            : URL.createObjectURL(item?.icon)
+                        }
+                        alt="Preview"
+                        sx={{ width: "50px",height:"50px", objectFit: "cover",borderRadius: "15px",}}
+                      />
+                      </Stack>
+                    </TableCell> 
+                    {/* <TableCell>
                       <Switch
-                        checked={message.deleted_At == null}
+                        checked={item.state}
                         onChange={handleChange}
                         inputProps={{ "aria-label": "controlled" }}
                       />
-                      {deleted_At}
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell>
                       <Box sx={{ display: 'flex', gap: '1rem' }}>
-                        <Tooltip arrow placement="left" title="Reply">
-                          <IconButton onClick={()=>handleRoute(message?.id)}>
-                            <ReplyIcon/>
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip arrow placement="right" title="Delete">
-                          <IconButton color="error" onClick={() => handleDelete(message?.id)}>
-                            <Delete/>
-                          </IconButton>
-                        </Tooltip>
-                      </Box>
+                      <Tooltip arrow placement="top" title="Edit">
+                        <IconButton onClick={()=>handleEdit(item)}>
+                          <Edit/>
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip arrow placement="top" title="Delete">
+                        <IconButton color="error" onClick={() => handleDelete(item?.id)}>
+                          <Delete/>
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
                     </TableCell>
                   </TableRow>
                 );
@@ -164,7 +172,6 @@ export const MessagesTable = (props: any) => {
         onPageChange={onPageChange}
         onRowsPerPageChange={onRowsPerPageChange}
         page={page}
-        labelRowsPerPage={t("Rows Per Page")}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
       />
@@ -172,7 +179,7 @@ export const MessagesTable = (props: any) => {
   );
 };
 
-MessagesTable.propTypes = {
+ContentTable.propTypes = {
   count: PropTypes.number,
   items: PropTypes.array,
   onDeselectAll: PropTypes.func,

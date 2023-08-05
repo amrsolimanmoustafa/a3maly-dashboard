@@ -154,6 +154,7 @@ export const VerificationRequestsTable = (props: any) => {
         onPageChange={onPageChange}
         onRowsPerPageChange={onRowsPerPageChange}
         page={page}
+        labelRowsPerPage={t("Rows Per Page")}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
       />

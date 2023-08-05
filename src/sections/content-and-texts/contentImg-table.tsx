@@ -1,44 +1,48 @@
-import { useRouter } from 'next/router';
-import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
-
+import { format } from 'date-fns';
 import {
+  Avatar,
   Box,
   Card,
+  Checkbox,
+  Stack,
   SvgIcon,
+  Switch,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TablePagination,
   TableRow,
+  Typography
 } from '@mui/material';
-import { Scrollbar } from '@/components/scrollbar';
-import React from 'react';
+import React, { useState } from 'react';
+import { Scrollbar } from '../../components/scrollbar';
+import { getInitials } from '../../utils/get-initials';
 import CogIcon from '@heroicons/react/24/solid/CogIcon';
-import { OrderRow } from '@/sections/order/OrderRow';
+import { MenuButton } from '@/components/button-menu';
+import { useRouter } from 'next/router';
+import {useTranslation} from 'react-i18next';
 
-export const OrderTable = (props: any) => {
+export const ContentTable = (props: any) => {
   const router = useRouter();
   const {
     count,
     items = [],
     onDeselectAll,
     onDeselectOne,
-    onPageChange = () => { },
+    onPageChange = () => {},
     onRowsPerPageChange,
     onSelectAll,
     onSelectOne,
     page,
-    handleSuspend = () => { },
+    handleSuspend = () => {},
     rowsPerPage,
     selected,
+    isAdmin=false
   } = props;
 
-  const { t } = useTranslation();
-
-  const selectedSome = (selected.length > 0) && (selected.length < items.length);
-  const selectedAll = items ? (items.length > 0) && selected.length === items.length : false;
+  const {t} = useTranslation();
 
   return (
     <Card>
@@ -47,12 +51,8 @@ export const OrderTable = (props: any) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>{t('Order Number')}</TableCell>
-                <TableCell>{t('Status')}</TableCell>
-                <TableCell>{t('Amount')}</TableCell>
-                <TableCell>{t('Driver')}</TableCell>
-                <TableCell>{t('branch name')}</TableCell>
-                <TableCell>{t('Created at')}</TableCell>
+                <TableCell>{t('#')}</TableCell>
+                <TableCell>{t('img')}</TableCell>
                 <TableCell>
                   <SvgIcon fontSize="small">
                     <CogIcon />
@@ -61,12 +61,14 @@ export const OrderTable = (props: any) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {items.map((orders: any) => (
-                <OrderRow
-                  key={orders.id}
-                  order={orders}
-                />
-              ))}
+              {items.map((item: any,index:any) => {
+                return (
+                  <TableRow hover key={index} >
+                    <TableCell>{index+1}</TableCell>
+                    <TableCell sx={{width:"100%"}}> <img src={item.img} alt="" style={{maxWidth:'220px'}} /></TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </Box>
@@ -77,16 +79,14 @@ export const OrderTable = (props: any) => {
         onPageChange={onPageChange}
         onRowsPerPageChange={onRowsPerPageChange}
         page={page}
-        labelRowsPerPage={t("Rows Per Page")}
         rowsPerPage={rowsPerPage}
-        rowsPerPageOptions={[5, 10, 25, 50, 100, 200]}
+        rowsPerPageOptions={[5, 10, 25]}
       />
     </Card>
   );
+};
 
-}
-
-OrderTable.propTypes = {
+ContentTable.propTypes = {
   count: PropTypes.number,
   items: PropTypes.array,
   onDeselectAll: PropTypes.func,
@@ -98,5 +98,6 @@ OrderTable.propTypes = {
   page: PropTypes.number,
   handleSuspend: PropTypes.func,
   rowsPerPage: PropTypes.number,
+  isAdmin: PropTypes.any,
   selected: PropTypes.array
 };
