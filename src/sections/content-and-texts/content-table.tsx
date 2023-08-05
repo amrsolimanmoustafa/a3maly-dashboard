@@ -23,7 +23,6 @@ import React, { useState } from "react";
 import { Scrollbar } from "../../components/scrollbar";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
-import { dictionary } from "@/configs/i18next";
 
 export type Group = {
   id: number;
@@ -77,9 +76,9 @@ export const ContentTable = (props: any) => {
                     }}
                   />
                 </TableCell>
-                <TableCell>{t(dictionary('Id'))}</TableCell>
-                <TableCell>{t(('Text in Arabic'))}</TableCell>
-                <TableCell>{t(('Text in English'))}</TableCell>
+                <TableCell>{t('Id')}</TableCell>
+                <TableCell>{t('Text in Arabic')}</TableCell>
+                <TableCell>{t('Text in English')}</TableCell>
                 <TableCell>{t("Icon")}</TableCell>
                 <TableCell>{t("Actions")}</TableCell>
               </TableRow>
