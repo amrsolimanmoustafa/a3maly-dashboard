@@ -24,7 +24,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 
 
 const DepartmentForm = (props: any) => {
-  const { handleSubmit, editMode, open, onClose, record, formItem } = props;
+  const { handleSubmit, editMode, open, onClose, record } = props;
   const rolesContext = useRole();
   const { t } = useTranslation();
   const [formState, setFormState] = useState<any>({
@@ -33,7 +33,7 @@ const DepartmentForm = (props: any) => {
     templatesNumer: "",
     wordUsed: "",
     departmentOwner: "",
-    state: false,
+    state: true,
   });
   useEffect(() => {
     (async () => {
@@ -49,7 +49,7 @@ const DepartmentForm = (props: any) => {
         templatesNumer: "",
         wordUsed: "",
         departmentOwner: "",
-        state: false,
+        state: true,
       });
     }
   }, [record, editMode]);
@@ -74,7 +74,7 @@ const DepartmentForm = (props: any) => {
       templatesNumer: "",
       wordUsed: "",
       departmentOwner: "",
-      state: false,
+      state: true,
     });
   };
   return(
@@ -82,7 +82,7 @@ const DepartmentForm = (props: any) => {
       <GroupContextProvider>
         <Dialog open={open}>
           <DialogTitle textAlign="center">
-            {!editMode ? t(`Add ${formItem}`) : t(`Edit ${formItem}`)}
+            {!editMode ? t("Add Department") : t("Edit Department")}
           </DialogTitle>
           <form
             onSubmit={(event) => {
@@ -102,9 +102,9 @@ const DepartmentForm = (props: any) => {
                 <Box>
                   <TextField
                     sx={{ mt: 1, width: "100%" }}
-                    name="departmentName"
-                    value={formState?.departmentName}
-                    label={t("department name")}
+                    name="nameEn"
+                    value={formState?.nameEn}
+                    label={t("Department Name En")}
                     onChange={handleInputChange}
                     required={true}
                   />
@@ -112,37 +112,19 @@ const DepartmentForm = (props: any) => {
                 <Box>
                   <TextField
                     sx={{ mt: 1, width: "100%" }}
-                    name="templatesNumer"
-                    value={formState?.templatesNumer}
-                    label={t("templates numer")}
+                    name="nameAr"
+                    value={formState?.nameAr}
+                    label={t("Department Name Ar")}
                     onChange={handleInputChange}
-                  />
-                </Box>
-                <Box>
-                  <TextField
-                    sx={{ mt: 1, width: "100%" }}
-                    name="wordUsed"
-                    value={formState?.wordUsed}
-                    label={t("word used")}
-                    onChange={handleInputChange}
-                  />
-                </Box>
-                <Box>
-                  <TextField
-                    sx={{ mt: 1, width: "100%" }}
-                    name="departmentOwner"
-                    value={formState?.departmentOwner}
-                    label={t("department owner")}
-                    onChange={handleInputChange}
+                    required={true}
                   />
                 </Box>
                 <Box>
                   <Stack direction="row" spacing={2} sx={{ mt: 1 }}>
                     <FormControl>
-                      <FormLabel id="demo-controlled-radio-buttons-group">{t(`Status`)}</FormLabel>
+                      <FormLabel>{t(`Status`)}</FormLabel>
                       <RadioGroup
-                        aria-labelledby="demo-controlled-radio-buttons-group"
-                        value={formState?.state} // Use the actual value from the state
+                        value={formState?.state}
                         name="state"
                         onChange={handleInputChange}
                       >

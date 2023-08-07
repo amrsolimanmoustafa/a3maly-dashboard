@@ -1,12 +1,13 @@
 import { Edit, Delete } from '@mui/icons-material'
-import { Box, Card, Checkbox, IconButton, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip } from '@mui/material'
+import { Box, Card, Checkbox, IconButton, Switch, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip } from '@mui/material'
 import { t } from 'i18next'
 import React from 'react'
 import { Scrollbar } from './scrollbar'
 
 type THeader = {
   name?: string | React.ReactNode,
-  value: string
+  value: string,
+  type?: "switch"
 }
 
 const basicTable = (props: any) => {
@@ -25,6 +26,7 @@ const basicTable = (props: any) => {
       handleEdit: null,
       handleDelete: null,
     },
+    handleSwitchChange,
     rowsPerPage,
     selected,
     selectable
@@ -65,6 +67,16 @@ const basicTable = (props: any) => {
                       />
                     </TableCell>}
                     {headers.map((h: THeader, index: number) => {
+                      if (h.type == 'switch') {
+                        return (
+                          <TableCell key={index}>
+                            <Switch
+                              checked={item[h.value]}
+                              onChange={() => handleSwitchChange(item)}
+                            />
+                          </TableCell>
+                        )
+                      }
                       return (<TableCell key={index}>{item[h.value]}</TableCell>)
                     })}
                     {actions && <TableCell>

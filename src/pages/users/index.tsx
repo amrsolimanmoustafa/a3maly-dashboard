@@ -92,24 +92,6 @@ const Page = () => {
     showAlert(t("User has been deleted successfully").toString(), "success");
   };
 
-  const handleDownload = () => {
-    // Replace the file URL with the actual path to your file in the project.
-    const fileUrl = '../../../public/users.xlsx';
-
-    // Create a hidden anchor element
-    const anchor = document.createElement('a');
-    anchor.href = fileUrl;
-    anchor.download = 'users.xlsx'; // Specify the desired file name
-    anchor.style.display = 'none';
-
-    // Append the anchor element to the DOM and click it programmatically
-    document.body.appendChild(anchor);
-    anchor.click();
-
-    // Remove the anchor from the DOM to keep it clean
-    document.body.removeChild(anchor);
-  };
-
   return (
     <>
       <Head>
@@ -153,34 +135,6 @@ const Page = () => {
               groups={groups}
               roles={roles}
             />
-            <Box border={'1px solid rgb(147,130,234)'} borderRadius={'8px'} bgcolor={'#ffffff'} sx={{ display: "flex", justifyContent: "center" }}>
-              <Grid container spacing={2} sx={{ display: "flex", justifyContent: "center" }}>
-                <Grid m={2} xs={1}>
-                  <Box width={'64px'} height={'64px'} borderRadius={32} bgcolor={'#ffffff'} justifyContent={'center'} alignItems={'center'} display={'flex'}>
-                  </Box>
-                </Grid>
-                <Grid alignSelf={'center'}>
-                  <Typography color={'rgb(32,32,32)'} fontWeight={700}>{t('Add bulk Users')}</Typography>
-                  <Typography noWrap>
-                    {t('Download first')}
-                    <Link onClick={() => handleDownload()} target="_blank"  download display={'inline'} sx={{cursor:"pointer"}} underline="always" color="primary"> users.xls </Link>
-                    {t('then upload it here after filling the data')}
-                  </Typography>
-                </Grid>
-                <Grid xs={2} flexGrow='1' textAlign={'center'} alignSelf={'center'}>
-                  <input
-                      type="file"
-                      accept=".xlsx"
-                      ref={fileInputRef}
-                      style={{ display: 'none' }}
-                      onChange={(event)=> null}
-                  />
-                  <Button variant="outlined" sx={{ borderStyle: 'dashed', bgcolor: '#ECECEC' }} onClick={() => fileInputRef?.current?.click()}>
-                    <Typography color="#626262">{t('Upload file')}</Typography>
-                  </Button>
-                </Grid>
-              </Grid>
-            </Box>
             {(userContext == undefined || userContext?.count > 0) && (
               <UsersTable
                 count={userContext?.count}

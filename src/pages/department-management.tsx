@@ -8,14 +8,15 @@ import { useSelection } from '@/hooks/use-selection'
 import { Box, Button, Container, Stack, Typography } from '@mui/material'
 import BasicTable from "@/components/basic-table"
 import ConfirmationPopup from '@/components/confirmation-popup'
-import PackageForm from '@/@forms/package'
+import DepartmentForm from '@/@forms/department'
 const Page = () => {
   const { t } = useTranslation()
   const headers : any = [
-    { name:t('Name En'), value:'name_en' },
-    { name:t('Name Ar'), value:'name_ar' },
-    { name:t('Price'), value:'price' },
-    { name:t('No of Words'), value:'words' },
+    { name:t('Name En'), value:'nameEn' },
+    { name:t('Name Ar'), value:'nameAr' },
+    { name:t('No Of Words Used'), value:'numberOfWordsUsed' },
+    { name:t('No of Templates'), value:'numberOfTemplates' },
+    { name:t('Department state'), value:'state', type: 'switch' },
   ]
   const { showAlert, renderForAlert } = useAlert()
   const [editMode, setEditMode] = useState(false)
@@ -23,34 +24,39 @@ const Page = () => {
   const [openConfirm, setOpenConfirm] = useState(false)
   const [record, setRecord] = useState<any>(null)
   const [selectedRecord, setSelectedRecord] = useState<any>(null)
-  const [packages, setPackages] = useState<any>({ 
+  const [items, setItems] = useState<any>({ 
     data: [
       {
         id: 1,
-        name_en: "package one",
-        name_ar: "الباكدج الاول",
-        price: 10,
-        words: 1500,
+        nameEn: "Dep one",
+        nameAr: "القسم الاول",
+        numberOfWordsUsed: 22600,
+        numberOfTemplates: 22,
+        state: true,
       },
       {
         id: 2,
-        name_en: "package Two",
-        name_ar: "الباكدج الثاني",
-        price: 18,
-        words: 3000,
+        nameEn: "Dep Two",
+        nameAr: "القسم الثاني",
+        numberOfWordsUsed: 1800,
+        numberOfTemplates: 2,
+        state: true,
       }
     ],
     meta: {
     count: 2
   } })
-  const packageIds: any[] | undefined = useMemo(
-    () => packages.data?.map((item: any) => item.id),
-    [packages.data]
+  const itemIds: any[] | undefined = useMemo(
+    () => items.data?.map((item: any) => item.id),
+    [items.data]
   )
-  const packagesSelection = useSelection(packageIds)
+  const itemSelection = useSelection(itemIds)
   const { handlePageChange, handleRowsPerPageChange, handleSearch, controller } =
     usePageUtilities()
 
+  const handleSwitchChange = (item : any) => {
+    items.data.find((x: any) => x.id == item.id)
+  }
   const handleEditRecord = (role: any) => {
     setRecord(role)
     setEditMode(true)
@@ -70,14 +76,17 @@ const Page = () => {
 
   const DeleteRecord = () => {
     setOpenConfirm(false)
-    setPackages(packages.filter((item : any) => item.id !== selectedRecord))
-    showAlert(t("Package has been deleted successfully").toString(), "success")
+    setItems({
+      data: items.data.filter((item : any) => item.id !== selectedRecord), 
+      meta: {count: items.meta.count-1}
+    })
+    showAlert(t("Department has been deleted successfully").toString(), "success")
   }
   const handleSubmit = async (formdata: any) => {
     if (editMode) {
-      showAlert(t("Package has been edited successfully").toString(), "success")
+      showAlert(t("Department has been edited successfully").toString(), "success")
     } else {
-      showAlert(t("Package has been added successfully").toString(), "success")
+      showAlert(t("Department has been added successfully").toString(), "success")
     }
     (async () => {
       await setEditMode(false)
@@ -88,7 +97,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>{t("Package Management")} | {t('app_name')}</title>
+        <title>{t("Department Management")} | {t('app_name')}</title>
       </Head>
       <Box
         component="main"
@@ -99,7 +108,7 @@ const Page = () => {
       >
         <Container maxWidth="xl">
           <ConfirmationPopup
-            message={"Are you sure to delete this User?"}
+            message={t("delete confirmation", {name: t('Department')})}
             confirmFuntion={DeleteRecord}
             open={openConfirm}
             setOpen={setOpenConfirm}
@@ -107,7 +116,7 @@ const Page = () => {
           <Stack spacing={3}>
             <Stack direction="row" justifyContent="space-between" spacing={4}>
               <Stack spacing={1}>
-                <Typography variant="h4">{t("Package Management")}</Typography>
+                <Typography variant="h4">{t("Department Management")}</Typography>
               </Stack>
               <Button
                 onClick={() => {
@@ -121,23 +130,24 @@ const Page = () => {
             </Stack>
             <BasicTable
               headers={headers}
-              items={packages.data}
+              items={items.data}
               onPageChange={handlePageChange}
               onRowsPerPageChange={handleRowsPerPageChange}
-              count={packages.meta?.count}
+              count={items.meta?.count}
               page={controller.page}
               rowsPerPage={controller.rowsPerPage}
-              // onSelectAll={packagesSelection.handleSelectAll}
-              // onSelectOne={packagesSelection.handleSelectOne}
-              // onDeselectAll={packagesSelection.handleDeselectAll}
-              // onDeselectOne={packagesSelection.handleDeselectOne}
-              // selected={packagesSelection.selected}
+              handleSwitchChange={handleSwitchChange}
+              // onSelectAll={itemSelection.handleSelectAll}
+              // onSelectOne={itemSelection.handleSelectOne}
+              // onDeselectAll={itemSelection.handleDeselectAll}
+              // onDeselectOne={itemSelection.handleDeselectOne}
+              // selected={itemSelection.selected}
               // selectable
               actions= {{handleEdit: handleEditRecord, handleDelete: handleDeleteRecord}}
             />
           </Stack>
         </Container>
-        <PackageForm
+        <DepartmentForm
           handleSubmit={handleSubmit}
           editMode={editMode}
           open={open}
