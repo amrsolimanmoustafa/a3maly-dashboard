@@ -64,10 +64,9 @@ export const WordMangementTable = (props: any) => {
                   />
                 </TableCell>
                 <TableCell >{t("Department name")}</TableCell>
-                <TableCell>{t("Department Owner")}</TableCell>
-                <TableCell>{t("templates Number")}</TableCell>
-                <TableCell>{t("number of used word")}</TableCell>
-                <TableCell>{t("Department state")}</TableCell>
+                <TableCell>{t("Templates Number")}</TableCell>
+                <TableCell>{t("Number Of Used Word")}</TableCell>
+                <TableCell>{t("Department State")}</TableCell>
                 <TableCell sx={{textAlign:"center"}}>{t("Actions")}</TableCell>
               </TableRow>
             </TableHead>

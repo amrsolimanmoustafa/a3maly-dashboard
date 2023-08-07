@@ -30,7 +30,7 @@ export const items = [
     external: false,
     disabled: false,
     menu: false,
-    title: "Package management",
+    title: "Package Management",
     path: "/package-management",
     icon: (
       <SvgIcon fontSize="small">
@@ -42,7 +42,7 @@ export const items = [
     external: false,
     disabled: false,
     menu: false,
-    title: "Department management",
+    title: "Department Management",
     path: "/department-management",
     icon: (
       <SvgIcon fontSize="small">
