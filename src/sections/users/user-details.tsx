@@ -149,7 +149,7 @@ export const UserDetails = (props: any) => {
           <NoAccounts />
         </SvgIcon>
       ),
-      label: t("Account state"),
+      label: t('State'),
       value: user?.state ? t("Active") : t("Banned"),
     },
   ];

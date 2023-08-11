@@ -1,5 +1,7 @@
 import { useContext } from 'react';
-import { DepartmentContext } from '@/contexts/departmentContext';
-import { departmentContextType } from '@/@types/department';
+import { DepartmentContext } from '@/contexts/department-context';
+import { DepartmentContextType } from '@/@types/department';
 
-export const useDepartment = () => useContext<departmentContextType>(DepartmentContext);
+const useDepartment = () => useContext<DepartmentContextType>(DepartmentContext)
+
+export default useDepartment

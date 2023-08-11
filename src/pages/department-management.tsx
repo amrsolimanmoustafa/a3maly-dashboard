@@ -9,8 +9,8 @@ import BasicTable from "@/components/basic-table"
 import ConfirmationPopup from '@/components/confirmation-popup'
 import DepartmentForm from '@/@forms/department'
 import { IDepartment, INewDepartment } from '@/@types/department'
-import { useDepartment } from '@/hooks/use-department'
-import DepartmentContextProvider from '@/contexts/departmentContext'
+import useDepartment from '@/hooks/use-department'
+import DepartmentContextProvider from '@/contexts/department-context'
 const Page = () => {
   const { t } = useTranslation()
   const headers: any = [
@@ -18,7 +18,7 @@ const Page = () => {
     { name: t('Name Ar'), value: 'nameAr' },
     { name: t('No Of Words Used'), value: 'numberOfWordsUsed' },
     { name: t('No of Templates'), value: 'numberOfTemplates' },
-    { name: t('Department state'), value: 'state', type: 'switch' },
+    { name: t('State'), value: 'state', type: 'switch' },
   ]
   const { showAlert, renderForAlert } = useAlert()
   const [editMode, setEditMode] = useState(false)

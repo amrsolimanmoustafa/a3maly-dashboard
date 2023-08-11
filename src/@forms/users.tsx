@@ -129,7 +129,7 @@ const UserForm = (props: any) => {
               >
                 <Box>
                   <TextField
-                    sx={{ mt: 1, width: "100%" }}
+                    fullWidth
                     name="name"
                     value={formState?.name}
                     label={t("Name")}
@@ -139,7 +139,7 @@ const UserForm = (props: any) => {
                 </Box>
                 <Box>
                   <TextField
-                    sx={{ mt: 1, width: "100%" }}
+                    fullWidth
                     name="NationalID"
                     value={formState?.NationalID}
                     label={t("NationalID")}
@@ -148,7 +148,7 @@ const UserForm = (props: any) => {
                 </Box>
                 <Box>
                   <TextField
-                    sx={{ mt: 1, width: "100%" }}
+                    fullWidth
                     name="city"
                     value={formState?.city}
                     label={t("City")}
@@ -157,7 +157,7 @@ const UserForm = (props: any) => {
                 </Box>
                 <Box>
                   <TextField
-                    sx={{ mt: 1, width: "100%", direction: "rtl" }}
+                    fullWidth
                     name="phone"
                     value={formState?.phone}
                     label={t("Phone")}
@@ -167,7 +167,7 @@ const UserForm = (props: any) => {
                 </Box>
                 <Box>
                   <TextField
-                    sx={{ mt: 1, width: "100%", direction: "rtl" }}
+                    fullWidth
                     name="telephone"
                     value={formState?.telephone}
                     label={t("Telephone")}
@@ -176,7 +176,7 @@ const UserForm = (props: any) => {
                 </Box>
                 <Box>
                   <TextField
-                    sx={{ mt: 1, width: "100%" }}
+                    fullWidth
                     name="email"
                     value={formState?.email}
                     label={t("Email")}

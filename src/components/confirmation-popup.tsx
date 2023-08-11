@@ -39,7 +39,7 @@ export default function ConfirmationPopup(props: any) {
       >
         <DialogTitle>{t("Are you sure ?")}</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert">{message}</DialogContentText>
+          <DialogContentText id="alert">{t(message)}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button variant="contained" onClick={handleClose}>

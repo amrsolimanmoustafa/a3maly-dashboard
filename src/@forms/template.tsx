@@ -101,7 +101,7 @@ const TemplateForm = (props: any) => {
               >
                 <Box>
                   <TextField
-                    sx={{ mt: 1, width: "100%" }}
+                    fullWidth
                     name="departmentName"
                     value={formState?.departmentName}
                     label={t("department name")}
@@ -111,7 +111,7 @@ const TemplateForm = (props: any) => {
                 </Box>
                 <Box>
                   <TextField
-                    sx={{ mt: 1, width: "100%" }}
+                    fullWidth
                     name="departmentName"
                     value={formState?.departmentName}
                     label={t("department name")}
@@ -121,7 +121,7 @@ const TemplateForm = (props: any) => {
                 </Box>
                 <Box>
                   <TextField
-                    sx={{ mt: 1, width: "100%" }}
+                    fullWidth
                     name="wordUsed"
                     value={formState?.wordUsed}
                     label={t("word used")}
@@ -131,7 +131,7 @@ const TemplateForm = (props: any) => {
                 </Box>
                 <Box>
                   <TextField
-                    sx={{ mt: 1, width: "100%" }}
+                    fullWidth
                     name="gptModel"
                     value={formState?.gptModel}
                     label={t("gpt model")}
@@ -141,7 +141,7 @@ const TemplateForm = (props: any) => {
                 </Box>
                 <Box>
                   <TextField
-                    sx={{ mt: 1, width: "100%" }}
+                    fullWidth
                     name="fields"
                     value={formState?.fields}
                     label={t("fields")}

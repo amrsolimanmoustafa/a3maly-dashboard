@@ -47,83 +47,81 @@ const DepartmentForm = (props: any) => {
     })
   }
   return (
-    <>
-      <Dialog open={open}>
-        <DialogTitle textAlign="center">
-          {!editMode ? t("Add Department") : t("Edit Department")}
-        </DialogTitle>
-        <form
-          onSubmit={(event) => {
-            event.preventDefault()
-            handleSubmit(formState)
-          }}
-        >
-          <DialogContent sx={{ maxHeight: "55vh" }}>
-            <Stack
-              sx={{
-                width: "100%",
-                minWidth: { xs: "300px", sm: "360px", md: "400px" },
-                gap: 2,
-              }}
-            >
-              <Box>
-                <TextField
-                  sx={{ mt: 1, width: "100%" }}
-                  name="name"
-                  value={formState.name}
-                  label={t("Department Name En")}
-                  onChange={handleInputChange}
-                  required={true}
-                />
-              </Box>
-              <Box>
-                <TextField
-                  sx={{ mt: 1, width: "100%" }}
-                  name="nameAr"
-                  value={formState.nameAr}
-                  label={t("Department Name Ar")}
-                  onChange={handleInputChange}
-                  required={true}
-                />
-              </Box>
-              <Box>
-                <Stack direction="row" spacing={2} sx={{ mt: 1 }}>
-                  <FormControl>
-                    <FormLabel>{t(`Status`)}</FormLabel>
-                    <RadioGroup
-                      value={formState.state}
-                      name="state"
-                      onChange={handleInputChange}
-                    >
-                      <FormControlLabel
-                        value={true}
-                        control={<Radio />}
-                        label={t("Active")}
-                      />
-                      <FormControlLabel
-                        value={false}
-                        control={<Radio />}
-                        label={t("Inactive")}
-                      />
-                    </RadioGroup>
-                  </FormControl>
-                </Stack>
-              </Box>
-            </Stack>
-          </DialogContent>
-          <DialogActions sx={{ p: "1.25rem" }}>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ borderRadius: 0.5 }}
-            >
-              {!editMode ? t("Add") : t("Edit")}
-            </Button>
-            <Button onClick={onClose}>{t("Cancel")}</Button>
-          </DialogActions>
-        </form>
-      </Dialog>
-    </>
+    <Dialog open={open}>
+      <DialogTitle textAlign="center">
+        {!editMode ? t("Add Department") : t("Edit Department")}
+      </DialogTitle>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault()
+          handleSubmit(formState)
+        }}
+      >
+        <DialogContent sx={{ maxHeight: "55vh" }}>
+          <Stack
+            sx={{
+              width: "100%",
+              minWidth: { xs: "300px", sm: "360px", md: "400px" },
+              gap: 2,
+            }}
+          >
+            <Box>
+              <TextField
+                fullWidth
+                name="name"
+                value={formState.name}
+                label={t("Department Name En")}
+                onChange={handleInputChange}
+                required={true}
+              />
+            </Box>
+            <Box>
+              <TextField
+                fullWidth
+                name="nameAr"
+                value={formState.nameAr}
+                label={t("Department Name Ar")}
+                onChange={handleInputChange}
+                required={true}
+              />
+            </Box>
+            <Box>
+              <Stack direction="row" spacing={2} sx={{ mt: 1 }}>
+                <FormControl>
+                  <FormLabel>{t(`Status`)}</FormLabel>
+                  <RadioGroup
+                    value={formState.state}
+                    name="state"
+                    onChange={handleInputChange}
+                  >
+                    <FormControlLabel
+                      value={true}
+                      control={<Radio />}
+                      label={t("Active")}
+                    />
+                    <FormControlLabel
+                      value={false}
+                      control={<Radio />}
+                      label={t("Inactive")}
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Stack>
+            </Box>
+          </Stack>
+        </DialogContent>
+        <DialogActions sx={{ p: "1.25rem" }}>
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{ borderRadius: 0.5 }}
+          >
+            {!editMode ? t("Add") : t("Edit")}
+          </Button>
+          <Button onClick={onClose}>{t("Cancel")}</Button>
+        </DialogActions>
+      </form>
+    </Dialog>
   )
 }
 

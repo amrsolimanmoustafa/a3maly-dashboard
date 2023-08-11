@@ -134,7 +134,7 @@ const Form = (props: any) => {
               <Box>
                 <Typography variant="body1">{t(("Text in Arabic"))}</Typography>
                 <TextField
-                  sx={{ mt: 1, width: "100%" }}
+                  fullWidth
                   name="arText"
                   value={formState?.arText}
                   label={t("Name in Arabic")}
@@ -147,7 +147,7 @@ const Form = (props: any) => {
               <Box>
                 <Typography variant="body1">{t(("Text in English"))}</Typography>
                 <TextField
-                  sx={{ mt: 1, width: "100%" }}
+                  fullWidth
                   label={t(("Text in English"))}
                   dir="ltr"
                   name="enText"

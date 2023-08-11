@@ -1,7 +1,7 @@
-import { IDepartment, INewDepartment, departmentContextType } from '@/@types/department'
+import { IDepartment, INewDepartment, DepartmentContextType } from '@/@types/department'
 import { createContext, useState } from 'react'
 
-export const DepartmentContext = createContext<departmentContextType>({
+export const DepartmentContext = createContext<DepartmentContextType>({
   departments: [],
   count: 0,
   fetch: () => {},
@@ -15,7 +15,7 @@ export const DepartmentContext = createContext<departmentContextType>({
   removeSelected: () => {},
 })
 
-const initialDepartment: IDepartment[] = [
+const initialData: IDepartment[] = [
   {
     id: "1",
     name: "Blog",
@@ -44,44 +44,44 @@ const DepartmentContextProvider : React.FC<{children: React.ReactNode}> = ({ chi
   const [count, setCount] = useState<number>(0)
 
   const fetch = (page: number, rowsPerPage: number, filter?: string) => {
-    setDepartments(initialDepartment)
+    setDepartments(initialData)
     setCount(2)
   }
 
-  const add = (department: INewDepartment) => {
+  const add = (record: INewDepartment) => {
     // assuming api call will return the additional data provided here
-    const newDepartment: IDepartment = {
-      ...department,
+    const newRecord: IDepartment = {
+      ...record,
       id: (departments?.length + 1).toString(),
       numberOfTemplates: 0,
       numberOfWordsUsed: 0,
       created_at: new Date().toLocaleDateString(),
       deleted_at: null
     }
-    setDepartments([...departments, newDepartment])
+    setDepartments([...departments, newRecord])
     setCount(count + 1)
   }
 
-  const remove = (departmentId: string) => {
-    const restDepartments = departments?.filter((department) => department.id !== departmentId)
-    setDepartments(restDepartments)
+  const remove = (id: string) => {
+    const data = departments?.filter((record) => record.id !== id)
+    setDepartments(data)
     setCount(count - 1)
   }
 
-  const edit = (department: IDepartment) => {
-    const newDepartments = [...departments]
-    const index = newDepartments.findIndex(x => x.id === department.id)
-    if (index > -1) newDepartments[index] = department
-    setDepartments(newDepartments)
+  const edit = (record: IDepartment) => {
+    const data = [...departments]
+    const index = data.findIndex(x => x.id === record.id)
+    if (index > -1) data[index] = record
+    setDepartments(data)
   }
 
   const suspend = (id: string) => {
-    const newDepartments = [...departments]
-    const index = newDepartments.findIndex(x => x.id === id)
+    const data = [...departments]
+    const index = data.findIndex(x => x.id === id)
     if (index > -1) {
-      newDepartments[index].state = !newDepartments[index].state
+      data[index].state = !data[index].state
     }
-    setDepartments(newDepartments)
+    setDepartments(data)
   }
 
   const suspendSelected = () => selected.forEach(x => suspend(x))

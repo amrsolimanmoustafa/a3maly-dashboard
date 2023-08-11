@@ -117,7 +117,7 @@ const Form = (props: any) => {
               >
                 <Box>
                   <TextField
-                    sx={{ mt: 1, width: "100%" }}
+                    fullWidth
                     name="textEn"
                     value={formState?.textEn}
                     label={t("English Text")}
@@ -127,7 +127,7 @@ const Form = (props: any) => {
                 </Box>
                 <Box>
                   <TextField
-                    sx={{ mt: 1, width: "100%" }}
+                    fullWidth
                     name="textAr"
                     value={formState?.textAr}
                     label={t("Arabic Text")}
@@ -173,7 +173,7 @@ const Form = (props: any) => {
                 </Box>
                 {formState?.isInput && <Box>
                   <TextField
-                    sx={{ mt: 1, width: "100%" }}
+                    fullWidth
                     name="param"
                     value={formState?.param}
                     label={t("Param to be Replaced")}
@@ -183,7 +183,7 @@ const Form = (props: any) => {
                 </Box>}
                 {formState?.isInput && <Box>
                   <TextField
-                    sx={{ mt: 1, width: "100%" }}
+                    fullWidth
                     name="inputLabel"
                     value={formState?.inputLabel}
                     label={t("Label")}
@@ -193,7 +193,7 @@ const Form = (props: any) => {
                 </Box>}
                 {formState?.isInput && <Box>
                   <TextField
-                    sx={{ mt: 1, width: "100%" }}
+                    fullWidth
                     name="inputName"
                     value={formState?.inputName}
                     label={t("name")}

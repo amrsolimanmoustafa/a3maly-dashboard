@@ -2,54 +2,36 @@ import { usePageUtilities } from '@/hooks/use-page-utilities'
 import { DashboardLayout } from '../layouts/dashboard/layout'
 import { useTranslation } from 'react-i18next'
 import Head from 'next/head'
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import useAlert from '@/hooks/useAlert'
-import { useSelection } from '@/hooks/use-selection'
 import { Box, Button, Container, Stack, Typography } from '@mui/material'
 import BasicTable from "@/components/basic-table"
 import ConfirmationPopup from '@/components/confirmation-popup'
 import PackageForm from '@/@forms/package'
+import PackageContextProvider from '@/contexts/package-context'
+import usePackage from '@/hooks/use-package'
+import { INewPackage, IPackage } from '@/@types/package'
 const Page = () => {
   const { t } = useTranslation()
-  const headers : any = [
-    { name:t('Name En'), value:'name_en' },
-    { name:t('Name Ar'), value:'name_ar' },
-    { name:t('Price'), value:'price' },
-    { name:t('No of Words'), value:'words' },
+  const headers: any = [
+    { name: t('Name En'), value: 'name' },
+    { name: t('Name Ar'), value: 'nameAr' },
+    { name: t('Price'), value: 'price' },
+    { name: t('No of Words'), value: 'words' },
+    { name: t('State'), value: 'state', type: 'switch' },
   ]
   const { showAlert, renderForAlert } = useAlert()
+  const { packages, count, fetch, add, edit, suspend, remove } = usePackage()
   const [editMode, setEditMode] = useState(false)
   const [open, setOpen] = useState(false)
   const [openConfirm, setOpenConfirm] = useState(false)
-  const [record, setRecord] = useState<any>(null)
-  const [selectedRecord, setSelectedRecord] = useState<any>(null)
-  const [packages, setPackages] = useState<any>({ 
-    data: [
-      {
-        id: 1,
-        name_en: "package one",
-        name_ar: "الباكدج الاول",
-        price: 10,
-        words: 1500,
-      },
-      {
-        id: 2,
-        name_en: "package Two",
-        name_ar: "الباكدج الثاني",
-        price: 18,
-        words: 3000,
-      }
-    ],
-    meta: {
-    count: 2
-  } })
-  const packageIds: any[] | undefined = useMemo(
-    () => packages.data?.map((item: any) => item.id),
-    [packages.data]
-  )
-  const packagesSelection = useSelection(packageIds)
-  const { handlePageChange, handleRowsPerPageChange, handleSearch, controller } =
-    usePageUtilities()
+  const [record, setRecord] = useState<IPackage | null>(null)
+  const [selectedRecord, setSelectedRecord] = useState<string | null>(null)
+  const { handlePageChange, handleRowsPerPageChange, controller } = usePageUtilities()
+
+  useEffect(() => {
+    fetch(controller.page, controller.rowsPerPage, controller.filter)
+  }, [controller.page])
 
   const handleEditRecord = (role: any) => {
     setRecord(role)
@@ -59,10 +41,13 @@ const Page = () => {
 
   const handleAddRecord = () => {
     setEditMode(false)
-    setRecord({})
+    setRecord(null)
     setOpen(true)
   }
 
+  const handleSwitchChange = (item: IPackage) => {
+    suspend(item.id)
+  }
   const handleDeleteRecord = (id: string) => {
     setSelectedRecord(id)
     setOpenConfirm(true)
@@ -70,20 +55,24 @@ const Page = () => {
 
   const DeleteRecord = () => {
     setOpenConfirm(false)
-    setPackages(packages.filter((item : any) => item.id !== selectedRecord))
+    remove(selectedRecord!)
     showAlert(t("Package has been deleted successfully").toString(), "success")
   }
-  const handleSubmit = async (formdata: any) => {
+  const handleSubmit = async (formdata: IPackage | INewPackage) => {
     if (editMode) {
+      edit(formdata)
       showAlert(t("Package has been edited successfully").toString(), "success")
     } else {
+      console.log(formdata)
+      
+      add(formdata)
       showAlert(t("Package has been added successfully").toString(), "success")
     }
     (async () => {
       await setEditMode(false)
-      await setRecord({})
+      await setRecord(null)
     })()
-    // setOpen(false)
+    setOpen(false)
   }
   return (
     <>
@@ -99,7 +88,7 @@ const Page = () => {
       >
         <Container maxWidth="xl">
           <ConfirmationPopup
-            message={"Are you sure to delete this User?"}
+            message={"Are you sure to delete this Package?"}
             confirmFuntion={DeleteRecord}
             open={openConfirm}
             setOpen={setOpenConfirm}
@@ -110,9 +99,7 @@ const Page = () => {
                 <Typography variant="h4">{t("Package Management")}</Typography>
               </Stack>
               <Button
-                onClick={() => {
-                  handleAddRecord()
-                }}
+                onClick={handleAddRecord}
                 variant="contained"
                 sx={{ borderRadius: 0.5 }}
               >
@@ -121,19 +108,14 @@ const Page = () => {
             </Stack>
             <BasicTable
               headers={headers}
-              items={packages.data}
+              items={packages}
               onPageChange={handlePageChange}
               onRowsPerPageChange={handleRowsPerPageChange}
-              count={packages.meta?.count}
+              count={count}
               page={controller.page}
               rowsPerPage={controller.rowsPerPage}
-              // onSelectAll={packagesSelection.handleSelectAll}
-              // onSelectOne={packagesSelection.handleSelectOne}
-              // onDeselectAll={packagesSelection.handleDeselectAll}
-              // onDeselectOne={packagesSelection.handleDeselectOne}
-              // selected={packagesSelection.selected}
-              // selectable
-              actions= {{handleEdit: handleEditRecord, handleDelete: handleDeleteRecord}}
+              handleSwitchChange={handleSwitchChange}
+              actions={{ handleEdit: handleEditRecord, handleDelete: handleDeleteRecord }}
             />
           </Stack>
         </Container>
@@ -150,6 +132,11 @@ const Page = () => {
   )
 }
 
-Page.getLayout = (page: any) => <DashboardLayout>{page}</DashboardLayout>
+Page.getLayout = (page: React.ReactElement) =>
+(<DashboardLayout>
+  <PackageContextProvider>
+    {page}
+  </PackageContextProvider>
+</DashboardLayout>)
 
 export default Page

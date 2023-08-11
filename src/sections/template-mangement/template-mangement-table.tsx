@@ -79,7 +79,7 @@ export const TemplateMangementTable = (props: any) => {
                 <TableCell>{t("number of used word")}</TableCell>
                 <TableCell>{t("GPT Model")}</TableCell>
                 <TableCell>{t("Fields")}</TableCell>
-                <TableCell>{t("Template state")}</TableCell>
+                <TableCell>{t('State')}</TableCell>
                 <TableCell sx={{textAlign:"center"}}>{t("Actions")}</TableCell>
               </TableRow>
             </TableHead>

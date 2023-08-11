@@ -15,13 +15,13 @@ export interface INewDepartment {
     state: boolean
 }
 
-export type departmentContextType = {
+export type DepartmentContextType = {
     departments: IDepartment[];
     count: number;
     fetch: (page: number, rowsPerPage: number, filter?: string) => void;
-    add: (department: any) => void;
-    edit: (department: any) => void;
-    remove: (department_id: string) => void;
+    add: (record: any) => void;
+    edit: (record: any) => void;
+    remove: (record_id: string) => void;
     suspend: (id: string) => void;
     selected: string[],
     setSelected: (x: string[]) => void,

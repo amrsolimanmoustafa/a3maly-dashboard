@@ -89,7 +89,7 @@ export const UsersTable = (props: any) => {
                 <TableCell>{t("Roles")}</TableCell>
                 <TableCell>{t("Subscription status")}</TableCell>
                 <TableCell>{t("Subscription package")}</TableCell>
-                <TableCell>{t("Account state")}</TableCell>
+                <TableCell>{t('State')}</TableCell>
                 <TableCell sx={{textAlign:"center"}}>{t("Actions")}</TableCell>
               </TableRow>
             </TableHead>
