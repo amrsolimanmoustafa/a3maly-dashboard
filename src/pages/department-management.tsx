@@ -2,70 +2,50 @@ import { usePageUtilities } from '@/hooks/use-page-utilities'
 import { DashboardLayout } from '../layouts/dashboard/layout'
 import { useTranslation } from 'react-i18next'
 import Head from 'next/head'
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import useAlert from '@/hooks/useAlert'
-import { useSelection } from '@/hooks/use-selection'
 import { Box, Button, Container, Stack, Typography } from '@mui/material'
 import BasicTable from "@/components/basic-table"
 import ConfirmationPopup from '@/components/confirmation-popup'
 import DepartmentForm from '@/@forms/department'
+import { IDepartment, INewDepartment } from '@/@types/department'
+import { useDepartment } from '@/hooks/use-department'
+import DepartmentContextProvider from '@/contexts/departmentContext'
 const Page = () => {
   const { t } = useTranslation()
-  const headers : any = [
-    { name:t('Name En'), value:'nameEn' },
-    { name:t('Name Ar'), value:'nameAr' },
-    { name:t('No Of Words Used'), value:'numberOfWordsUsed' },
-    { name:t('No of Templates'), value:'numberOfTemplates' },
-    { name:t('Department state'), value:'state', type: 'switch' },
+  const headers: any = [
+    { name: t('Name En'), value: 'name' },
+    { name: t('Name Ar'), value: 'nameAr' },
+    { name: t('No Of Words Used'), value: 'numberOfWordsUsed' },
+    { name: t('No of Templates'), value: 'numberOfTemplates' },
+    { name: t('Department state'), value: 'state', type: 'switch' },
   ]
   const { showAlert, renderForAlert } = useAlert()
   const [editMode, setEditMode] = useState(false)
   const [open, setOpen] = useState(false)
   const [openConfirm, setOpenConfirm] = useState(false)
-  const [record, setRecord] = useState<any>(null)
-  const [selectedRecord, setSelectedRecord] = useState<any>(null)
-  const [items, setItems] = useState<any>({ 
-    data: [
-      {
-        id: 1,
-        nameEn: "Dep one",
-        nameAr: "القسم الاول",
-        numberOfWordsUsed: 22600,
-        numberOfTemplates: 22,
-        state: true,
-      },
-      {
-        id: 2,
-        nameEn: "Dep Two",
-        nameAr: "القسم الثاني",
-        numberOfWordsUsed: 1800,
-        numberOfTemplates: 2,
-        state: true,
-      }
-    ],
-    meta: {
-    count: 2
-  } })
-  const itemIds: any[] | undefined = useMemo(
-    () => items.data?.map((item: any) => item.id),
-    [items.data]
-  )
-  const itemSelection = useSelection(itemIds)
-  const { handlePageChange, handleRowsPerPageChange, handleSearch, controller } =
-    usePageUtilities()
+  const [record, setRecord] = useState<IDepartment | null>(null)
+  const [selectedRecord, setSelectedRecord] = useState<string | null>(null)
+  const { departments, count, fetch, add, edit, remove, suspend } = useDepartment()
+  const departmentContext = useDepartment()
+  const { handlePageChange, handleRowsPerPageChange, controller } = usePageUtilities()
 
-  const handleSwitchChange = (item : any) => {
-    items.data.find((x: any) => x.id == item.id)
+  useEffect(() => {
+    fetch(controller.page, controller.rowsPerPage, controller.filter)
+    console.log(departmentContext?.departments)
+  }, [])
+  const handleSwitchChange = (item: any) => {
+    suspend(item.id)
   }
-  const handleEditRecord = (role: any) => {
-    setRecord(role)
+  const handleEditRecord = (department: IDepartment) => {
+    setRecord(department)
     setEditMode(true)
     setOpen(true)
   }
 
   const handleAddRecord = () => {
     setEditMode(false)
-    setRecord({})
+    setRecord(null)
     setOpen(true)
   }
 
@@ -76,23 +56,24 @@ const Page = () => {
 
   const DeleteRecord = () => {
     setOpenConfirm(false)
-    setItems({
-      data: items.data.filter((item : any) => item.id !== selectedRecord), 
-      meta: {count: items.meta.count-1}
-    })
+    remove(selectedRecord!)
     showAlert(t("Department has been deleted successfully").toString(), "success")
   }
-  const handleSubmit = async (formdata: any) => {
+  const handleSubmit = async (formdata: IDepartment | INewDepartment) => {
+    console.log(formdata)
+
     if (editMode) {
+      edit(formdata)
       showAlert(t("Department has been edited successfully").toString(), "success")
     } else {
+      add(formdata)
       showAlert(t("Department has been added successfully").toString(), "success")
     }
     (async () => {
       await setEditMode(false)
-      await setRecord({})
+      await setRecord(null)
     })()
-    // setOpen(false)
+    setOpen(false)
   }
   return (
     <>
@@ -108,7 +89,7 @@ const Page = () => {
       >
         <Container maxWidth="xl">
           <ConfirmationPopup
-            message={t("delete confirmation", {name: t('Department')})}
+            message={t("delete confirmation", { name: t('Department') })}
             confirmFuntion={DeleteRecord}
             open={openConfirm}
             setOpen={setOpenConfirm}
@@ -130,20 +111,14 @@ const Page = () => {
             </Stack>
             <BasicTable
               headers={headers}
-              items={items.data}
+              items={departments}
               onPageChange={handlePageChange}
               onRowsPerPageChange={handleRowsPerPageChange}
-              count={items.meta?.count}
+              count={count}
               page={controller.page}
               rowsPerPage={controller.rowsPerPage}
               handleSwitchChange={handleSwitchChange}
-              // onSelectAll={itemSelection.handleSelectAll}
-              // onSelectOne={itemSelection.handleSelectOne}
-              // onDeselectAll={itemSelection.handleDeselectAll}
-              // onDeselectOne={itemSelection.handleDeselectOne}
-              // selected={itemSelection.selected}
-              // selectable
-              actions= {{handleEdit: handleEditRecord, handleDelete: handleDeleteRecord}}
+              actions={{ handleEdit: handleEditRecord, handleDelete: handleDeleteRecord }}
             />
           </Stack>
         </Container>
@@ -160,6 +135,11 @@ const Page = () => {
   )
 }
 
-Page.getLayout = (page: any) => <DashboardLayout>{page}</DashboardLayout>
+Page.getLayout = (page: any) =>
+(<DashboardLayout>
+  <DepartmentContextProvider>
+    {page}
+  </DepartmentContextProvider>
+</DashboardLayout>)
 
 export default Page

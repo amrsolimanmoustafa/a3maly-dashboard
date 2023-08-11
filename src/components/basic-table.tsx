@@ -71,7 +71,8 @@ const basicTable = (props: any) => {
                         return (
                           <TableCell key={index}>
                             <Switch
-                              checked={item[h.value]}
+                              checked={item[h.value] === true || item[h.value] === 'true'}
+                              value={item[h.value]}
                               onChange={() => handleSwitchChange(item)}
                             />
                           </TableCell>

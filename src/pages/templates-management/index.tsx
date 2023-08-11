@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { Box, Button, Container, Stack, Typography } from '@mui/material';
 import { DepartmentMangementSearch } from '@/sections/department-mangement/department-mangement-search';
 import { usePageUtilities } from '@/hooks/use-page-utilities';
-import DepartmentContextProvider from '@/contexts/departmentContext';
 import GroupContextProvider from '@/contexts/group-context';
 import useAlert from '@/hooks/useAlert';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -48,7 +47,6 @@ const Page = () => {
 
   const handleSubmit = async (formdata: any) => {
     if (editMode) {
-      // departmentContext?.EditUser(formdata);
       showAlert(t("Templates has been edited successfully").toString(), "success");
     } else {
       templateContext?.addTemplate(formdata);

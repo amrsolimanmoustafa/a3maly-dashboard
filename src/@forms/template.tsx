@@ -36,8 +36,6 @@ const TemplateForm = (props: any) => {
   });
   useEffect(() => {
     (async () => {
-      //fetch all data related to add user
-      await rolesContext?.fetchRoles(1, 100, "");
     })();
     if (editMode) {
       setFormState(record);
@@ -71,7 +69,7 @@ const TemplateForm = (props: any) => {
     setFormState({
       id: Math.floor(Math.random() * 1032),
       templateName: "",
-      departmentName: "",
+      departmentId: "",
       wordUsed: "",
       gptModel: "",
       fields: [],
@@ -156,7 +154,6 @@ const TemplateForm = (props: any) => {
             <DialogActions sx={{ p: "1.25rem" }}>
               <Button
                 type="submit"
-                startIcon={<AddModerator />}
                 variant="contained"
                 sx={{ borderRadius: 0.5 }}
               >
