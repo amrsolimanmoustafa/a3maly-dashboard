@@ -10,7 +10,7 @@ import { usePageUtilities } from "@/hooks/use-page-utilities";
 import { MessagesTable } from "@/sections/contact-messages/messages-table";
 
 import MessagesContextProvider from "@/contexts/messages-context";
-import useAlert from '@/hooks/useAlert';
+import useAlert from '@/hooks/use-alert';
 import ConfirmationPopup from '@/components/confirmation-popup';
 const Page = () => {
   const { t } = useTranslation();

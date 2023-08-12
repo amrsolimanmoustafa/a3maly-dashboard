@@ -9,7 +9,7 @@ import {
   Typography,
   Grid, Button, 
 } from '@mui/material';
-import useAlert from '@/hooks/useAlert';
+import useAlert from '@/hooks/use-alert';
 import { useSelection } from "@/hooks/use-selection";
 import { SearchBar } from "@/sections/shared/search-bar";
 import { usePageUtilities } from "@/hooks/use-page-utilities";

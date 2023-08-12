@@ -12,7 +12,7 @@ import {
 import React from 'react';
 import { useTranslation } from "react-i18next";
 import { useAuth } from '@/hooks/use-auth';
-import SnackBar from "@/components/SnackBar";
+import SnackBar from "@/components/snack-bar";
 export const SettingsEmail = () => {
   const context = useAuth();
   const { t } = useTranslation();

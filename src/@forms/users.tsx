@@ -1,13 +1,9 @@
 // ------This form for Groups , user Categories and Roles -----
-import React, { useEffect, useRef, useState } from "react";
-import Head from "next/head";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
-  Container,
   Stack,
-  Typography,
-  Grid,
   Button,
   TextField,
   InputLabel,
@@ -22,11 +18,10 @@ import {
   DialogTitle,
   MenuItem,
 } from "@mui/material";
-import { AddModerator, Delete, Edit } from "@mui/icons-material";
+import { AddModerator } from "@mui/icons-material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { useGroup } from "@/hooks/use-groups";
 import { useRole } from "@/hooks/use-role";
-import { useUserCategory } from "@/hooks/use-userCategory";
 import GroupContextProvider from "@/contexts/group-context";
 //TODO: replace this with Bk-End-API (context provider)
 const groups = ["الادارة المالية", "الأدمن", "المشرفين"];
@@ -36,7 +31,6 @@ const categories = ["الادارة", "العملاء", "المندوبين", "�
 const UserForm = (props: any) => {
   const { handleSubmit, editMode, open, onClose, record, formItem } = props;
   const groupContext = useGroup();
-  const userCategoriesContext = useUserCategory();
   const rolesContext = useRole();
   const { t } = useTranslation();
   const [formState, setFormState] = useState<any>({
@@ -56,7 +50,6 @@ const UserForm = (props: any) => {
     (async () => {
       //fetch all data related to add user
       await groupContext?.fetchGroups(1, 100, "");
-      await userCategoriesContext?.fetchUserCategories(1, 100, "");
       await rolesContext?.fetchRoles(1, 100, "");
     })();
     if (editMode) {

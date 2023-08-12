@@ -8,7 +8,7 @@ import Grid from "@mui/material/Grid";
 import { useTranslation } from "react-i18next";
 import { useMessages } from "@/hooks/use-messages";
 import MessagesContextProvider from "@/contexts/messages-context";
-import SnackBar from "@/components/SnackBar";
+import SnackBar from "@/components/snack-bar";
 import { useNotifictions } from "@/hooks/use-notifications";
 
 

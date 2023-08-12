@@ -1,5 +1,5 @@
 import { useState,useEffect } from "react";
-import useDebounce from "./useDebounce";
+import useDebounce from "./use-debounce";
 
 export const usePageUtilities = () => {
     const [search,setSearch] = useState();

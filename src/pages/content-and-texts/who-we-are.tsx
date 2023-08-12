@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Head from "next/head";
 import { useTranslation } from "react-i18next";
 import { Box, Container, Stack, Typography, Grid } from "@mui/material";
-import SnackBar from "@/components/SnackBar";
+import SnackBar from "@/components/snack-bar";
 import GroupsIcon from '@mui/icons-material/Groups';
 import Form from "@/@forms/text-and-content-upload";
 import TextBox from "@/components/content-texts-textBox";

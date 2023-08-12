@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import UserContextProvider from "@/contexts/user-context";
 import { usePageUtilities } from "@/hooks/use-page-utilities";
 import { useRouter } from "next/router";
-import useAlert from "@/hooks/useAlert";
+import useAlert from "@/hooks/use-alert";
 import ConfirmationPopup from "@/components/confirmation-popup";
 import UserForm from "@/@forms/users";
 import GroupContextProvider from "@/contexts/group-context";

@@ -5,19 +5,12 @@ import {
   Stack,
   Button,
   TextField,
-  FormControl,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import { AddModerator, Delete, Edit } from "@mui/icons-material";
 import { useRole } from "@/hooks/use-role";
-import { useUserCategory } from "@/hooks/use-userCategory";
 import GroupContextProvider from "@/contexts/group-context";
 import { SelectChangeEvent } from '@mui/material/Select';
 

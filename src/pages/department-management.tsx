@@ -3,7 +3,7 @@ import { DashboardLayout } from '../layouts/dashboard/layout'
 import { useTranslation } from 'react-i18next'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import useAlert from '@/hooks/useAlert'
+import useAlert from '@/hooks/use-alert'
 import { Box, Button, Container, Stack, Typography } from '@mui/material'
 import BasicTable from "@/components/basic-table"
 import ConfirmationPopup from '@/components/confirmation-popup'
