@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+import React, { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 import {
   Box,
   Stack,
@@ -9,29 +9,24 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-} from "@mui/material";
-import { useRole } from "@/hooks/use-role";
-import GroupContextProvider from "@/contexts/group-context";
-import { SelectChangeEvent } from '@mui/material/Select';
+} from "@mui/material"
+import { SelectChangeEvent } from '@mui/material/Select'
 
 const TemplateForm = (props: any) => {
-  const { handleSubmit, editMode, open, onClose, record, formItem } = props;
-  const rolesContext = useRole();
-  const { t } = useTranslation();
+  const { handleSubmit, editMode, open, onClose, record } = props
+  const { t } = useTranslation()
   const [formState, setFormState] = useState<any>({
-    id: Math.floor(Math.random() * 1032),
+    id: Math.floor(Math.random() * 1032).toString(),
     templateName: "",
     departmentName: "",
     wordUsed: "",
     gptModel: "",
     fields: [],
     state: false,
-  });
+  })
   useEffect(() => {
-    (async () => {
-    })();
     if (editMode) {
-      setFormState(record);
+      setFormState(record)
     } else {
       setFormState({
         id: Math.floor(Math.random() * 1032),
@@ -41,124 +36,109 @@ const TemplateForm = (props: any) => {
         gptModel: "",
         fields: [],
         state: false,
-      });
+      })
     }
-  }, [record, editMode]);
+  }, [record, editMode])
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-      setFormState({
-        ...formState,
-        [name]: value,
-      });
-  };
-  const handleSelectChange = (event: SelectChangeEvent) => {
-    const { name, value } = event.target;
+    const { name, value } = event.target
     setFormState({
       ...formState,
       [name]: value,
-    });
-  };
-  const RestForm = () => {
+    })
+  }
+  const handleSelectChange = (event: SelectChangeEvent) => {
+    const { name, value } = event.target
     setFormState({
-      id: Math.floor(Math.random() * 1032),
-      templateName: "",
-      departmentId: "",
-      wordUsed: "",
-      gptModel: "",
-      fields: [],
-      state: false,
-    });
-  };
+      ...formState,
+      [name]: value,
+    })
+  }
 
   return (
-    <>
-      <GroupContextProvider>
-        <Dialog open={open}>
-          <DialogTitle textAlign="center">
-            {!editMode ? t(`Add ${formItem}`) : t(`Edit ${formItem}`)}
-          </DialogTitle>
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              handleSubmit();
+    <Dialog open={open}>
+      <DialogTitle textAlign="center">
+        {!editMode ? t('AddName', { name: t('Template') }) : t('EditName', { name: t('Template') })}
+      </DialogTitle>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault()
+          handleSubmit()
 
+        }}
+      >
+        <DialogContent sx={{ maxHeight: "55vh" }}>
+          <Stack
+            sx={{
+              width: "100%",
+              minWidth: { xs: "300px", sm: "360px", md: "400px" },
+              gap: 2,
             }}
           >
-            <DialogContent sx={{ maxHeight: "55vh" }}>
-              <Stack
-                sx={{
-                  width: "100%",
-                  minWidth: { xs: "300px", sm: "360px", md: "400px" },
-                  gap: 2,
-                }}
-              >
-                <Box>
-                  <TextField
-                    fullWidth
-                    name="departmentName"
-                    value={formState?.departmentName}
-                    label={t("department name")}
-                    onChange={handleInputChange}
-                    required={true}
-                  />
-                </Box>
-                <Box>
-                  <TextField
-                    fullWidth
-                    name="departmentName"
-                    value={formState?.departmentName}
-                    label={t("department name")}
-                    onChange={handleInputChange}
-                    required={true}
-                  />
-                </Box>
-                <Box>
-                  <TextField
-                    fullWidth
-                    name="wordUsed"
-                    value={formState?.wordUsed}
-                    label={t("word used")}
-                    onChange={handleInputChange}
-                    required={true}
-                  />
-                </Box>
-                <Box>
-                  <TextField
-                    fullWidth
-                    name="gptModel"
-                    value={formState?.gptModel}
-                    label={t("gpt model")}
-                    onChange={handleInputChange}
-                    required={true}
-                  />
-                </Box>
-                <Box>
-                  <TextField
-                    fullWidth
-                    name="fields"
-                    value={formState?.fields}
-                    label={t("fields")}
-                    onChange={handleInputChange}
-                    required={true}
-                  />
-                </Box>
-              </Stack>
-            </DialogContent>
-            <DialogActions sx={{ p: "1.25rem" }}>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{ borderRadius: 0.5 }}
-              >
-                {!editMode ? t("Add") : t("Edit")}
-              </Button>
-              <Button onClick={onClose}>{t("Cancel")}</Button>
-            </DialogActions>
-          </form>
-        </Dialog>
-      </GroupContextProvider>
-    </>
-  );
+            <Box>
+              <TextField
+                fullWidth
+                name="departmentName"
+                value={formState?.departmentName}
+                label={t("department name")}
+                onChange={handleInputChange}
+                required={true}
+              />
+            </Box>
+            <Box>
+              <TextField
+                fullWidth
+                name="departmentName"
+                value={formState?.departmentName}
+                label={t("department name")}
+                onChange={handleInputChange}
+                required={true}
+              />
+            </Box>
+            <Box>
+              <TextField
+                fullWidth
+                name="wordUsed"
+                value={formState?.wordUsed}
+                label={t("word used")}
+                onChange={handleInputChange}
+                required={true}
+              />
+            </Box>
+            <Box>
+              <TextField
+                fullWidth
+                name="gptModel"
+                value={formState?.gptModel}
+                label={t("gpt model")}
+                onChange={handleInputChange}
+                required={true}
+              />
+            </Box>
+            <Box>
+              <TextField
+                fullWidth
+                name="fields"
+                value={formState?.fields}
+                label={t("fields")}
+                onChange={handleInputChange}
+                required={true}
+              />
+            </Box>
+          </Stack>
+        </DialogContent>
+        <DialogActions sx={{ p: "1.25rem" }}>
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{ borderRadius: 0.5 }}
+          >
+            {!editMode ? t("Add") : t("Edit")}
+          </Button>
+          <Button onClick={onClose}>{t("Cancel")}</Button>
+        </DialogActions>
+      </form>
+    </Dialog>
+  )
 }
 
-export default TemplateForm;
+export default TemplateForm
