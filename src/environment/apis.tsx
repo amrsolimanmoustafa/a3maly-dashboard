@@ -16,19 +16,6 @@ export const get_contact_messages = (page: number = 1, rowsPerPage: number = 10,
 
 export const get_contact_message = (id: string) => `/contacts/${id}`;
 
-// Shipping Offices API
-export const get_office = (id: string) => `/branches/${id}`;
-export const get_offices = (page: number = 1, rowsPerPage: number = 10, filter?: string) =>
-  `/branches?page=${page + 1}&limit=${rowsPerPage}&filters=${filter!=undefined ?`phone<>${filter}&filters=name<>${filter}`: ""}`;
-export const get_cities = () => `/branches/cities`;
-export const add_office = "/branches";
-export const edit_office = (id: string) => `/branches/${id}`;
-
-// Financials API
-export const get_transactions = (page: number = 1, rowsPerPage: number = 10, filter?: string) => `/financials/transactions?page=${page + 1}&limit=${rowsPerPage}&filters=${filter!=undefined ?`username<>${filter}&filters=name<>${filter}&filters=phone<>${filter}`: ""}`;
-
-export const get_financials_account_balance = () => `/financials/account-balance`;
-
 //Admins API
 export const get_admin = (id: string) => `/admins/${id}`;
 export const get_admins = (page: number = 1, rowsPerPage: number = 10,  filter?: Filter[]) =>
