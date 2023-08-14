@@ -11,6 +11,7 @@ export interface IPackage {
     price: number
     words: number
     features: string[]
+    featuresAr: string[]
     state: boolean
     deleted_at: string | null
     created_at: string
@@ -26,6 +27,7 @@ export interface INewPackage {
     price: number
     words: number
     features: string[]
+    featuresAr: string[]
     state: boolean
 }
 
