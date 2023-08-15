@@ -11,10 +11,13 @@ import {
   DialogTitle,
 } from "@mui/material"
 import { SelectChangeEvent } from '@mui/material/Select'
+import useDepartment from "@/hooks/use-department"
+import useTemplate from "@/hooks/use-templates"
 
 const TemplateForm = (props: any) => {
   const { handleSubmit, editMode, open, onClose, record } = props
   const { t } = useTranslation()
+  const departmentContext = useDepartment()
   const [formState, setFormState] = useState<any>({
     id: Math.floor(Math.random() * 1032).toString(),
     templateName: "",

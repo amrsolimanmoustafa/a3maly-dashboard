@@ -1,30 +1,37 @@
-import { DashboardLayout } from '@/layouts/dashboard/layout'
-import Head from 'next/head'
-import { useTranslation } from 'react-i18next'
-import { Box, Button, Container, Stack, Typography } from '@mui/material'
-import { usePageUtilities } from '@/hooks/use-page-utilities'
-import GroupContextProvider from '@/contexts/group-context'
-import useAlert from '@/hooks/use-alert'
-import React, { useEffect, useMemo, useState } from 'react'
-import { useSelection } from '@/hooks/use-selection'
-import ConfirmationPopup from '@/components/confirmation-popup'
-import { useTemplates } from '@/hooks/use-templates'
-import { TemplateMangementSearch } from '@/sections/template-mangement/template-mangement-search'
-import { TemplateMangementTable } from '@/sections/template-mangement/template-mangement-table'
-import TemplatesContextProvider from '@/contexts/template-context'
-import TemplateForm from '@/@forms/template'
-import FieldsForm from '@/@forms/fields'
+import { DashboardLayout } from "@/layouts/dashboard/layout"
+import Head from "next/head"
+import { useTranslation } from "react-i18next"
+import { Box, Button, Container, Stack, Typography } from "@mui/material"
+import { usePageUtilities } from "@/hooks/use-page-utilities"
+import GroupContextProvider from "@/contexts/group-context"
+import useAlert from "@/hooks/use-alert"
+import React, { useEffect, useMemo, useState } from "react"
+import ConfirmationPopup from "@/components/confirmation-popup"
+import useTemplate from "@/hooks/use-templates"
+import { TemplateMangementSearch } from "@/sections/template-mangement/template-mangement-search"
+import TemplateContextProvider from "@/contexts/template-context"
+import DepartmentContextProvider from "@/contexts/department-context"
+import TemplateForm from "@/@forms/template"
+import BasicTable from "@/components/basic-table"
+import { ITemplate } from "@/@types/ITemplate"
 
 const Page = () => {
   const { t } = useTranslation()
-  const { templates, count, fetch, add, remove, edit, suspend } = useTemplates()
+  const { templates, count, fetch, add, remove, edit, suspend } = useTemplate()
   const { showAlert, renderForAlert } = useAlert()
-  const [editMode, setEditMode] = useState(false)
-  const [open, setOpen] = useState(false)
-  const [openField, setOpenField] = useState(false)
-  const [record, setRecord] = useState<any>(null)
+  const [editMode, setEditMode] = useState<boolean>(false)
+  const [open, setOpen] = useState<boolean>(false)
+  const [record, setRecord] = useState<ITemplate | null>(null)
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>("")
-  const [openConfirm, setOpenConfirm] = useState(false)
+  const [openConfirm, setOpenConfirm] = useState<boolean>(false)
+  const headers = [
+    { name: t("Template En"), value: "name" },
+    { name: t("Template Ar"), value: "nameAr" },
+    { name: t("Department name"), value: "departmentName" },
+    { name: t("GPT Model"), value: "gptModel" },
+    { name: t("Words Used"), value: "wordsUsed" },
+    { name: t("State"), value: "state", type: "switch" },
+  ]
   const onClose = () => {
     setOpen(false)
   }
@@ -36,14 +43,13 @@ const Page = () => {
     [templates]
   )
 
-  const templatesSelection = useSelection(templatesIds)
-
   useEffect(() => {
     fetch(controller.page, controller.rowsPerPage, controller.filter)
   }, [controller])
 
   const handleSubmit = async (formdata: any) => {
     if (editMode) {
+      edit(formdata)
       showAlert(t("Templates has been edited successfully").toString(), "success")
     } else {
       add(formdata)
@@ -51,44 +57,44 @@ const Page = () => {
     }
     (async () => {
       await setEditMode(false)
-      await setRecord({})
+      await setRecord(null)
     })()
     // setOpen(false)
   }
 
-  const handleEditTemplate = (role: any) => {
-    setRecord(role)
+  const handleEditTemplate = (data: any) => {
+    setRecord(data)
     setEditMode(true)
     setOpen(true)
-  }
-
-  const handleEditEditTemplate = (role: any) => {
-    setRecord(role)
-    setEditMode(true)
-    setOpenField(true)
   }
 
   const handleAddTemplate = () => {
     setEditMode(false)
-    setRecord({})
+    setRecord(null)
     setOpen(true)
   }
 
-  const handleDeleteTEmplate = (role_id: string) => {
-    setSelectedTemplateId(role_id)
+  const handleDeleteTemplate = (id: string) => {
+    setSelectedTemplateId(id)
     setOpenConfirm(true)
   }
 
-  const DeleteTemplate = () => {
+  const deleteTemplate = () => {
     setOpenConfirm(false)
     suspend(selectedTemplateId)
     showAlert(t("Template has been deleted successfully").toString(), "success")
   }
 
+  const handleSwitchChange = (item: any) => {
+    suspend(item.id)
+  }
+
   return (
     <>
       <Head>
-        <title>{t("Templates management")} | {t('app_name')}</title>
+        <title>
+          {t("Templates management")} | {t("app_name")}
+        </title>
       </Head>
       <Box
         component="main"
@@ -100,7 +106,7 @@ const Page = () => {
         <Container maxWidth="xl">
           <ConfirmationPopup
             message={"Are you sure to delete this User?"}
-            confirmFuntion={DeleteTemplate}
+            confirmFuntion={deleteTemplate}
             open={openConfirm}
             setOpen={setOpenConfirm}
           />
@@ -119,26 +125,18 @@ const Page = () => {
                 {t("Add")}
               </Button>
             </Stack>
-            <TemplateMangementSearch
-              onSearchChange={handleSearch}
-            />
-            {(count > 0) && (
-              <TemplateMangementTable
-                count={count}
+            <TemplateMangementSearch onSearchChange={handleSearch} />
+            {count > 0 && (
+              <BasicTable
+                headers={headers}
                 items={templates}
-                onDeselectAll={templatesSelection.handleDeselectAll}
-                onDeselectOne={templatesSelection.handleDeselectOne}
                 onPageChange={handlePageChange}
                 onRowsPerPageChange={handleRowsPerPageChange}
-                onSelectAll={templatesSelection.handleSelectAll}
-                onSelectOne={templatesSelection.handleSelectOne}
-                openField={handleEditEditTemplate}
+                count={count}
                 page={controller.page}
                 rowsPerPage={controller.rowsPerPage}
-                selected={templatesSelection.selected}
-                handleSuspend={suspend}
-                handleEdit={handleEditTemplate}
-                handleDelete={handleDeleteTEmplate}
+                handleSwitchChange={handleSwitchChange}
+                actions={{ handleEdit: handleEditTemplate, handleDelete: handleDeleteTemplate }}
               />
             )}
           </Stack>
@@ -150,27 +148,19 @@ const Page = () => {
           onClose={onClose}
           record={record}
         />
-        <FieldsForm
-          handleSubmit={() => null}
-          editMode={editMode}
-          open={openField}
-          onClose={onClose}
-          record={record}
-          formItem={"fields"}
-        />
       </Box>
       {renderForAlert()}
     </>
   )
 }
 
-Page.getLayout = (page: any) => (
+Page.getLayout = (page: React.ReactNode) => (
   <DashboardLayout>
-    <TemplatesContextProvider>
-      <GroupContextProvider>
-        {page}
-      </GroupContextProvider>
-    </TemplatesContextProvider>
+    <DepartmentContextProvider>
+      <TemplateContextProvider>
+        <GroupContextProvider>{page}</GroupContextProvider>
+      </TemplateContextProvider>
+    </DepartmentContextProvider>
   </DashboardLayout>
 )
 

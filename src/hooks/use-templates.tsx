@@ -1,4 +1,5 @@
-import { TemplatesContext } from '@/contexts/template-context';
-import { useContext } from 'react';
+import { TemplateContext } from '@/contexts/template-context'
+import { useContext } from 'react'
 
-export const useTemplates = () => useContext(TemplatesContext);
+const useTemplate = () => useContext(TemplateContext)
+export default useTemplate

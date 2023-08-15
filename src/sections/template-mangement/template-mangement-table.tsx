@@ -74,7 +74,7 @@ export const TemplateMangementTable = (props: any) => {
                     }}
                   />
                 </TableCell>
-                <TableCell >{t("Template name")}</TableCell>
+                <TableCell>{t("Template name")}</TableCell>
                 <TableCell>{t("Department name")}</TableCell>
                 <TableCell>{t("number of used word")}</TableCell>
                 <TableCell>{t("GPT Model")}</TableCell>

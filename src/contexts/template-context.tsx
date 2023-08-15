@@ -1,7 +1,7 @@
 import { ITemplate, TemplateContextType } from '@/@types/ITemplate'
 import { createContext, useState } from 'react'
 
-export const TemplatesContext = createContext<TemplateContextType>({
+export const TemplateContext = createContext<TemplateContextType>({
   templates: [],
   count: 0,
   fetch: () => {},
@@ -44,7 +44,7 @@ const initialData : ITemplate[] = [
   },
 ]
 
-const TemplatesContextProvider = ({ children }: any) => {
+const TemplateContextProvider = ({ children }: any) => {
   const [templates, setTemplates] = useState<ITemplate[]>([])
   const [selected, setSelected] = useState<string[]>([])
   const [count, setCount] = useState<number>(0)
@@ -97,7 +97,7 @@ const TemplatesContextProvider = ({ children }: any) => {
   const removeSelected = () => selected.forEach(x => remove(x))
 
   return (
-    <TemplatesContext.Provider
+    <TemplateContext.Provider
       value={{
         templates,
         count,
@@ -113,8 +113,8 @@ const TemplatesContextProvider = ({ children }: any) => {
       }}
     >
       {children}
-    </TemplatesContext.Provider>
+    </TemplateContext.Provider>
   )
 }
 
-export default TemplatesContextProvider
+export default TemplateContextProvider
