@@ -27,6 +27,7 @@ const Page = () => {
           <Stack spacing={3}>
             <Typography variant="h4">{dictionary("Users")}</Typography>
             <SharedTable<User>
+              endpoint="https://google.com"
               previewData={users as any}
               easyColumns={[
                 "id",
@@ -38,6 +39,11 @@ const Page = () => {
                 "created_at",
                 "updated_at",
               ]}
+              initialState={{
+                columnVisibility: {
+                  id: false,
+                }
+              }}
             />
           </Stack>
         </Container>
