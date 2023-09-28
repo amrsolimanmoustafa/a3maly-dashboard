@@ -23,7 +23,6 @@ import CogIcon from '@heroicons/react/24/solid/CogIcon';
 import { MenuButton } from '@/components/button-menu';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
-import ClientRow from './client-row';
 
 export const ClientsTable = (props: any) => {
   const {
@@ -77,15 +76,15 @@ export const ClientsTable = (props: any) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {items.map((user: any) =>
-                <ClientRow
-                  key={user.id}
-                  user={user}
-                  selected={selected}
-                  onSelectOne={onSelectOne}
-                  onDeselectOne={onDeselectOne}
-                  handleSuspend={handleSuspend} />
-              )}
+              {/* {items.map((user: any) => */}
+              {/*   <ClientRow */}
+              {/*     key={user.id} */}
+              {/*     user={user} */}
+              {/*     selected={selected} */}
+              {/*     onSelectOne={onSelectOne} */}
+              {/*     onDeselectOne={onDeselectOne} */}
+              {/*     handleSuspend={handleSuspend} /> */}
+              {/* )} */}
             </TableBody>
           </Table>
         </Box>

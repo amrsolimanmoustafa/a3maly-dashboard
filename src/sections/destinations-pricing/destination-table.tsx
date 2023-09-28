@@ -15,7 +15,7 @@ import CogIcon from '@heroicons/react/24/solid/CogIcon';
 import React, { useState } from 'react';
 import DestinationRow from '@/sections/destinations-pricing/destination-row';
 import PropTypes from 'prop-types';
-import { DriversTable } from '@/sections/drivers/drivers-table';
+// import { DriversTable } from '@/sections/drivers/drivers-table';
 import { useTranslation } from 'react-i18next';
 
 export const DestinationTable = (props: any) => {
@@ -25,12 +25,12 @@ export const DestinationTable = (props: any) => {
     items = [],
     onDeselectAll,
     onDeselectOne,
-    onPageChange = () => {},
+    onPageChange = () => { },
     onRowsPerPageChange,
     onSelectAll,
     onSelectOne,
     page,
-    handleSuspend = () => {},
+    handleSuspend = () => { },
     rowsPerPage,
     selected,
   } = props;
@@ -98,17 +98,17 @@ export const DestinationTable = (props: any) => {
   );
 }
 
-DriversTable.propTypes = {
-  count: PropTypes.number,
-  items: PropTypes.array,
-  onDeselectAll: PropTypes.func,
-  onDeselectOne: PropTypes.func,
-  onPageChange: PropTypes.func,
-  onRowsPerPageChange: PropTypes.func,
-  onSelectAll: PropTypes.func,
-  onSelectOne: PropTypes.func,
-  page: PropTypes.number,
-  handleSuspend: PropTypes.func,
-  rowsPerPage: PropTypes.number,
-  selected: PropTypes.array,
-};
+// DriversTable.propTypes = {
+//   count: PropTypes.number,
+//   items: PropTypes.array,
+//   onDeselectAll: PropTypes.func,
+//   onDeselectOne: PropTypes.func,
+//   onPageChange: PropTypes.func,
+//   onRowsPerPageChange: PropTypes.func,
+//   onSelectAll: PropTypes.func,
+//   onSelectOne: PropTypes.func,
+//   page: PropTypes.number,
+//   handleSuspend: PropTypes.func,
+//   rowsPerPage: PropTypes.number,
+//   selected: PropTypes.array,
+// };
