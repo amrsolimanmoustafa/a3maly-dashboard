@@ -78,7 +78,7 @@ dependencies:
     specifier: ^5.4.1
     version: 5.4.1
   prop-types:
-    specifier: 15.8.1
+    specifier: ^15.8.1
     version: 15.8.1
   react:
     specifier: 18.2.0
