@@ -7,8 +7,10 @@ import { dictionary } from "@/configs/i18next";
 import SharedTable from "@/components/SharedTable";
 import users from "../../../public/endpoints/users.json";
 import { User, UsersTableZodSchema } from "@/@types/user";
+import axiosClient from "@/configs/axios-client";
 
 const Page = () => {
+  const endpoint = "https://google.com";
   return (
     <>
       <Head>
@@ -27,13 +29,37 @@ const Page = () => {
           <Stack spacing={3}>
             <Typography variant="h4">{dictionary("Users")}</Typography>
             <SharedTable<User>
+              previewData={users as any}
+              endpoint={endpoint}
+              addRowMutationFn={(values) => {
+                return axiosClient.post(endpoint, values);
+              }}
+              editRowMutationFn={({ id, newData }) => {
+                return axiosClient.patch(`${endpoint}${id}`, newData);
+              }}
+              deleteRowMutationFn={(id) => {
+                return axiosClient.delete(`${endpoint}${id}`);
+              }}
               enableRowActions
               enableAddNewRow
+              modalCreateReturnFormData
+              easyColumns={[
+                "id",
+                "avatar",
+                "name",
+                "email",
+                "phone",
+                "role",
+                "is_active",
+                "created_at",
+                "updated_at",
+              ]}
               modalCreateColumns={[
                 {
                   header: "avatar",
                   accessorKey: "avatar",
                   formElementType: "image",
+                  imageBlob: true,
                 },
                 {
                   header: "Name",
@@ -70,19 +96,6 @@ const Page = () => {
                   accessorKey: "is_active",
                   formElementType: "switch",
                 },
-              ]}
-              endpoint="https://google.com"
-              previewData={users as any}
-              easyColumns={[
-                "id",
-                "avatar",
-                "name",
-                "email",
-                "phone",
-                "role",
-                "is_active",
-                "created_at",
-                "updated_at",
               ]}
               initialState={{
                 columnVisibility: {

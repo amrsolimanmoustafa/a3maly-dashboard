@@ -28,6 +28,7 @@ export type ModalCreateEditColumnsSchema<T extends Record<string, any>> = MRT_Co
   header: TranslatedWord;
   options?: Readonly<{ title: string; value: string } | undefined>[];
   multiple?: boolean;
+  imageBlob?: boolean;
 };
 
 interface ModalCreate<T extends Record<string, any> = {}> {
@@ -36,6 +37,7 @@ interface ModalCreate<T extends Record<string, any> = {}> {
   onSubmit: (values: any) => void;
   open: boolean;
   title: TranslatedWord;
+  formData?: boolean;
 }
 
 export const ModalCreate = <T extends Record<any, any> = {}>({
@@ -44,12 +46,24 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
   onClose,
   onSubmit,
   title,
+  formData = false,
 }: ModalCreate<T>) => {
   const [values, setValues] = useState<any>({});
   const [images, setImages] = useState([]);
   const handleSubmit = () => {
-    //put your validation logic here
-    onSubmit(values);
+    // validation logic
+
+    if (formData) {
+      // Convert state to form data if formData prop is true
+      const formData = new FormData();
+      for (const key in values) {
+        formData.append(key, values[key]);
+      }
+      onSubmit(formData);
+    } else {
+      // If formData is false, submit values as-is
+      onSubmit(values);
+    }
     onClose();
   };
 
@@ -145,7 +159,7 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
                         setImages(imageList as any);
                         setValues({
                           ...values,
-                          [column!.accessorKey as string]: imageList[0]?.data_url,
+                          [column!.accessorKey as string]: column.imageBlob ? dataURItoBlob(imageList[0].data_url) : imageList[0].data_url,
                         });
                       }}
                     >
@@ -446,3 +460,23 @@ export type ExtractProps<TComponentOrTProps> = TComponentOrTProps extends React.
 >
   ? TProps
   : TComponentOrTProps;
+
+function dataURItoBlob(dataURI: string) {
+  // convert base64/URLEncoded data component to raw binary data held in a string
+  var byteString;
+  if (dataURI.split(',')[0].indexOf('base64') >= 0)
+    byteString = atob(dataURI.split(',')[1]);
+  else
+    byteString = unescape(dataURI.split(',')[1]);
+
+  // separate out the mime component
+  var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+  // write the bytes of the string to a typed array
+  var ia = new Uint8Array(byteString.length);
+  for (var i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+
+  return new Blob([ia], { type: mimeString });
+}

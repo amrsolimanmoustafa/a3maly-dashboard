@@ -19,7 +19,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { MutationFunction, useMutation, useQuery } from "@tanstack/react-query";
 import {
   MaterialReactTable,
   MaterialReactTableProps,
@@ -36,6 +36,8 @@ import ModalDelete from "./ModalDelete";
 import { ModalCreate, ModalCreateEditColumnsSchema } from "./ModalCreate";
 import { ZodSchema } from "zod";
 import { isURL } from "./utils";
+import { AxiosResponse } from "axios";
+
 
 
 type SharedTableProps<T extends Record<string, any>> = Omit<MaterialReactTableProps<T>, "data" | "columns">
@@ -56,7 +58,12 @@ type SharedTableProps<T extends Record<string, any>> = Omit<MaterialReactTablePr
     previewData?: {
       data: any[];
     };
-  }
+    modalCreateReturnFormData?: boolean;
+    addRowMutationFn?: MutationFunction<AxiosResponse<any, any>, Record<string, any>> | undefined
+    editRowMutationFn?: MutationFunction<AxiosResponse<any, any>, { id: string, newData: Record<string, any> }> | undefined
+    deleteRowMutationFn?: MutationFunction<AxiosResponse<any, any>, string> | undefined
+  };
+
 
 
 const SharedTable = <T extends Record<string, any>>(props: SharedTableProps<T>) => {
@@ -122,9 +129,9 @@ const SharedTable = <T extends Record<string, any>>(props: SharedTableProps<T>) 
   }>({});
 
   const addNewRow = useMutation({
-    mutationFn: (values: Record<string, any>) => {
+    mutationFn: props.addRowMutationFn ?? ((values: Record<string, any>) => {
       return axiosClient.post(endpoint, values);
-    },
+    }),
     onMutate: async () => {
       await queryClient.cancelQueries(tableIdentifier);
     },
@@ -138,14 +145,11 @@ const SharedTable = <T extends Record<string, any>>(props: SharedTableProps<T>) 
   });
 
   const deleteRow = useMutation({
-    mutationFn: (id: string) => {
+    mutationFn: props?.deleteRowMutationFn ?? ((id: string) => {
       const deleteURL = new URL(endpoint);
-      // delete any query params
       deleteURL.search = "";
       return axiosClient.delete(`${deleteURL.toString()}${id}`);
-
-      return axiosClient.delete(`${endpoint}/${id}`);
-    },
+    }),
     onMutate: async () => {
       await queryClient.cancelQueries(tableIdentifier);
     },
@@ -157,13 +161,16 @@ const SharedTable = <T extends Record<string, any>>(props: SharedTableProps<T>) 
       queryClient.setQueryData(tableIdentifier, context);
     },
   });
+
   const editRow = useMutation({
-    mutationFn: (values: Record<string, any>) => {
-      // remove all search params
+    mutationFn: props?.editRowMutationFn ?? (({ id, newData }: {
+      id: string,
+      newData: Record<string, any>
+    }) => {
       const editURL = new URL(endpoint);
       editURL.search = "";
-      return axiosClient.patch(`${editURL.toString()}${itemToEdit?.id}`, values);
-    },
+      return axiosClient.patch(`${editURL.toString()}${id}`, newData);
+    }),
     onMutate: async () => {
       await queryClient.cancelQueries(tableIdentifier);
     },
@@ -211,13 +218,19 @@ const SharedTable = <T extends Record<string, any>>(props: SharedTableProps<T>) 
   const [itemToEdit, setItemToEdit] = useState<Record<string, any> | null>(null);
 
   const handleEditRow = useCallback(
-    (values: any) => {
-      if (!values) {
+    (newData: Record<string, any>) => {
+      if (!newData) {
         throw new Error("values can't be null");
       }
-      console.log("values", values);
+      if (!itemToEdit) {
+        throw new Error("itemToEdit can't be null");
+      }
+      console.log("values", newData);
 
-      editRow.mutate(values);
+      editRow.mutate({
+        id: itemToEdit?.id,
+        newData,
+      });
       setIsModalEditOpen(false);
     },
     [setIsModalEditOpen, editRow],
@@ -400,6 +413,7 @@ const SharedTable = <T extends Record<string, any>>(props: SharedTableProps<T>) 
         open={isModalCreateOpen}
         onClose={() => setIsModalCreateOpen(false)}
         onSubmit={handleCreateNewRow}
+        formData={props?.modalCreateReturnFormData}
       />
 
       <ModalCreate<T>
