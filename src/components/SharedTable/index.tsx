@@ -50,7 +50,7 @@ type SharedTableProps<T extends Record<string, any>> = Omit<MaterialReactTablePr
     actions?: Partial<MRT_ColumnDef<T>>[];
     modalCreateColumns?: ModalCreateEditColumnsSchema<T>[];
     // modalCreateEditColumns?: ModalCreateEditColumnsSchema<T>[];
-    zodValidationSchema?: ZodSchema;
+    zodValidationSchema?: ZodSchema<T>;
     enableAddNewRow?: boolean;
 
     previewData?: {

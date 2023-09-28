@@ -6,7 +6,7 @@ import GroupContextProvider from "@/contexts/group-context";
 import { dictionary } from "@/configs/i18next";
 import SharedTable from "@/components/SharedTable";
 import users from "../../../public/endpoints/users.json";
-import { User } from "@/@types/user";
+import { User, UsersTableZodSchema } from "@/@types/user";
 
 const Page = () => {
   return (
@@ -27,6 +27,50 @@ const Page = () => {
           <Stack spacing={3}>
             <Typography variant="h4">{dictionary("Users")}</Typography>
             <SharedTable<User>
+              enableRowActions
+              enableAddNewRow
+              modalCreateColumns={[
+                {
+                  header: "avatar",
+                  accessorKey: "avatar",
+                  formElementType: "image",
+                },
+                {
+                  header: "Name",
+                  accessorKey: "name",
+                  formElementType: "text",
+                },
+                {
+                  header: "Email",
+                  accessorKey: "email",
+                  formElementType: "text",
+                },
+                {
+                  header: "Phone",
+                  accessorKey: "phone",
+                  formElementType: "text",
+                },
+                {
+                  header: "Roles",
+                  accessorKey: "role",
+                  formElementType: "autocomplete",
+                  options: [
+                    {
+                      title: "Admin",
+                      value: "admin",
+                    },
+                    {
+                      title: "User",
+                      value: "user",
+                    },
+                  ],
+                },
+                {
+                  header: "Is active",
+                  accessorKey: "is_active",
+                  formElementType: "switch",
+                },
+              ]}
               endpoint="https://google.com"
               previewData={users as any}
               easyColumns={[
@@ -36,6 +80,7 @@ const Page = () => {
                 "email",
                 "phone",
                 "role",
+                "is_active",
                 "created_at",
                 "updated_at",
               ]}
