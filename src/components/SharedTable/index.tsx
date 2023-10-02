@@ -65,7 +65,7 @@ type SharedTableProps<T extends TSharedTableData> = Omit<MaterialReactTableProps
     getDataFn: () => Promise<T>;
     addRowMutationFn: MutationFunction<AxiosResponse<any, any>, Record<string, any>>
     editRowMutationFn: MutationFunction<AxiosResponse<any, any>, { id: string, newData: Record<string, any> }>
-    deleteRowMutationFn: MutationFunction<AxiosResponse<any, any>, string>
+    deleteRowMutationFn: (itemToDelete: T["data"][0]) => Promise<AxiosResponse<any, any>>
     identifyItemToBeDeletedBy: keyof T["data"][0]
   };
 
@@ -151,11 +151,13 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
   });
 
   const deleteRow = useMutation({
-    mutationFn: props?.deleteRowMutationFn ?? ((id: string) => {
-      const deleteURL = new URL(endpoint);
-      deleteURL.search = "";
-      return axiosClient.delete(`${deleteURL.toString()}${id}`);
-    }),
+    mutationFn: props.deleteRowMutationFn
+    //   ?? ((id: string) => {
+    //   const deleteURL = new URL(endpoint);
+    //   deleteURL.search = "";
+    //   return axiosClient.delete(`${deleteURL.toString()}${id}`);
+    // })
+    ,
     onMutate: async () => {
       await queryClient.cancelQueries(tableIdentifier);
     },
@@ -213,11 +215,13 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
   };
 
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<T["data"] | null>(null);
-  // const handleDeleteRow = useCallback(() => {
-  //   deleteRow.mutate(itemToDelete?.data?.id);
-  //   setIsModalDeleteOpen(false);
-  // }, [setIsModalDeleteOpen, itemToDelete, deleteRow]);
+  type RowToDelete = T["data"][0] | null;
+  const [rowToDelete, setRowToDelete] = useState<RowToDelete | null>(null);
+  const handleDeleteRow = useCallback(() => {
+    if (!rowToDelete) throw new Error("rowToDelete can't be null");
+    deleteRow.mutate(rowToDelete);
+    setIsModalDeleteOpen(false);
+  }, [setIsModalDeleteOpen, rowToDelete, deleteRow]);
 
   // edit row
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
@@ -304,7 +308,7 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
           <MenuItem
             key="delete"
             onClick={() => {
-              setItemToDelete(row.original);
+              setRowToDelete(row.original);
               setIsModalDeleteOpen(true);
             }}
           >
@@ -409,9 +413,9 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
         open={isModalDeleteOpen}
         onClose={() => setIsModalDeleteOpen(false)}
         title="Delete"
-        handleSubmit={props?.deleteRowMutationFn}
+        handleSubmit={handleDeleteRow}
         // @ts-ignore
-        item={itemToDelete?.[props?.identifyItemToBeDeletedBy as any] ?? ""}
+        item={rowToDelete?.[props?.identifyItemToBeDeletedBy as any] ?? ""}
       />
 
       <ModalCreate<T>
@@ -420,7 +424,7 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
         open={isModalCreateOpen}
         onClose={() => setIsModalCreateOpen(false)}
         onSubmit={handleCreateNewRow}
-        formData={props?.modalCreateReturnFormData}
+        formData={props?.modalCreateReturnFormData ?? false}
       />
 
       <ModalCreate<T>

@@ -11,10 +11,10 @@ import axiosClient from "@/configs/axios-client";
 import { safeApiCall } from "@/utils";
 
 const Page = () => {
-  const endpoint = "/users/";
+  const endpoint = "/users";
   const getDataFn = async () => {
     const res = await safeApiCall<UsersTableApiResponse>({
-      axiosFn: () => axiosClient.get(endpoint),
+      axiosFn: () => axiosClient.get(endpoint + "/index?paginate=10"),
       validationSchema: UsersTableApiResponseZodSchema,
     });
     return res.data;
@@ -46,10 +46,11 @@ const Page = () => {
               editRowMutationFn={({ id, newData }) => {
                 return axiosClient.patch(`${endpoint}${id}`, newData);
               }}
-              deleteRowMutationFn={(id) => {
-                return axiosClient.delete(`${endpoint}${id}`);
+              deleteRowMutationFn={(itemToDelete) => {
+                console.log("id", itemToDelete);
+                return axiosClient.delete(`${endpoint}/delete/${itemToDelete.id}`);
               }}
-              identifyItemToBeDeletedBy="id"
+              identifyItemToBeDeletedBy="name"
 
               enableRowActions
               enableAddNewRow
