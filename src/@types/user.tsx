@@ -6,7 +6,7 @@ export enum RolesEnum {
   // USER = "USER"
 }
 
-const UserZodSchema = z.object({
+export const UserZodSchema = z.object({
   id: z.number(),
   name: z.string(),
   email: z.string().email(),

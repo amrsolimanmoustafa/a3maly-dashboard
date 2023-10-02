@@ -10,7 +10,7 @@ import { User, UsersTableZodSchema } from "@/@types/user";
 import axiosClient from "@/configs/axios-client";
 
 const Page = () => {
-  const endpoint = "https://google.com";
+  const endpoint = "/users/";
   return (
     <>
       <Head>
@@ -29,7 +29,6 @@ const Page = () => {
           <Stack spacing={3}>
             <Typography variant="h4">{dictionary("Users")}</Typography>
             <SharedTable<User>
-              previewData={users as any}
               endpoint={endpoint}
               addRowMutationFn={(values) => {
                 return axiosClient.post(endpoint, values);
