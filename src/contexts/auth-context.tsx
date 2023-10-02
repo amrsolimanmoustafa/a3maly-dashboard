@@ -8,7 +8,7 @@ import { User, UserZodSchema } from "@/@types/user";
 import { makeApiResponseZodSchema } from "@/components/SharedTable/utils";
 import { z } from "zod";
 import { Box, Typography } from "@mui/material";
-import { objectToFormData } from "@/utils";
+import { objectToFormData, safeApiCall } from "@/utils";
 
 type ActionType = { type: string; payload: any };
 
@@ -93,7 +93,7 @@ export const AuthContext = createContext<initialValue | undefined>(undefined);
 
 export const AuthProvider = ({ children }: any) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [authUser, setAuthUser] = useState<AuthLoginApiResponse | null>(null);
+  const [authUser, setAuthUser] = useState<User | null>(null);
   const initialized = useRef(false);
 
   const initialize = async () => {
@@ -277,25 +277,17 @@ export const AuthProvider = ({ children }: any) => {
 
   type AuthLoginApiResponse = z.infer<typeof AuthLoginApiResponseZodSchema>;
 
-
   const signIn = async (email: string, password: string) => {
-    const { data: res } = await axiosClient.post("/auth/login",
-      objectToFormData({
-        email,
-        password,
-      })
-    );
+    const res = await safeApiCall({
+      apiCallFn: () => axiosClient.post("/auth/login", objectToFormData({ email, password })),
+      validationSchema: AuthLoginApiResponseZodSchema,
+    })
 
-    const user: AuthLoginApiResponse["data"]["user"] = res.data.user;
     const data: AuthLoginApiResponse["data"] = res.data;
+    const user = data.user;
 
     if (data.access_token == undefined) {
       throw new Error("Email or password is incorrect");
-    }
-
-    if (user && !AuthLoginApiResponseZodSchema.safeParse(res).success) {
-      console.error("Api response is not valid", JSON.stringify(AuthLoginApiResponseZodSchema.safeParse(res)));
-      throw new Error("Api response is not valid");
     }
 
     window.sessionStorage.setItem("authenticated", "true");
