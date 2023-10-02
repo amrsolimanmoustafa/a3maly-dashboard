@@ -1,5 +1,6 @@
 import { ZodError, ZodSchema } from "zod";
 import { AxiosResponse, AxiosError } from 'axios';
+import axiosClient from "@/configs/axios-client";
 
 export function objectToFormData(obj: Record<string, any>): FormData {
   const formData = new FormData();
@@ -32,19 +33,19 @@ export function objectToFormData(obj: Record<string, any>): FormData {
 /**
  * Handles API calls safely with validation.
  *
- * @param apiCallFn Function to call for the API request.
+ * @param axiosFn Function to call for the API request.
  * @param validationSchema Validation schema for the response data.
  * @returns Promise that resolves to the validated response data.
  */
-export async function safeApiCall({
-  apiCallFn,
+export async function safeApiCall<T>({
+  axiosFn,
   validationSchema
 }: {
-  apiCallFn: () => Promise<any>,
+  axiosFn: () => Promise<AxiosResponse<T>>,
   validationSchema?: ZodSchema
-}): Promise<AxiosResponse> {
+}): Promise<T> {
   try {
-    const response: AxiosResponse = await apiCallFn();
+    const response: AxiosResponse = await axiosFn();
     if (isAcceptedStatus(response.status)) {
       if (!validationSchema) return response.data;
       return validateApiResponse(response.data, validationSchema);
@@ -52,14 +53,19 @@ export async function safeApiCall({
       throw new Error(`API request failed with status code ${response.status}`);
     }
   } catch (error) {
+    const errorLog = {
+      funcName: axiosFn.name,
+      error,
+    };
+
     if (error instanceof AxiosError) {
-      console.error('Axios error:', error.message);
+      console.error('Axios error:', errorLog);
       throw new Error('Network error occurred');
     } else if (error instanceof ZodError) {
-      console.error('Validation error:', error.message);
+      console.error('Validation error:', errorLog);
       throw new Error('Api response validation failed')
     } else {
-      console.error('Unexpected error:', error);
+      console.error('Unexpected error:', errorLog);
       throw new Error('An unexpected error occurred');
     }
   }
@@ -76,7 +82,7 @@ function validateApiResponse<T>(
   responseData: any,
   validationSchema: ZodSchema<T>
 ): T {
-  return validationSchema.parse(responseData);
+  return validationSchema.parse(responseData)
 }
 
 /**

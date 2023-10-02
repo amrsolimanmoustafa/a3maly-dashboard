@@ -38,13 +38,16 @@ import { ZodSchema } from "zod";
 import { isURL } from "./utils";
 import { AxiosResponse } from "axios";
 
+type TSharedTableData = {
+  data: Array<Record<string, any>>;
+  total: number;
+}
 
-
-type SharedTableProps<T extends Record<string, any>> = Omit<MaterialReactTableProps<T>, "data" | "columns">
+type SharedTableProps<T extends TSharedTableData> = Omit<MaterialReactTableProps<T["data"]>, "data" | "columns">
   & {
     columns?: MRT_ColumnDef<T>[];
     data?: T[];
-    easyColumns?: Array<keyof T>;
+    easyColumns?: Array<keyof T["data"][0]>;
     nativeColumns?: MRT_ColumnDef<T>[];
     endpoint: string;
     customColumnOrder?: MRT_ColumnDef<T>["accessorKey"][];
@@ -59,14 +62,16 @@ type SharedTableProps<T extends Record<string, any>> = Omit<MaterialReactTablePr
       data: any[];
     };
     modalCreateReturnFormData?: boolean;
-    addRowMutationFn?: MutationFunction<AxiosResponse<any, any>, Record<string, any>> | undefined
-    editRowMutationFn?: MutationFunction<AxiosResponse<any, any>, { id: string, newData: Record<string, any> }> | undefined
-    deleteRowMutationFn?: MutationFunction<AxiosResponse<any, any>, string> | undefined
+    getDataFn: () => Promise<T>;
+    addRowMutationFn: MutationFunction<AxiosResponse<any, any>, Record<string, any>>
+    editRowMutationFn: MutationFunction<AxiosResponse<any, any>, { id: string, newData: Record<string, any> }>
+    deleteRowMutationFn: MutationFunction<AxiosResponse<any, any>, string>
+    identifyItemToBeDeletedBy: keyof T["data"][0]
   };
 
 
 
-const SharedTable = <T extends Record<string, any>>(props: SharedTableProps<T>) => {
+const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => {
   const {
     endpoint,
     actions,
@@ -98,25 +103,26 @@ const SharedTable = <T extends Record<string, any>>(props: SharedTableProps<T>) 
 
   const { data, isError, isFetching, isLoading, refetch } = useQuery(
     tableIdentifier,
-    async () => {
-      if (previewData) {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        return previewData.data;
-      }
-
-      if (endpoint) {
-        const fetchURL = new URL(endpoint);
-        fetchURL.searchParams.set("page", `${pagination.pageIndex + 1}`);
-        fetchURL.searchParams.set("size", `${pagination.pageSize}`);
-        fetchURL.searchParams.set("filters", JSON.stringify(columnFilters ?? []));
-        fetchURL.searchParams.set("globalFilter", globalFilter ?? "");
-        // fetchURL.searchParams.set("sorting", JSON.stringify(sorting ?? []));
-        // branchId && fetchURL.searchParams.set("branch_id", branchId);
-
-        return (await axiosClient.get(fetchURL.toString())).data;
-      }
-      throw new Error("endpoint is not provided");
-    },
+    () => props.getDataFn?.()
+    //   ?? (async () => {
+    //   if (previewData) {
+    //     await new Promise((resolve) => setTimeout(resolve, 2000));
+    //     return previewData.data;
+    //   }
+    //
+    //   if (endpoint) {
+    //     const fetchURL = new URL(endpoint);
+    //     // fetchURL.searchParams.set("page", `${pagination.pageIndex + 1}`);
+    //     // fetchURL.searchParams.set("size", `${pagination.pageSize}`);
+    //     // fetchURL.searchParams.set("filters", JSON.stringify(columnFilters ?? []));
+    //     // fetchURL.searchParams.set("globalFilter", globalFilter ?? "");
+    //     // fetchURL.searchParams.set("sorting", JSON.stringify(sorting ?? []));
+    //     // branchId && fetchURL.searchParams.set("branch_id", branchId);
+    //     return (await axiosClient.get(fetchURL.toString())).data;
+    //   }
+    //   throw new Error("endpoint is not provided");
+    // })
+    ,
     {
       keepPreviousData: true,
     },
@@ -207,11 +213,11 @@ const SharedTable = <T extends Record<string, any>>(props: SharedTableProps<T>) 
   };
 
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<T | null>(null);
-  const handleDeleteRow = useCallback(() => {
-    deleteRow.mutate(itemToDelete?.id);
-    setIsModalDeleteOpen(false);
-  }, [setIsModalDeleteOpen, itemToDelete, deleteRow]);
+  const [itemToDelete, setItemToDelete] = useState<T["data"] | null>(null);
+  // const handleDeleteRow = useCallback(() => {
+  //   deleteRow.mutate(itemToDelete?.data?.id);
+  //   setIsModalDeleteOpen(false);
+  // }, [setIsModalDeleteOpen, itemToDelete, deleteRow]);
 
   // edit row
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
@@ -341,7 +347,7 @@ const SharedTable = <T extends Record<string, any>>(props: SharedTableProps<T>) 
         onSortingChange={setSorting}
         enableSorting={false}
         enableColumnActions={false}
-        rowCount={data?.meta?.total ?? 0}
+        rowCount={data?.total ?? 0}
         // @ts-ignore
         state={{
           isLoading,
@@ -403,8 +409,9 @@ const SharedTable = <T extends Record<string, any>>(props: SharedTableProps<T>) 
         open={isModalDeleteOpen}
         onClose={() => setIsModalDeleteOpen(false)}
         title="Delete"
-        handleSubmit={handleDeleteRow}
-        item={itemToDelete?.name ?? itemToDelete?.name_en ?? itemToDelete?.name_ar ?? ""}
+        handleSubmit={props?.deleteRowMutationFn}
+        // @ts-ignore
+        item={itemToDelete?.[props?.identifyItemToBeDeletedBy as any] ?? ""}
       />
 
       <ModalCreate<T>

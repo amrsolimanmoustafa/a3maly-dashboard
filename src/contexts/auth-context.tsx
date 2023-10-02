@@ -5,7 +5,6 @@ import axiosClient from "../configs/axios-client";
 import { IShippingOffice } from "@/@types/shipping-office";
 import { UserType } from "@/@types/auth-user";
 import { User, UserZodSchema } from "@/@types/user";
-import { makeApiResponseZodSchema } from "@/components/SharedTable/utils";
 import { z } from "zod";
 import { Box, Typography } from "@mui/material";
 import { objectToFormData, safeApiCall } from "@/utils";
@@ -279,7 +278,7 @@ export const AuthProvider = ({ children }: any) => {
 
   const signIn = async (email: string, password: string) => {
     const res = await safeApiCall({
-      apiCallFn: () => axiosClient.post("/auth/login", objectToFormData({ email, password })),
+      axiosFn: () => axiosClient.post("/auth/login", objectToFormData({ email, password })),
       validationSchema: AuthLoginApiResponseZodSchema,
     })
 

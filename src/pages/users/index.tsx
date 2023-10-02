@@ -6,11 +6,20 @@ import GroupContextProvider from "@/contexts/group-context";
 import { dictionary } from "@/configs/i18next";
 import SharedTable from "@/components/SharedTable";
 import users from "../../../public/endpoints/users.json";
-import { User, UsersTableZodSchema } from "@/@types/user";
+import { User, UsersTableApiResponse, UsersTableApiResponseZodSchema } from "@/@types/user";
 import axiosClient from "@/configs/axios-client";
+import { safeApiCall } from "@/utils";
 
 const Page = () => {
   const endpoint = "/users/";
+  const getDataFn = async () => {
+    const res = await safeApiCall<UsersTableApiResponse>({
+      axiosFn: () => axiosClient.get(endpoint),
+      validationSchema: UsersTableApiResponseZodSchema,
+    });
+    return res.data;
+  };
+
   return (
     <>
       <Head>
@@ -28,8 +37,9 @@ const Page = () => {
         <Container maxWidth="xl">
           <Stack spacing={3}>
             <Typography variant="h4">{dictionary("Users")}</Typography>
-            <SharedTable<User>
+            <SharedTable<UsersTableApiResponse["data"]>
               endpoint={endpoint}
+              getDataFn={getDataFn}
               addRowMutationFn={(values) => {
                 return axiosClient.post(endpoint, values);
               }}
@@ -39,6 +49,8 @@ const Page = () => {
               deleteRowMutationFn={(id) => {
                 return axiosClient.delete(`${endpoint}${id}`);
               }}
+              identifyItemToBeDeletedBy="id"
+
               enableRowActions
               enableAddNewRow
               modalCreateReturnFormData

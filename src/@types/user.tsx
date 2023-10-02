@@ -1,5 +1,5 @@
-import { makeApiResponseZodSchema } from "@/components/SharedTable/utils";
-import { z } from "zod";
+import { makeTableApiResponseZodSchema } from "@/components/SharedTable/utils";
+import { z, ZodNull } from "zod";
 
 export enum RolesEnum {
   ADMIN = "ADMIN",
@@ -26,4 +26,7 @@ export type UserContextType = {
   user: User[];
 };
 
-export const UsersTableZodSchema = makeApiResponseZodSchema<typeof UserZodSchema>;
+export const UsersTableApiResponseZodSchema =
+  makeTableApiResponseZodSchema(UserZodSchema)
+
+export type UsersTableApiResponse = z.infer<typeof UsersTableApiResponseZodSchema>;
