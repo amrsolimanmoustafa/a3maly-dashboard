@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export enum RolesEnum {
   ADMIN = "ADMIN",
+  SUPERADMIN = "SUPERADMIN",
   // USER = "USER"
 }
 

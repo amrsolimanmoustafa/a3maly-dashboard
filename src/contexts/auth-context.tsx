@@ -264,43 +264,48 @@ export const AuthProvider = ({ children }: any) => {
     }
   }
 
-  const AuthLoginUserZodSchema = UserZodSchema.extend({
-    access_token: z.string(),
-    expires_in: z.number(),
-  });
-
-  const AuthLoginApiResponseZodSchema = AuthLoginUserZodSchema.extend({
+  const AuthLoginApiResponseZodSchema = z.object({
+    data: z.object({
+      access_token: z.string(),
+      expires_in: z.number(),
+      token_type: z.string(),
+      user: UserZodSchema,
+    }),
     message: z.string(),
     status: z.boolean(),
   });
 
-  type AuthLoginApiResponse = z.infer<typeof AuthLoginUserZodSchema>;
+  type AuthLoginApiResponse = z.infer<typeof AuthLoginApiResponseZodSchema>;
 
 
   const signIn = async (email: string, password: string) => {
-    const { data }: { data: AuthLoginApiResponse } = await axiosClient.post("/auth/login",
+    const { data: res } = await axiosClient.post("/auth/login",
       objectToFormData({
         email,
         password,
       })
     );
 
-    if (data.id == undefined) {
+    const user: AuthLoginApiResponse["data"]["user"] = res.data.user;
+    const data: AuthLoginApiResponse["data"] = res.data;
+
+    if (data.access_token == undefined) {
       throw new Error("Email or password is incorrect");
     }
 
-    if (data && !AuthLoginApiResponseZodSchema.safeParse(data).success) {
+    if (user && !AuthLoginApiResponseZodSchema.safeParse(res).success) {
+      console.error("Api response is not valid", JSON.stringify(AuthLoginApiResponseZodSchema.safeParse(res)));
       throw new Error("Api response is not valid");
     }
 
     window.sessionStorage.setItem("authenticated", "true");
     window.sessionStorage.setItem("token", data.access_token);
-    window.sessionStorage.setItem("user", JSON.stringify(data));
+    window.sessionStorage.setItem("user", JSON.stringify(user));
     axiosClient.defaults.headers.common["Authorization"] = `Bearer ` + data.access_token;
-    setAuthUser(data);
+    setAuthUser(user);
     dispatch({
       type: HANDLERS.SIGN_IN,
-      payload: data,
+      payload: user,
     });
     return true;
   };
