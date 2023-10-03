@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosClient = axios.create({
-  baseURL: "http://194.163.137.50/admin",
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL
 });
 
 axiosClient.defaults.headers.common = {
