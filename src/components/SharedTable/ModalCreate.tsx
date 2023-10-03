@@ -19,11 +19,11 @@ import {
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { MRT_ColumnDef } from "material-react-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactImageUploading from "react-images-uploading";
 
 export type ModalCreateEditColumnsSchema<T extends Record<string, any>> = MRT_ColumnDef<T> & {
-  formElementType?: "switch" | "date" | "text" | "image" | "autocomplete";
+  formElementType?: "switch" | "date" | "text" | "image" | "autocomplete" | "password";
   prevValue?: any;
   header: TranslatedWord;
   options?: Readonly<{ title: string; value: string } | undefined>[];
@@ -54,18 +54,23 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
     // validation logic
 
     if (formData) {
-      // Convert state to form data if formData prop is true
       const formData = new FormData();
       for (const key in values) {
         formData.append(key, values[key]);
       }
       onSubmit(formData);
     } else {
-      // If formData is false, submit values as-is
       onSubmit(values);
     }
     onClose();
   };
+
+  useEffect(() => {
+    return () => {
+      setValues({});
+      setImages([]);
+    };
+  }, [open]);
 
   return (
     <Dialog fullWidth open={open}>
@@ -124,7 +129,7 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
                             onChange={(e) =>
                               setValues({
                                 ...values,
-                                [e.target.name]: e.target.checked,
+                                [e.target.name]: e.target.checked ? 1 : 0,
                               })
                             }
                             inputProps={{ "aria-label": "controlled" }}
@@ -133,10 +138,11 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
                       </Grid>
                     </>
                   )}
-                  {column.formElementType === "text" && (
+                  {(column.formElementType === "text" || column.formElementType === "password") && (
                     <Grid item xs={12} md={6}>
                       <TextField
                         fullWidth
+                        type={column.formElementType}
                         key={column!.accessorKey as string}
                         label={dictionary(column.header)}
                         name={column!.accessorKey as string}

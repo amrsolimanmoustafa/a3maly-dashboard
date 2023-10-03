@@ -62,11 +62,17 @@ type SharedTableProps<T extends TSharedTableData> = Omit<MaterialReactTableProps
       data: any[];
     };
     modalCreateReturnFormData?: boolean;
-    getDataFn: () => Promise<T>;
+    modalEditReturnFormData?: boolean;
+    getDataFn: ({
+      url: string,
+      functionToPassUrl: (url: string) => Promise<any>
+    })
     addRowMutationFn: MutationFunction<AxiosResponse<any, any>, Record<string, any>>
     editRowMutationFn: MutationFunction<AxiosResponse<any, any>, { id: string, newData: Record<string, any> }>
     deleteRowMutationFn: (itemToDelete: T["data"][0]) => Promise<AxiosResponse<any, any>>
     identifyItemToBeDeletedBy: keyof T["data"][0]
+    pageIndexParam?: string;
+    pageSizeParam?: string;
   };
 
 
@@ -103,7 +109,14 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
 
   const { data, isError, isFetching, isLoading, refetch } = useQuery(
     tableIdentifier,
-    () => props.getDataFn?.()
+    () => {
+      // const endpointURL = new URL(endpoint);
+      // endpointURL.searchParams.set(props.pageIndexParam, `${pagination.pageIndex + 1}`);
+      // endpointURL.searchParams.set(props.pageSizeParam, `${pagination.pageSize}`);
+      const paginationParams = `?${props.pageIndexParam}=${pagination.pageIndex + 1}&${props.pageSizeParam}=${pagination.pageSize}`
+      return props.getDataFn.functionToPassUrl(props.getDataFn.url + paginationParams);
+    }
+
     //   ?? (async () => {
     //   if (previewData) {
     //     await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -438,6 +451,7 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
         open={isModalEditOpen}
         onClose={() => setIsModalEditOpen(false)}
         onSubmit={handleEditRow}
+        formData={props?.modalEditReturnFormData ?? false}
       />
     </>
   );

@@ -4,6 +4,7 @@ import { z, ZodNull } from "zod";
 export enum RolesEnum {
   ADMIN = "ADMIN",
   SUPERADMIN = "SUPERADMIN",
+  CLIENT = "CLIENT",
   // USER = "USER"
 }
 

@@ -12,9 +12,9 @@ import { safeApiCall } from "@/utils";
 
 const Page = () => {
   const endpoint = "/users";
-  const getDataFn = async () => {
+  const getDataFn = async (endpointWithPaginationParams: string) => {
     const res = await safeApiCall<UsersTableApiResponse>({
-      axiosFn: () => axiosClient.get(endpoint + "/index?paginate=10"),
+      axiosFn: () => axiosClient.get(endpointWithPaginationParams),
       validationSchema: UsersTableApiResponseZodSchema,
     });
     return res.data;
@@ -39,22 +39,28 @@ const Page = () => {
             <Typography variant="h4">{dictionary("Users")}</Typography>
             <SharedTable<UsersTableApiResponse["data"]>
               endpoint={endpoint}
-              getDataFn={getDataFn}
+              getDataFn={
+                ({
+                  url: endpoint + "/index",
+                  functionToPassUrl: getDataFn,
+                })
+              }
               addRowMutationFn={(values) => {
-                return axiosClient.post(endpoint, values);
+                return axiosClient.post(`${endpoint}/store`, values);
               }}
               editRowMutationFn={({ id, newData }) => {
-                return axiosClient.patch(`${endpoint}${id}`, newData);
+                return axiosClient.patch(`${endpoint}/${id}`, newData);
               }}
               deleteRowMutationFn={(itemToDelete) => {
-                console.log("id", itemToDelete);
                 return axiosClient.delete(`${endpoint}/delete/${itemToDelete.id}`);
               }}
               identifyItemToBeDeletedBy="name"
-
+              pageIndexParam="page"
+              pageSizeParam="paginate"
               enableRowActions
               enableAddNewRow
               modalCreateReturnFormData
+              modalEditReturnFormData
               easyColumns={[
                 "id",
                 "avatar",
@@ -79,6 +85,11 @@ const Page = () => {
                   formElementType: "text",
                 },
                 {
+                  header: "password",
+                  accessorKey: "password",
+                  formElementType: "password",
+                },
+                {
                   header: "Email",
                   accessorKey: "email",
                   formElementType: "text",
@@ -89,17 +100,17 @@ const Page = () => {
                   formElementType: "text",
                 },
                 {
-                  header: "Roles",
+                  header: "Role",
                   accessorKey: "role",
                   formElementType: "autocomplete",
                   options: [
                     {
                       title: "Admin",
-                      value: "admin",
+                      value: "ADMIN",
                     },
                     {
-                      title: "User",
-                      value: "user",
+                      title: "Client",
+                      value: "CLIENT",
                     },
                   ],
                 },
