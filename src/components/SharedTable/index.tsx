@@ -53,7 +53,7 @@ type SharedTableProps<T extends TSharedTableData> = Omit<MaterialReactTableProps
     customColumnOrder?: MRT_ColumnDef<T>["accessorKey"][];
     columnVisibility?: Partial<Record<NonNullable<MRT_ColumnDef<T>["accessorKey"]>, boolean>>;
     actions?: Partial<MRT_ColumnDef<T>>[];
-    modalCreateColumns?: ModalCreateEditColumnsSchema<T>[];
+    modalCreateColumns?: keyof ModalCreateEditColumnsSchema<T>[];
     // modalCreateEditColumns?: ModalCreateEditColumnsSchema<T>[];
     zodValidationSchema?: ZodSchema<T>;
     enableAddNewRow?: boolean;
@@ -114,7 +114,18 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
       // endpointURL.searchParams.set(props.pageIndexParam, `${pagination.pageIndex + 1}`);
       // endpointURL.searchParams.set(props.pageSizeParam, `${pagination.pageSize}`);
       const paginationParams = `?${props.pageIndexParam}=${pagination.pageIndex + 1}&${props.pageSizeParam}=${pagination.pageSize}`
-      return props.getDataFn.functionToPassUrl(props.getDataFn.url + paginationParams);
+      //page=1&paginate=10&name=test&sortBy=name&sort=DESC
+      //page=1&paginate=10&email=ahmed&email=desc&globalSearch=sasd
+      const filtersParams = columnFilters.map((filter) => `&${filter.id}=${filter.value}`).join("")
+      const sortingParams = sorting.map((sort) => `&sortBy=${sort.id}&sort=${sort.desc ? "DESC" : "ASC"}`).join("")
+      const globalFilterParams = `&globalSearch=${globalFilter}`
+      return props.getDataFn.functionToPassUrl(
+        props.getDataFn.url +
+        paginationParams +
+        filtersParams +
+        sortingParams +
+        globalFilterParams
+      )
     }
 
     //   ?? (async () => {
@@ -125,11 +136,11 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
     //
     //   if (endpoint) {
     //     const fetchURL = new URL(endpoint);
-    //     // fetchURL.searchParams.set("page", `${pagination.pageIndex + 1}`);
-    //     // fetchURL.searchParams.set("size", `${pagination.pageSize}`);
-    //     // fetchURL.searchParams.set("filters", JSON.stringify(columnFilters ?? []));
-    //     // fetchURL.searchParams.set("globalFilter", globalFilter ?? "");
-    //     // fetchURL.searchParams.set("sorting", JSON.stringify(sorting ?? []));
+    // fetchURL.searchParams.set("page", `${pagination.pageIndex + 1}`);
+    // fetchURL.searchParams.set("size", `${pagination.pageSize}`);
+    // fetchURL.searchParams.set("filters", JSON.stringify(columnFilters ?? []));
+    // fetchURL.searchParams.set("globalFilter", globalFilter ?? "");
+    // fetchURL.searchParams.set("sorting", JSON.stringify(sorting ?? []));
     //     // branchId && fetchURL.searchParams.set("branch_id", branchId);
     //     return (await axiosClient.get(fetchURL.toString())).data;
     //   }
@@ -362,7 +373,7 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
         onGlobalFilterChange={setGlobalFilter}
         onPaginationChange={setPagination}
         onSortingChange={setSorting}
-        enableSorting={false}
+        enableGlobalFilter
         enableColumnActions={false}
         rowCount={data?.total ?? 0}
         // @ts-ignore
