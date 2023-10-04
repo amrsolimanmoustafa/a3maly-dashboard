@@ -31,8 +31,9 @@ const Page = () => {
     validationSchema: Yup.object({
       email: Yup
         .string()
+        .email('Must be a valid email')
         .max(255)
-        .required('username is required'),
+        .required('Email is required'),
       password: Yup
         .string()
         .max(255)
@@ -40,11 +41,10 @@ const Page = () => {
     }),
     onSubmit: async (values, helpers) => {
       try {
-        const { email, password } = values;
         const isSuccessful = await auth?.signIn(values.email, values.password);
-        console.log(isSuccessful);
         if (!!isSuccessful) router.push('/');
       } catch (err: any) {
+        console.log(err);
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
         helpers.setSubmitting(false);
@@ -124,11 +124,11 @@ const Page = () => {
                     error={!!(formik.touched.email && formik.errors.email)}
                     fullWidth
                     helperText={formik.touched.email && formik.errors.email}
-                    label={t('username')}
-                    name="username"
+                    label={t('Email')}
+                    name="email"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
-                    type="username"
+                    type="email"
                     value={formik.values.email}
                   />
                   <TextField

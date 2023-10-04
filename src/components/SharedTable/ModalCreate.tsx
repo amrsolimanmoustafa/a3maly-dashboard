@@ -28,7 +28,7 @@ import CurrencyTextField from '@lupus-ai/mui-currency-textfield'
 
 export interface ModalCreateEditColumnsSchema<T extends Record<string, any>> {
   accessorKey: MRT_ColumnDef<T["data"]>["accessorKey"];
-  formElementType?: "switch" | "date" | "text" | "image" | "autocomplete" | "password" | "phone" | "email" | "price";
+  formElementType?: "switch" | "date" | "text" | "image" | "autocomplete" | "password" | "phone" | "email" | "price" | "number"
   prevValue?: any;
   header: TranslatedWord;
   options?: Readonly<{ title: string; value: string } | undefined>[];
@@ -171,14 +171,14 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
                       </Grid>
                     </>
                   )}
-                  {(column.formElementType === "text" || column.formElementType === "password") && (
+                  {(column.formElementType === "text" || column.formElementType === "password" || column.formElementType === "number") && (
                     <Grid item xs={12} md={6}>
                       <Controller
                         name={column.accessorKey as string}
                         control={control}
                         rules={{
                           required: !column.optional,
-                          minLength: 8,
+                          minLength: column.formElementType === "number" ? 0 : 8,
                           maxLength: column.formElementType === "password" ? 32 : undefined,
                         }}
                         defaultValue={column?.prevValue}

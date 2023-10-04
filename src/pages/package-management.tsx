@@ -65,6 +65,7 @@ const Page = () => {
                 "price_annually",
                 "features_ar",
                 "features_en",
+                "words_count",
                 "created_at",
                 "updated_at",
               ]}
@@ -100,6 +101,11 @@ const Page = () => {
                   accessorKey: "features_en",
                   formElementType: "text",
                   multiline: true,
+                },
+                {
+                  header: "Words count",
+                  accessorKey: "words_count",
+                  formElementType: "number",
                 },
               ]}
               initialState={{

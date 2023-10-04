@@ -279,7 +279,7 @@ export const AuthProvider = ({ children }: any) => {
   const signIn = async (email: string, password: string) => {
     const res = await safeApiCall({
       axiosFn: () => axiosClient.post("/auth/login", objectToFormData({ email, password })),
-      validationSchema: AuthLoginApiResponseZodSchema,
+      // validationSchema: AuthLoginApiResponseZodSchema,
     })
 
     const data: AuthLoginApiResponse["data"] = res.data;

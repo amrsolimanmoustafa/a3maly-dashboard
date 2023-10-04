@@ -100,7 +100,7 @@
   "ReadOnly": "عرض فقط",
   "Search": "بحث",
   "Name": "الاسم",
-  "Email": "الايميل",
+  "Email": "البريد الالكتروني",
   "Phone": "الهاتف",
   "Tax amount": "قيمة الضريبة",
   "ACCEPTED": "بدأ الرحلة",
@@ -378,5 +378,6 @@
   "Features en": "الخصائص بالانجليزيه",
   "Telephone is invalid": "الهاتف غير صالح",
   "Email is invalid": "البريد الإلكتروني غير صالح",
-  "Minimum 8 characters": "الحد الأدنى 8 أحرف"
+  "Minimum 8 characters": "الحد الأدنى 8 أحرف",
+  "Words count": "عدد الكلمات"
 }
