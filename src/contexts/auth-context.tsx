@@ -4,7 +4,7 @@ import React from "react";
 import axiosClient from "../configs/axios-client";
 import { IShippingOffice } from "@/@types/shipping-office";
 import { UserType } from "@/@types/auth-user";
-import { User, UserZodSchema } from "@/@types/user";
+import { User, userZodSchema } from "@/@types/user";
 import { z } from "zod";
 import { Box, Typography } from "@mui/material";
 import { objectToFormData, safeApiCall } from "@/utils";
@@ -268,7 +268,7 @@ export const AuthProvider = ({ children }: any) => {
       access_token: z.string(),
       expires_in: z.number(),
       token_type: z.string(),
-      user: UserZodSchema,
+      user: userZodSchema,
     }),
     message: z.string(),
     status: z.boolean(),
