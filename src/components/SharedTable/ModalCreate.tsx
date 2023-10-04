@@ -36,9 +36,11 @@ export interface ModalCreateEditColumnsSchema<T extends Record<string, any>> {
   imageBlob?: boolean;
   multiline?: boolean;
   optional?: boolean;
+  disableEdit?: boolean;
 };
 
 interface ModalCreate<T extends Record<string, any> = {}> {
+  mode: "create" | "edit";
   columns: ModalCreateEditColumnsSchema<T>[];
   onClose: () => void;
   onSubmit: (values: any) => void;
@@ -53,9 +55,11 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
   onClose,
   onSubmit,
   title,
+  mode,
   formData = false,
 }: ModalCreate<T>) => {
 
+  if (mode === "edit") columns = columns.filter((column) => !column.disableEdit);
   const { register, unregister, handleSubmit, formState: { errors }, control } = useForm({
     // resolver: zodResolver(zodValidationSchema),
   });

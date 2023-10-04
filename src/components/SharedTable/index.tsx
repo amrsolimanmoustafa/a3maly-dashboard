@@ -444,6 +444,7 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
 
       <ModalCreate<T>
         title="Add"
+        mode="create"
         columns={modalCreateColumns ?? []}
         open={isModalCreateOpen}
         onClose={() => setIsModalCreateOpen(false)}
@@ -453,6 +454,7 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
 
       <ModalCreate<T>
         title="Edit"
+        mode="edit"
         columns={
           modalCreateColumns?.map((column) => ({
             ...column,

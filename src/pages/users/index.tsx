@@ -89,6 +89,7 @@ const Page = () => {
                   header: "password",
                   accessorKey: "password",
                   formElementType: "password",
+                  disableEdit: true,
                 },
                 {
                   header: "Email",
