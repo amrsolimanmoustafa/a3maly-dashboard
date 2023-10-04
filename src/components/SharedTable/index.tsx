@@ -53,7 +53,7 @@ type SharedTableProps<T extends TSharedTableData> = Omit<MaterialReactTableProps
     customColumnOrder?: MRT_ColumnDef<T>["accessorKey"][];
     columnVisibility?: Partial<Record<NonNullable<MRT_ColumnDef<T>["accessorKey"]>, boolean>>;
     actions?: Partial<MRT_ColumnDef<T>>[];
-    modalCreateColumns?: keyof ModalCreateEditColumnsSchema<T>[];
+    modalCreateColumns?: ModalCreateEditColumnsSchema<T>[];
     // modalCreateEditColumns?: ModalCreateEditColumnsSchema<T>[];
     zodValidationSchema?: ZodSchema<T>;
     enableAddNewRow?: boolean;

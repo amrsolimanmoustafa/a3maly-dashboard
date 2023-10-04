@@ -78,6 +78,7 @@ const Page = () => {
                   accessorKey: "avatar",
                   formElementType: "image",
                   imageBlob: true,
+                  optional: true,
                 },
                 {
                   header: "Name",
@@ -92,12 +93,12 @@ const Page = () => {
                 {
                   header: "Email",
                   accessorKey: "email",
-                  formElementType: "text",
+                  formElementType: "email",
                 },
                 {
                   header: "Phone",
                   accessorKey: "phone",
-                  formElementType: "text",
+                  formElementType: "phone",
                 },
                 {
                   header: "Role",

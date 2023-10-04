@@ -20,15 +20,22 @@ import {
 import { DatePicker } from "@mui/x-date-pickers";
 import { MRT_ColumnDef } from "material-react-table";
 import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import ReactImageUploading from "react-images-uploading";
+import { MuiTelInput, matchIsValidTel } from "mui-tel-input";
+// @ts-ignore
+import CurrencyTextField from '@lupus-ai/mui-currency-textfield'
 
-export type ModalCreateEditColumnsSchema<T extends Record<string, any>> = MRT_ColumnDef<T> & {
-  formElementType?: "switch" | "date" | "text" | "image" | "autocomplete" | "password";
+export interface ModalCreateEditColumnsSchema<T extends Record<string, any>> {
+  accessorKey: MRT_ColumnDef<T["data"]>["accessorKey"];
+  formElementType?: "switch" | "date" | "text" | "image" | "autocomplete" | "password" | "phone" | "email" | "price";
   prevValue?: any;
   header: TranslatedWord;
   options?: Readonly<{ title: string; value: string } | undefined>[];
   multiple?: boolean;
   imageBlob?: boolean;
+  multiline?: boolean;
+  optional?: boolean;
 };
 
 interface ModalCreate<T extends Record<string, any> = {}> {
@@ -48,38 +55,51 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
   title,
   formData = false,
 }: ModalCreate<T>) => {
+
+  const { register, unregister, handleSubmit, formState: { errors }, control } = useForm({
+    // resolver: zodResolver(zodValidationSchema),
+  });
+
   const [values, setValues] = useState<any>({});
   const [images, setImages] = useState([]);
-  const handleSubmit = () => {
-    // validation logic
 
-    if (formData) {
-      const formData = new FormData();
-      for (const key in values) {
-        formData.append(key, values[key]);
-      }
-      onSubmit(formData);
-    } else {
-      onSubmit(values);
-    }
-    onClose();
-  };
-
+  // const onSubmit = () => {
+  //   // validation logic
+  //   if (columns.every((column) => column.optional || values[column.accessorKey])) {
+  //     if (formData) {
+  //       const formData = new FormData();
+  //       for (const key in values) {
+  //         formData.append(key, values[key]);
+  //       }
+  //       onSubmit(formData);
+  //     } else {
+  //       onSubmit(values);
+  //     }
+  //
+  //     onClose();
+  //   }
+  //
+  //   return false
+  // };
+  //
   useEffect(() => {
     return () => {
       setValues({});
       setImages([]);
+      columns.forEach((column) => {
+        unregister(column.accessorKey as string);
+      });
     };
   }, [open]);
 
   return (
     <Dialog fullWidth open={open}>
-      <DialogTitle marginY={1} textAlign="center">
-        {dictionary(title)}
-      </DialogTitle>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <DialogTitle marginY={1} textAlign="center">
+          {dictionary(title)}
+        </DialogTitle>
 
-      <DialogContent>
-        <form onSubmit={(e) => e.preventDefault()}>
+        <DialogContent>
           <Grid container spacing={2}>
             {columns.map((column) => {
               const { accessorKey, header } = column;
@@ -89,33 +109,46 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
                 <>
                   {column.formElementType === "autocomplete" && (
                     <Grid item xs={12} md={6}>
-                      <Autocomplete
-                        multiple={column.multiple ?? false}
-                        onChange={(e, value) =>
-                          setValues({
-                            ...values,
-                            [column.accessorKey as string]: convertFromAutoCompleteOptions(
-                              value as AutocompleteOption[],
-                            ),
-                          })
-                        }
-                        id="multiple-limit-tags"
-                        options={column.options ?? []}
-                        getOptionLabel={(option) => option?.title ?? ""}
-                        defaultValue={
-                          column.prevValue
-                            ? convertToAutocompleteValue(column.prevValue, column.multiple)
-                            : []
-                        }
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            label={dictionary(header)}
-                            placeholder={dictionary(header)}
+                      <Controller
+                        name={column.accessorKey as string}
+                        control={control}
+                        rules={{
+                          required: !column.optional,
+                        }}
+                        defaultValue={column?.prevValue}
+                        render={({ field, fieldState }) => (
+                          <Autocomplete
+                            multiple={column.multiple ?? false}
+                            onChange={(e, value) =>
+                              setValues({
+                                ...values,
+                                [column.accessorKey as string]: convertFromAutoCompleteOptions(
+                                  value as AutocompleteOption[],
+                                ),
+                              })
+                            }
+                            id="multiple-limit-tags"
+                            options={column.options ?? []}
+                            getOptionLabel={(option) => option?.title ?? ""}
+                            defaultValue={
+                              column.prevValue
+                                ? convertToAutocompleteValue(column.prevValue, column.multiple)
+                                : []
+                            }
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                label={dictionary(header)}
+                                placeholder={dictionary(header)}
+                                required={!column.optional}
+                                {...register(column.accessorKey as string)}
+                              />
+                            )}
                           />
                         )}
                       />
                     </Grid>
+
                   )}
                   {column.formElementType === "switch" && (
                     <>
@@ -140,19 +173,111 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
                   )}
                   {(column.formElementType === "text" || column.formElementType === "password") && (
                     <Grid item xs={12} md={6}>
-                      <TextField
-                        fullWidth
-                        type={column.formElementType}
-                        key={column!.accessorKey as string}
-                        label={dictionary(column.header)}
-                        name={column!.accessorKey as string}
+                      <Controller
+                        name={column.accessorKey as string}
+                        control={control}
+                        rules={{
+                          required: !column.optional,
+                          minLength: 8,
+                          maxLength: column.formElementType === "password" ? 32 : undefined,
+                        }}
                         defaultValue={column?.prevValue}
-                        onChange={(e) =>
-                          setValues({
-                            ...values,
-                            [e.target.name]: e.target.value,
-                          })
-                        }
+                        render={({ field, fieldState }) => (
+                          <TextField
+                            {...field}
+                            fullWidth
+                            error={fieldState.invalid}
+                            helperText={
+                              fieldState.invalid
+                                ? dictionary("Minimum 8 characters")
+                                : ""
+                            }
+                            required={!column.optional}
+                            type={column.formElementType}
+                            key={column!.accessorKey as string}
+                            label={dictionary(column.header)}
+                            defaultValue={column?.prevValue}
+                            multiline={column.multiline}
+                            minRows={3}
+                          />
+                        )}
+                      />
+
+                    </Grid>
+                  )}
+                  {(column.formElementType === "phone") && (
+                    <Grid item xs={12} md={6}>
+                      <Controller
+                        name={column.accessorKey as string}
+                        control={control}
+                        rules={{
+                          validate: matchIsValidTel,
+                          required: !column.optional,
+                        }}
+                        defaultValue={column?.prevValue}
+                        render={({ field, fieldState }) => (
+                          <MuiTelInput
+                            {...field}
+                            defaultCountry="SA"
+                            helperText={fieldState.invalid ? dictionary("Telephone is invalid") : ""}
+                            error={fieldState.invalid}
+                            label={dictionary(column.header)}
+                            required={!column.optional}
+                            fullWidth
+                          />
+                        )}
+                      />
+
+                    </Grid>
+                  )}
+                  {column.formElementType === "email" && (
+                    <Grid item xs={12} md={6}>
+                      <Controller
+                        name={column.accessorKey as string}
+                        control={control}
+                        rules={{
+                          required: !column.optional,
+                          pattern: {
+                            value: /\S+@\S+\.\S+/,
+                            message: dictionary("Email is invalid"),
+                          },
+                        }}
+                        defaultValue={column?.prevValue}
+                        render={({ field, fieldState }) => (
+                          <TextField
+                            {...field}
+                            helperText={fieldState.invalid ? dictionary("Email is invalid") : ""}
+                            error={fieldState.invalid}
+                            label={dictionary(column.header)}
+                            required={!column.optional}
+                            fullWidth
+                          />
+                        )}
+                      />
+                    </Grid>
+                  )}
+                  {column.formElementType === "price" && (
+                    <Grid item xs={12} md={6}>
+                      <Controller
+                        name={column.accessorKey as string}
+                        control={control}
+                        rules={{
+                          required: !column.optional,
+                        }}
+                        defaultValue={column?.prevValue}
+                        render={({ field, fieldState }) => (
+                          <CurrencyTextField
+                            {...field}
+                            variant="outlined"
+                            currencySymbol="SAR"
+                            outputFormat="string"
+                            decimalCharacter="."
+                            digitGroupSeparator=","
+                            label={dictionary(column.header)}
+                            required={!column.optional}
+                            fullWidth
+                          />
+                        )}
                       />
                     </Grid>
                   )}
@@ -179,6 +304,7 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
                         dragProps,
                       }) => (
                         <ImageUploadComponent
+                          aria-required={!column.optional}
                           label={column.header}
                           name={column!.accessorKey as string}
                           key={column!.accessorKey as string}
@@ -196,16 +322,16 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
               );
             })}
           </Grid>
-        </form>
-      </DialogContent>
+        </DialogContent>
 
-      <DialogActions sx={{ p: "1.25rem" }}>
-        <Button color="primary" onClick={handleSubmit} variant="contained">
-          {dictionary("Add")}
-        </Button>
-        <Button onClick={onClose}>{dictionary("Cancel")}</Button>
-      </DialogActions>
-    </Dialog>
+        <DialogActions sx={{ p: "1.25rem" }}>
+          <Button color="primary" type="submit" variant="contained">
+            {dictionary("Add")}
+          </Button>
+          <Button type="reset" onClick={onClose}>{dictionary("Cancel")}</Button>
+        </DialogActions>
+      </form>
+    </Dialog >
   );
 };
 

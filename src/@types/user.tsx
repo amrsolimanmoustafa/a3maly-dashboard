@@ -8,7 +8,7 @@ export enum RolesEnum {
   // USER = "USER"
 }
 
-export const UserZodSchema = z.object({
+export const userZodSchema = z.object({
   id: z.number(),
   name: z.string(),
   email: z.string().email(),
@@ -21,13 +21,13 @@ export const UserZodSchema = z.object({
   updated_at: z.string(),
 });
 
-export type User = z.infer<typeof UserZodSchema>;
+export type User = z.infer<typeof userZodSchema>;
 
 export type UserContextType = {
   user: User[];
 };
 
 export const UsersTableApiResponseZodSchema =
-  makeTableApiResponseZodSchema(UserZodSchema)
+  makeTableApiResponseZodSchema(userZodSchema)
 
 export type UsersTableApiResponse = z.infer<typeof UsersTableApiResponseZodSchema>;

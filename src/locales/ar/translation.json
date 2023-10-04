@@ -369,5 +369,14 @@
   "Drivers Balance": "حسابات السائقين",
   "Roles": "الأدوار",
   "Is active": "الحاله",
-  "Role": "الدور"
+  "Role": "الدور",
+  "Title ar": "الاسم بالعربيه",
+  "Title en": "الاسم بالانجليزيه",
+  "Price monthly": "السعر شهريا",
+  "Price annually": "السعر سنويا",
+  "Features ar": "الخصائص بالعربيه",
+  "Features en": "الخصائص بالانجليزيه",
+  "Telephone is invalid": "الهاتف غير صالح",
+  "Email is invalid": "البريد الإلكتروني غير صالح",
+  "Minimum 8 characters": "الحد الأدنى 8 أحرف"
 }
