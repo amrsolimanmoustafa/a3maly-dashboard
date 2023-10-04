@@ -45,7 +45,10 @@ const Page = () => {
                 return axiosClient.post(`${endpoint}/store`, values);
               }}
               editRowMutationFn={({ id, newData }) => {
-                return axiosClient.patch(`${endpoint}/${id}`, newData);
+                return axiosClient.patch(`${endpoint}/update/${id}`, {
+                  ...newData,
+                  _method: "PATCH",
+                });
               }}
               deleteRowMutationFn={(itemToDelete) => {
                 return axiosClient.delete(`${endpoint}/delete/${itemToDelete.id}`);

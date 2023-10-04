@@ -5,8 +5,7 @@ import UserContextProvider from "@/contexts/user-context";
 import GroupContextProvider from "@/contexts/group-context";
 import { dictionary } from "@/configs/i18next";
 import SharedTable from "@/components/SharedTable";
-import users from "../../../public/endpoints/users.json";
-import { User, UsersTableApiResponse, UsersTableApiResponseZodSchema } from "@/@types/user";
+import { UsersTableApiResponse, UsersTableApiResponseZodSchema } from "@/@types/user";
 import axiosClient from "@/configs/axios-client";
 import { safeApiCall } from "@/utils";
 
@@ -49,7 +48,10 @@ const Page = () => {
                 return axiosClient.post(`${endpoint}/store`, values);
               }}
               editRowMutationFn={({ id, newData }) => {
-                return axiosClient.patch(`${endpoint}/${id}`, newData);
+                return axiosClient.patch(`${endpoint}/update/${id}`, {
+                  ...newData,
+                  _method: "PATCH",
+                });
               }}
               deleteRowMutationFn={(itemToDelete) => {
                 return axiosClient.delete(`${endpoint}/delete/${itemToDelete.id}`);
