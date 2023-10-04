@@ -8,6 +8,7 @@ import SharedTable from "@/components/SharedTable";
 import { UsersTableApiResponse, UsersTableApiResponseZodSchema } from "@/@types/user";
 import axiosClient from "@/configs/axios-client";
 import { safeApiCall } from "@/utils";
+import { toFormData } from "axios";
 
 const Page = () => {
   const endpoint = "/users";
@@ -45,12 +46,14 @@ const Page = () => {
                 })
               }
               addRowMutationFn={(values) => {
-                return axiosClient.post(`${endpoint}/store`, values);
+                return axiosClient.post(`${endpoint}/store`, toFormData(values));
               }}
               editRowMutationFn={({ id, newData }) => {
                 return axiosClient.patch(`${endpoint}/update/${id}`, {
-                  ...newData,
-                  _method: "PATCH",
+                  ...toFormData({
+                    ...newData,
+                    _method: "PATCH",
+                  }),
                 });
               }}
               deleteRowMutationFn={(itemToDelete) => {
@@ -61,8 +64,6 @@ const Page = () => {
               pageSizeParam="paginate"
               enableRowActions
               enableAddNewRow
-              modalCreateReturnFormData
-              modalEditReturnFormData
               easyColumns={[
                 "id",
                 "avatar",

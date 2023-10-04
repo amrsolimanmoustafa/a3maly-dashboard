@@ -67,25 +67,6 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
   const [values, setValues] = useState<any>({});
   const [images, setImages] = useState([]);
 
-  // const onSubmit = () => {
-  //   // validation logic
-  //   if (columns.every((column) => column.optional || values[column.accessorKey])) {
-  //     if (formData) {
-  //       const formData = new FormData();
-  //       for (const key in values) {
-  //         formData.append(key, values[key]);
-  //       }
-  //       onSubmit(formData);
-  //     } else {
-  //       onSubmit(values);
-  //     }
-  //
-  //     onClose();
-  //   }
-  //
-  //   return false
-  // };
-  //
   useEffect(() => {
     return () => {
       setValues({});
@@ -223,6 +204,7 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
                           <MuiTelInput
                             {...field}
                             defaultCountry="SA"
+
                             helperText={fieldState.invalid ? dictionary("Telephone is invalid") : ""}
                             error={fieldState.invalid}
                             label={dictionary(column.header)}
@@ -286,41 +268,51 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
                     </Grid>
                   )}
                   {column.formElementType === "image" && (
-                    <ReactImageUploading
-                      value={images}
-                      // maxNumber={10}
-                      dataURLKey="data_url"
-                      onChange={(imageList, addUpdateIndex) => {
-                        setImages(imageList as any);
-                        setValues({
-                          ...values,
-                          [column!.accessorKey as string]: column.imageBlob ? dataURItoBlob(imageList[0].data_url) : imageList[0].data_url,
-                        });
+                    <Controller
+                      name={column.accessorKey as string}
+                      control={control}
+                      rules={{
+                        required: !column.optional,
                       }}
-                    >
-                      {({
-                        imageList,
-                        onImageUpload,
-                        onImageRemoveAll,
-                        onImageUpdate,
-                        onImageRemove,
-                        isDragging,
-                        dragProps,
-                      }) => (
-                        <ImageUploadComponent
-                          aria-required={!column.optional}
-                          label={column.header}
-                          name={column!.accessorKey as string}
-                          key={column!.accessorKey as string}
-                          onClick={onImageUpload}
-                          onChange={onImageUpload}
-                          {...dragProps}
-                          isDragging={isDragging}
-                          previewImg={imageList}
-                          prevImageSrc={column?.prevValue}
-                        />
-                      )}
-                    </ReactImageUploading>
+                      defaultValue={column?.prevValue}
+                      render={({ field, fieldState }) => (
+                        <ReactImageUploading
+                          value={images}
+                          // maxNumber={10}
+                          dataURLKey="data_url"
+                          onChange={async (imageList, addUpdateIndex) => {
+                            setImages(imageList as any);
+                            const blob = await (await fetch(imageList[0].data_url)).blob();
+                            const file = new File([blob], "avatar.png", { type: blob.type });
+                            field.onChange(column.imageBlob ? file : imageList[0].data_url);
+                          }}
+                        >
+                          {({
+                            imageList,
+                            onImageUpload,
+                            onImageRemoveAll,
+                            onImageUpdate,
+                            onImageRemove,
+                            isDragging,
+                            dragProps,
+                          }) => (
+                            <ImageUploadComponent
+                              aria-required={!column.optional}
+                              label={column.header}
+                              name={column!.accessorKey as string}
+                              key={column!.accessorKey as string}
+                              onClick={onImageUpload}
+                              onChange={onImageUpload}
+                              {...dragProps}
+                              isDragging={isDragging}
+                              previewImg={imageList}
+                              prevImageSrc={column?.prevValue}
+                            />
+                          )}
+                        </ReactImageUploading>
+                      )
+                      }
+                    />
                   )}
                 </>
               );

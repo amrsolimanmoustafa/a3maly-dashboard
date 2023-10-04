@@ -7,6 +7,7 @@ import SharedTable from '@/components/SharedTable'
 import axiosClient from '@/configs/axios-client'
 import { PlanTableApiResponse, PlanTableApiResponseZodSchema } from '@/@types/plan'
 import { safeApiCall } from '@/utils'
+import { toFormData } from 'axios'
 
 const Page = () => {
   const endpoint = "/plans";
@@ -42,12 +43,14 @@ const Page = () => {
                 })
               }
               addRowMutationFn={(values) => {
-                return axiosClient.post(`${endpoint}/store`, values);
+                return axiosClient.post(`${endpoint}/store`, toFormData(values));
               }}
               editRowMutationFn={({ id, newData }) => {
                 return axiosClient.patch(`${endpoint}/update/${id}`, {
-                  ...newData,
-                  _method: "PATCH",
+                  ...toFormData({
+                    ...newData,
+                    _method: "PATCH",
+                  }),
                 });
               }}
               deleteRowMutationFn={(itemToDelete) => {
@@ -58,8 +61,6 @@ const Page = () => {
               pageSizeParam="paginate"
               enableRowActions
               enableAddNewRow
-              modalCreateReturnFormData
-              modalEditReturnFormData
               easyColumns={[
                 "id",
                 "title_ar",

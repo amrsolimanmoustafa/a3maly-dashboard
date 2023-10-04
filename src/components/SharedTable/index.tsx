@@ -61,8 +61,6 @@ type SharedTableProps<T extends TSharedTableData> = Omit<MaterialReactTableProps
     previewData?: {
       data: any[];
     };
-    modalCreateReturnFormData?: boolean;
-    modalEditReturnFormData?: boolean;
     getDataFn: ({
       url: string,
       functionToPassUrl: (url: string) => Promise<any>
@@ -449,7 +447,6 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
         open={isModalCreateOpen}
         onClose={() => setIsModalCreateOpen(false)}
         onSubmit={handleCreateNewRow}
-        formData={props?.modalCreateReturnFormData ?? false}
       />
 
       <ModalCreate<T>
@@ -464,7 +461,6 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
         open={isModalEditOpen}
         onClose={() => setIsModalEditOpen(false)}
         onSubmit={handleEditRow}
-        formData={props?.modalEditReturnFormData ?? false}
       />
     </>
   );
