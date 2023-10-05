@@ -193,14 +193,7 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
   });
 
   const editRow = useMutation({
-    mutationFn: props?.editRowMutationFn ?? (({ id, newData }: {
-      id: string,
-      newData: Record<string, any>
-    }) => {
-      const editURL = new URL(endpoint);
-      editURL.search = "";
-      return axiosClient.patch(`${editURL.toString()}${id}`, newData);
-    }),
+    mutationFn: props?.editRowMutationFn,
     onMutate: async () => {
       await queryClient.cancelQueries(tableIdentifier);
     },

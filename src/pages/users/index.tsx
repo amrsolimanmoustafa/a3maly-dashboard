@@ -49,12 +49,12 @@ const Page = () => {
                 return axiosClient.post(`${endpoint}/store`, toFormData(values));
               }}
               editRowMutationFn={({ id, newData }) => {
-                return axiosClient.post(`${endpoint}/update/${id}`, {
-                  ...toFormData({
+                return axiosClient.post(`${endpoint}/update/${id}`,
+                  toFormData({
                     ...newData,
                     _method: "PATCH",
                   }),
-                });
+                );
               }}
               deleteRowMutationFn={(itemToDelete) => {
                 return axiosClient.delete(`${endpoint}/delete/${itemToDelete.id}`);

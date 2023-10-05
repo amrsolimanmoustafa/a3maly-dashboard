@@ -66,6 +66,13 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
 
   const [values, setValues] = useState<any>({});
   const [images, setImages] = useState([]);
+  const [prevValues] = useState<Record<string, any>>((() => {
+    const obj: Record<string, any> = {};
+    columns.forEach((column) => {
+      obj[column.accessorKey as string] = column.prevValue;
+    });
+    return obj;
+  }));
 
   useEffect(() => {
     return () => {
@@ -77,9 +84,27 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
     };
   }, [open]);
 
+  const handleFormSubmit = (data: any) => {
+    if (mode === 'create') onSubmit(data);
+    else {
+      const differentValues = getDifferentValues(prevValues, data);
+      onSubmit(differentValues);
+    }
+  };
+
+  function getDifferentValues(obj1: Record<string, any>, obj2: Record<string, any>): Record<string, any> {
+    const result: Record<string, any> = {};
+    for (const key in obj1) {
+      if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key) && obj1[key] !== obj2[key]) {
+        result[key] = obj2[key];
+      }
+    }
+    return result;
+  }
+
   return (
     <Dialog fullWidth open={open}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(handleFormSubmit)}>
         <DialogTitle marginY={1} textAlign="center">
           {dictionary(title)}
         </DialogTitle>
