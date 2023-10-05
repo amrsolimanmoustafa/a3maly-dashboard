@@ -49,7 +49,7 @@ const Page = () => {
                 return axiosClient.post(`${endpoint}/store`, toFormData(values));
               }}
               editRowMutationFn={({ id, newData }) => {
-                return axiosClient.patch(`${endpoint}/update/${id}`, {
+                return axiosClient.post(`${endpoint}/update/${id}`, {
                   ...toFormData({
                     ...newData,
                     _method: "PATCH",
