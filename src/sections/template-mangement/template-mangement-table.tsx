@@ -21,7 +21,6 @@ import { useTranslation } from "react-i18next";
 import { Delete, Edit } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import { WordMangementTable } from '@/sections/department-mangement/word-mangement-table';
-import FieldsForm from '@/@forms/fields';
 import { useRouter } from 'next/router';
 
 export const TemplateMangementTable = (props: any) => {
@@ -48,12 +47,6 @@ export const TemplateMangementTable = (props: any) => {
 
   const selectedSome = selected.length > 0 && selected.length < items.length;
   const selectedAll = items ? items.length > 0 && selected.length === items.length : false;
-
-  const handleFields = (id: any) => {
-    router.push(`/templates-management/fields/${id}`);
-  }
-
-
   return (
     <Card>
       <Scrollbar>
@@ -78,7 +71,6 @@ export const TemplateMangementTable = (props: any) => {
                 <TableCell>{t("Department name")}</TableCell>
                 <TableCell>{t("number of used word")}</TableCell>
                 <TableCell>{t("GPT Model")}</TableCell>
-                <TableCell>{t("Fields")}</TableCell>
                 <TableCell>{t("Template state")}</TableCell>
                 <TableCell sx={{textAlign:"center"}}>{t("Actions")}</TableCell>
               </TableRow>
@@ -114,7 +106,6 @@ export const TemplateMangementTable = (props: any) => {
                     <TableCell>{template?.templateName}</TableCell>
                     <TableCell>{template?.wordUsed}</TableCell>
                     <TableCell>{template?.gptModel}</TableCell>
-                    <TableCell><Button onClick={() => handleFields(template?.id)}>Fields</Button></TableCell>
                     <TableCell>
                       <Switch
                         checked={template?.state}
