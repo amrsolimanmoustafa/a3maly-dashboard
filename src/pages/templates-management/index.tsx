@@ -4,13 +4,36 @@ import { DashboardLayout } from "../../layouts/dashboard/layout";
 import GroupContextProvider from "@/contexts/group-context";
 import { dictionary } from "@/configs/i18next";
 import SharedTable from "@/components/SharedTable";
-import users from "../../../public/endpoints/users.json";
-import { Template, TemplatesTableZodSchema } from "@/@types/template";
+import { TemplatesTableZodSchema, TemplateTableApiResponse } from "@/@types/template";
+import { CategoriesTableApiResponse, categoryZodSchema } from "@/@types/category";
 import axiosClient from "@/configs/axios-client";
+import { toFormData } from 'axios'
+import { safeApiCall } from '@/utils'
 import TemplatesContextProvider from "@/contexts/template-context";
+import { useEffect, useState } from "react";
 
 const Page = () => {
-  const endpoint = "https://google.com";
+  const endpoint = "/templates";
+  const getDataFn = async (endpointWithPaginationParams: string) => {
+    const res = await safeApiCall<TemplateTableApiResponse>({
+      axiosFn: () => axiosClient.get(endpointWithPaginationParams),
+      validationSchema: TemplatesTableZodSchema,
+    });
+    return res.data;
+  };
+  const [categories, setCategories] = useState<any[]>([]);
+  const getCategoriesFn = async () => {
+    const res = await safeApiCall<CategoriesTableApiResponse>({
+      axiosFn: () => axiosClient.get('/categories/index'),
+      validationSchema: categoryZodSchema,
+    });
+    setCategories(res.data.data.map(r => {return {title: `${r.title_en} - ${r.title_ar}`, value: r.id}}));
+  };
+  useEffect(() => {
+    (async () => {
+      await getCategoriesFn();
+    })();
+  }, []);
   return (
     <>
       <Head>
@@ -28,33 +51,46 @@ const Page = () => {
         <Container maxWidth="xl">
           <Stack spacing={3}>
             <Typography variant="h4">{dictionary("Templates")}</Typography>
-            <SharedTable<Template>
-              previewData={users as any}
+            <SharedTable<TemplateTableApiResponse["data"]>
               endpoint={endpoint}
+              getDataFn={
+                ({
+                  url: endpoint + "/index",
+                  functionToPassUrl: getDataFn,
+                })
+              }
               addRowMutationFn={(values) => {
                 return axiosClient.post(endpoint, values);
               }}
               editRowMutationFn={({ id, newData }) => {
-                return axiosClient.patch(`${endpoint}${id}`, newData);
+                return axiosClient.post(`${endpoint}/update/${id}`, {
+                  ...toFormData({
+                    ...newData,
+                    _method: "PATCH",
+                  }),
+                });
               }}
               deleteRowMutationFn={(id) => {
                 return axiosClient.delete(`${endpoint}${id}`);
               }}
+              identifyItemToBeDeletedBy="id"
+              pageIndexParam="page"
+              pageSizeParam="paginate"
               enableRowActions
               enableAddNewRow
-              modalCreateReturnFormData
               easyColumns={[
                 "id",
-                "name",
-                "departmentName",
+                "title_en",
+                "title_ar",
+                "category_id",
                 "is_active",
                 "created_at",
                 "updated_at",
               ]}
               modalCreateColumns={[
                 {
-                  header: "avatar",
-                  accessorKey: "avatar",
+                  header: "Icon",
+                  accessorKey: "icon",
                   formElementType: "image",
                   imageBlob: true,
                 },
@@ -64,29 +100,10 @@ const Page = () => {
                   formElementType: "text",
                 },
                 {
-                  header: "Email",
-                  accessorKey: "email",
-                  formElementType: "text",
-                },
-                {
-                  header: "Phone",
-                  accessorKey: "phone",
-                  formElementType: "text",
-                },
-                {
-                  header: "Roles",
-                  accessorKey: "role",
+                  header: "Category",
+                  accessorKey: "icon",
                   formElementType: "autocomplete",
-                  options: [
-                    {
-                      title: "Admin",
-                      value: "admin",
-                    },
-                    {
-                      title: "User",
-                      value: "user",
-                    },
-                  ],
+                  options: categories as Readonly<{ title: string; value: string; } | undefined>[]
                 },
                 {
                   header: "Is active",
