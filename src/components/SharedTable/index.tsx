@@ -435,7 +435,7 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
 
       <ModalCreate<T>
         title="Add"
-        mode="create"
+        mode="add"
         columns={modalCreateColumns ?? []}
         open={isModalCreateOpen}
         onClose={() => setIsModalCreateOpen(false)}

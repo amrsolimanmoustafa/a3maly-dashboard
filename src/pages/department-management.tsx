@@ -4,19 +4,18 @@ import UserContextProvider from "@/contexts/user-context";
 import GroupContextProvider from "@/contexts/group-context";
 import { dictionary } from "@/configs/i18next";
 import SharedTable from "@/components/SharedTable";
-import { UsersTableApiResponse, UsersTableApiResponseZodSchema } from "@/@types/user";
 import axiosClient from "@/configs/axios-client";
 import { safeApiCall } from "@/utils";
 import { toFormData } from "axios";
 import { DashboardLayout } from "@/layouts/dashboard/layout";
-import { CategoriesTableApiResponse } from "@/@types/category";
+import { CategoriesTableApiResponse, categoriesTableApiResponseZodSchema } from "@/@types/category";
 
 const Page = () => {
   const endpoint = "/categories";
   const getDataFn = async (endpointWithPaginationParams: string) => {
-    const res = await safeApiCall<UsersTableApiResponse>({
+    const res = await safeApiCall<CategoriesTableApiResponse>({
       axiosFn: () => axiosClient.get(endpointWithPaginationParams),
-      validationSchema: UsersTableApiResponseZodSchema,
+      validationSchema: categoriesTableApiResponseZodSchema,
     });
     return res.data;
   };

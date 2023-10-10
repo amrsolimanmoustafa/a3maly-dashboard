@@ -40,7 +40,7 @@ export interface ModalCreateEditColumnsSchema<T extends Record<string, any>> {
 };
 
 interface ModalCreate<T extends Record<string, any> = {}> {
-  mode: "create" | "edit";
+  mode: "add" | "edit";
   columns: ModalCreateEditColumnsSchema<T>[];
   onClose: () => void;
   onSubmit: (values: any) => void;
@@ -66,15 +66,14 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
 
   const [values, setValues] = useState<any>({});
   const [images, setImages] = useState([]);
-  const [prevValues] = useState<Record<string, any>>((() => {
-    const obj: Record<string, any> = {};
-    columns.forEach((column) => {
-      obj[column.accessorKey as string] = column.prevValue;
-    });
-    return obj;
-  }));
+  const [prevValues, setPrevValues] = useState<Record<string, any>>({});
 
   useEffect(() => {
+    if (mode === "edit") setPrevValues(columns.reduce((acc, column) => {
+      acc[column.accessorKey as string] = column.prevValue;
+      return acc;
+    }, {} as Record<string, any>));
+
     return () => {
       setValues({});
       setImages([]);
@@ -85,7 +84,7 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
   }, [open]);
 
   const handleFormSubmit = (data: any) => {
-    if (mode === 'create') onSubmit(data);
+    if (mode === 'add') onSubmit(data);
     else {
       const differentValues = getDifferentValues(prevValues, data);
       onSubmit(differentValues);
@@ -158,26 +157,28 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
                         )}
                       />
                     </Grid>
-
                   )}
                   {column.formElementType === "switch" && (
                     <>
-                      <Grid item xs={12}>
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
-                          <Typography variant="body2">{dictionary(header)}</Typography>
-                          <Switch
-                            defaultChecked={column?.prevValue}
-                            key={column!.accessorKey as string}
-                            name={column!.accessorKey as string}
-                            onChange={(e) =>
-                              setValues({
-                                ...values,
-                                [e.target.name]: e.target.checked ? 1 : 0,
-                              })
-                            }
-                            inputProps={{ "aria-label": "controlled" }}
-                          />
-                        </Box>
+                      <Grid item xs={12} md={6}>
+                        <Controller
+                          name={column.accessorKey as string}
+                          control={control}
+                          key={column!.accessorKey as string}
+                          render={({ field, fieldState }) => (
+                            <Box sx={{ display: "flex", alignItems: "center" }}>
+                              <Typography variant="body2">{dictionary(header)}</Typography>
+                              <Switch
+                                defaultChecked={column?.prevValue}
+                                inputProps={{ "aria-label": "controlled" }}
+                                {...field}
+                                onChange={(e) => {
+                                  field.onChange(e.target.checked ? 1 : 0); // Handle onChange separately
+                                }}
+                              />
+                            </Box>
+                          )}
+                        />
                       </Grid>
                     </>
                   )}

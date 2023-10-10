@@ -9,11 +9,12 @@ import { UsersTableApiResponse, UsersTableApiResponseZodSchema } from "@/@types/
 import axiosClient from "@/configs/axios-client";
 import { safeApiCall } from "@/utils";
 import { toFormData } from "axios";
+import { CategoriesTableApiResponse } from "@/@types/category";
 
 const Page = () => {
   const endpoint = "/users";
   const getDataFn = async (endpointWithPaginationParams: string) => {
-    const res = await safeApiCall<UsersTableApiResponse>({
+    const res = await safeApiCall<CategoriesTableApiResponse>({
       axiosFn: () => axiosClient.get(endpointWithPaginationParams),
       validationSchema: UsersTableApiResponseZodSchema,
     });
