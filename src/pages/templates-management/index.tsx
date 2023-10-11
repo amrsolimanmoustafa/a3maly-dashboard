@@ -21,13 +21,10 @@ const Page = () => {
     });
     return res.data;
   };
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<Readonly<{ title: string; value: string; } | undefined>[]>([]);
   const getCategoriesFn = async () => {
-    const res = await safeApiCall<CategoriesTableApiResponse>({
-      axiosFn: () => axiosClient.get('/categories/index'),
-      validationSchema: categoryZodSchema,
-    });
-    setCategories(res.data.data.map(r => {return {title: `${r.title_en} - ${r.title_ar}`, value: r.id}}));
+    const res = await axiosClient.get('/categories/index')
+    setCategories(_ => res.data.data.map((r: any) => {return {title: `${r.title_en} - ${r.title_ar}`, value: r.id}}));
   };
   useEffect(() => {
     (async () => {
@@ -103,12 +100,24 @@ const Page = () => {
                   header: "Category",
                   accessorKey: "icon",
                   formElementType: "autocomplete",
-                  options: categories as Readonly<{ title: string; value: string; } | undefined>[]
+                  options: categories
                 },
                 {
                   header: "Is active",
                   accessorKey: "is_active",
                   formElementType: "switch",
+                },
+                {
+                  header: "Inputs",
+                  accessorKey: "attributes",
+                  formElementType: "form",
+                  formInputs: [
+                    {
+                      header: "Is active",
+                      accessorKey: "is_active",
+                      formElementType: "switch",
+                    },
+                  ]
                 },
               ]}
               initialState={{
