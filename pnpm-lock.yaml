@@ -38,9 +38,6 @@ dependencies:
   '@react-google-maps/api':
     specifier: ^2.18.1
     version: 2.19.2(react-dom@18.2.0)(react@18.2.0)
-  '@tanstack/react-query':
-    specifier: ^4.35.3
-    version: 4.35.7(react-dom@18.2.0)(react@18.2.0)
   '@types/jest':
     specifier: ^29.4.0
     version: 29.5.5
@@ -68,9 +65,6 @@ dependencies:
   js-file-downloader:
     specifier: ^1.1.25
     version: 1.1.25
-  material-react-table:
-    specifier: ^1.15.0
-    version: 1.15.0(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@mui/icons-material@5.14.11)(@mui/material@5.14.11)(react-dom@18.2.0)(react@18.2.0)
   mui-rte-fixed:
     specifier: ^2.1.0
     version: 2.1.2(@mui/icons-material@5.14.11)(@mui/material@5.14.11)(@mui/styles@5.14.11)(react-dom@18.2.0)(react@18.2.0)
@@ -98,9 +92,6 @@ dependencies:
   react-i18next:
     specifier: ^12.2.0
     version: 12.3.1(i18next@22.5.1)(react-dom@18.2.0)(react@18.2.0)
-  react-images-uploading:
-    specifier: ^3.1.7
-    version: 3.1.7(react-dom@18.2.0)(react@18.2.0)
   react-qr-code:
     specifier: ^2.0.11
     version: 2.0.12(react@18.2.0)
@@ -115,10 +106,10 @@ dependencies:
     version: 4.7.2
   stylis:
     specifier: ^4.1.3
-    version: 4.2.0
+    version: 4.3.0
   stylis-plugin-rtl:
     specifier: ^2.1.1
-    version: 2.1.1(stylis@4.2.0)
+    version: 2.1.1(stylis@4.3.0)
   typescript:
     specifier: ^4.9.5
     version: 4.9.5
@@ -129,11 +120,8 @@ dependencies:
     specifier: ^0.18.5
     version: 0.18.5
   yup:
-    specifier: ^1.3.2
-    version: 1.3.2
-  zod:
-    specifier: ^3.22.2
-    version: 3.22.2
+    specifier: 1.0.0
+    version: 1.0.0
 
 devDependencies:
   '@types/file-saver':
@@ -1065,65 +1053,6 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /@tanstack/match-sorter-utils@8.8.4:
-    resolution: {integrity: sha512-rKH8LjZiszWEvmi01NR72QWZ8m4xmXre0OOwlRGnjU01Eqz/QnN+cqpty2PJ0efHblq09+KilvyR7lsbzmXVEw==}
-    engines: {node: '>=12'}
-    dependencies:
-      remove-accents: 0.4.2
-    dev: false
-
-  /@tanstack/query-core@4.35.7:
-    resolution: {integrity: sha512-PgDJtX75ubFS0WCYFM7DqEoJ4QbxU3S5OH3gJSI40xr7UVVax3/J4CM3XUMOTs+EOT5YGEfssi3tfRVGte4DEw==}
-    dev: false
-
-  /@tanstack/react-query@4.35.7(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-0MankquP/6EOM2ATfEov6ViiKemey5uTbjGlFMX1xGotwNaqC76YKDMJdHumZupPbZcZPWAeoPGEHQmVKIKoOQ==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-    dependencies:
-      '@tanstack/query-core': 4.35.7
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      use-sync-external-store: 1.2.0(react@18.2.0)
-    dev: false
-
-  /@tanstack/react-table@8.10.3(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-Qya1cJ+91arAlW7IRDWksRDnYw28O446jJ/ljkRSc663EaftJoBCAU10M+VV1K6MpCBLrXq1BD5IQc1zj/ZEjA==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      react: '>=16'
-      react-dom: '>=16'
-    dependencies:
-      '@tanstack/table-core': 8.10.3
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-    dev: false
-
-  /@tanstack/react-virtual@3.0.0-beta.60(react@18.2.0):
-    resolution: {integrity: sha512-F0wL9+byp7lf/tH6U5LW0ZjBqs+hrMXJrj5xcIGcklI0pggvjzMNW9DdIBcyltPNr6hmHQ0wt8FDGe1n1ZAThA==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      '@tanstack/virtual-core': 3.0.0-beta.60
-      react: 18.2.0
-    dev: false
-
-  /@tanstack/table-core@8.10.3:
-    resolution: {integrity: sha512-hJ55YfJlWbfzRROfcyA/kC1aZr/shsLA8XNAwN8jXylhYWGLnPmiJJISrUfj4dMMWRiFi0xBlnlC7MLH+zSrcw==}
-    engines: {node: '>=12'}
-    dev: false
-
-  /@tanstack/virtual-core@3.0.0-beta.60:
-    resolution: {integrity: sha512-QlCdhsV1+JIf0c0U6ge6SQmpwsyAT0oQaOSZk50AtEeAyQl9tQrd6qCHAslxQpgphrfe945abvKG8uYvw3hIGA==}
-    dev: false
-
   /@types/draft-js@0.11.13:
     resolution: {integrity: sha512-4cMlNWoKwcRwkA+GtCD53u5Dj78n9Z8hScB5rZYKw4Q3UZxh0h1Fm4ezLgGjAHkhsdrviWQm3MPuUi/jLOuq8A==}
     dependencies:
@@ -1652,8 +1581,8 @@ packages:
     resolution: {integrity: sha512-ASFBup0Mz1uyiIjANan1jzLQami9z1PoYSZCiiYW2FczPbenXc45FZdBZLzOT+r6+iciuEModtmCti+hjaAk0A==}
     dev: false
 
-  /core-js@3.33.0:
-    resolution: {integrity: sha512-HoZr92+ZjFEKar5HS6MC776gYslNOKHt75mEBKWKnPeFDpZ6nH5OeF3S6HFT1mUAUZKrzkez05VboaX8myjSuw==}
+  /core-js@3.32.2:
+    resolution: {integrity: sha512-pxXSw1mYZPDGvTQqEc5vgIb83jGQKFGYWY76z4a7weZXUolw3G+OvpZqSRcfYOoOVUQJYEPsWeQK8pKEnUtWxQ==}
     requiresBuild: true
     dev: false
 
@@ -2312,7 +2241,7 @@ packages:
   /fbjs@2.0.0:
     resolution: {integrity: sha512-8XA8ny9ifxrAWlyhAbexXcs3rRMtxWcs3M0lctLfB49jRDHiaxj+Mo0XxbwE7nKZYzgCFoq64FS+WFd4IycPPQ==}
     dependencies:
-      core-js: 3.33.0
+      core-js: 3.32.2
       cross-fetch: 3.1.8
       fbjs-css-vars: 1.0.2
       loose-envify: 1.4.0
@@ -2578,11 +2507,6 @@ packages:
     engines: {node: '>= 0.4.0'}
     dependencies:
       function-bind: 1.1.1
-
-  /highlight-words@1.2.2:
-    resolution: {integrity: sha512-Mf4xfPXYm8Ay1wTibCrHpNWeR2nUMynMVFkXCi4mbl+TEgmNOe+I4hV7W3OCZcSvzGL6kupaqpfHOemliMTGxQ==}
-    engines: {node: '>= 16', npm: '>= 8'}
-    dev: false
 
   /hoist-non-react-statics@3.3.2:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
@@ -3093,29 +3017,6 @@ packages:
       yallist: 4.0.0
     dev: true
 
-  /material-react-table@1.15.0(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@mui/icons-material@5.14.11)(@mui/material@5.14.11)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-f59XPZ+jFErRAs3ym3cHsK6kBLCrYJGX6GoF473V1/gCpsNbkWEEdmCVMpB8ycOUNDEXtnRDMZzk3LjTMd6wpg==}
-    engines: {node: '>=14'}
-    peerDependencies:
-      '@emotion/react': '>=11'
-      '@emotion/styled': '>=11'
-      '@mui/icons-material': '>=5'
-      '@mui/material': '>=5'
-      react: '>=17.0'
-      react-dom: '>=17.0'
-    dependencies:
-      '@emotion/react': 11.11.1(@types/react@18.2.23)(react@18.2.0)
-      '@emotion/styled': 11.11.0(@emotion/react@11.11.1)(@types/react@18.2.23)(react@18.2.0)
-      '@mui/icons-material': 5.14.11(@mui/material@5.14.11)(@types/react@18.2.23)(react@18.2.0)
-      '@mui/material': 5.14.11(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@types/react@18.2.23)(react-dom@18.2.0)(react@18.2.0)
-      '@tanstack/match-sorter-utils': 8.8.4
-      '@tanstack/react-table': 8.10.3(react-dom@18.2.0)(react@18.2.0)
-      '@tanstack/react-virtual': 3.0.0-beta.60(react@18.2.0)
-      highlight-words: 1.2.2
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-    dev: false
-
   /merge2@1.4.1:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
@@ -3519,17 +3420,6 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /react-images-uploading@3.1.7(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-woET50eCezm645iIeP4gCoN7HjdR3T64UXC5l53yd+2vHFp+pwABH8Z/aAO5IXDeC1aP6doQ+K738L701zswAw==}
-    engines: {node: '>=8', npm: '>=5'}
-    peerDependencies:
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
-    dependencies:
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-    dev: false
-
   /react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
@@ -3628,10 +3518,6 @@ packages:
     resolution: {integrity: sha512-pq2bWo9mVD43nbts2wGv17XLiNLya+GklZ8kaDLV2Z08gDCsGpnKn9BFMepvWuHCbyVvY7J5o5+BVvoQbmlJLg==}
     engines: {node: '>=8'}
     dev: true
-
-  /remove-accents@0.4.2:
-    resolution: {integrity: sha512-7pXIJqJOq5tFgG1A2Zxti3Ht8jJF337m4sowbuHsW30ZnkQFnDzy9qBNhgzX8ZLW4+UBcXiiR7SwR6pokHsxiA==}
-    dev: false
 
   /resolve-from@4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
@@ -3921,13 +3807,13 @@ packages:
       react: 18.2.0
     dev: false
 
-  /stylis-plugin-rtl@2.1.1(stylis@4.2.0):
+  /stylis-plugin-rtl@2.1.1(stylis@4.3.0):
     resolution: {integrity: sha512-q6xIkri6fBufIO/sV55md2CbgS5c6gg9EhSVATtHHCdOnbN/jcI0u3lYhNVeuI65c4lQPo67g8xmq5jrREvzlg==}
     peerDependencies:
       stylis: 4.x
     dependencies:
       cssjanus: 2.1.0
-      stylis: 4.2.0
+      stylis: 4.3.0
     dev: false
 
   /stylis@4.1.3:
@@ -3936,6 +3822,10 @@ packages:
 
   /stylis@4.2.0:
     resolution: {integrity: sha512-Orov6g6BB1sDfYgzWfTHDOxamtX1bE/zo104Dh9e6fqJ3PooipYyfJ0pUmrZO2wAvO8YbEyeFrkV91XTsGMSrw==}
+    dev: false
+
+  /stylis@4.3.0:
+    resolution: {integrity: sha512-E87pIogpwUsUwXw7dNyU4QDjdgVMy52m+XEOPEKUn161cCzWjjhPSQhByfd1CcNvrOLnXQ6OnnZDwnJrz/Z4YQ==}
     dev: false
 
   /supercluster@8.0.1:
@@ -4175,14 +4065,6 @@ packages:
       react: 18.2.0
     dev: false
 
-  /use-sync-external-store@1.2.0(react@18.2.0):
-    resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      react: 18.2.0
-    dev: false
-
   /util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
     dev: false
@@ -4326,15 +4208,11 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /yup@1.3.2:
-    resolution: {integrity: sha512-6KCM971iQtJ+/KUaHdrhVr2LDkfhBtFPRnsG1P8F4q3uUVQ2RfEM9xekpha9aA4GXWJevjM10eDcPQ1FfWlmaQ==}
+  /yup@1.0.0:
+    resolution: {integrity: sha512-bRZIyMkoe212ahGJTE32cr2dLkJw53Va+Uw5mzsBKpcef9zCGQ23k/xtpQUfGwdWPKvCIlR8CzFwchs2rm2XpQ==}
     dependencies:
       property-expr: 2.0.5
       tiny-case: 1.0.3
       toposort: 2.0.2
       type-fest: 2.19.0
-    dev: false
-
-  /zod@3.22.2:
-    resolution: {integrity: sha512-wvWkphh5WQsJbVk1tbx1l1Ly4yg+XecD+Mq280uBGt9wa5BKSWf4Mhp6GmrkPixhMxmabYY7RbzlwVP32pbGCg==}
     dev: false
