@@ -84,6 +84,8 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
   }, [open]);
 
   const handleFormSubmit = (data: any) => {
+    console.log("data from handleFormSubmit", data);
+    console.log("values from handleFormSubmit", values);
     if (mode === 'add') onSubmit(data);
     else {
       const differentValues = getDifferentValues(prevValues, data);
@@ -113,7 +115,7 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
             {columns.map((column) => {
               const { accessorKey, header } = column;
               const value = values[accessorKey ?? ""];
-
+              console.log("value", value);
               return (
                 <>
                   {column.formElementType === "autocomplete" && (
@@ -121,36 +123,22 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
                       <Controller
                         name={column.accessorKey as string}
                         control={control}
-                        rules={{
-                          required: !column.optional,
-                        }}
-                        defaultValue={column?.prevValue}
-                        render={({ field, fieldState }) => (
+                        render={({ field }) => (
                           <Autocomplete
-                            multiple={column.multiple ?? false}
-                            onChange={(e, value) =>
-                              setValues({
-                                ...values,
-                                [column.accessorKey as string]: convertFromAutoCompleteOptions(
-                                  value as AutocompleteOption[],
-                                ),
-                              })
-                            }
-                            id="multiple-limit-tags"
-                            options={column.options ?? []}
-                            getOptionLabel={(option) => option?.title ?? ""}
-                            defaultValue={
-                              column.prevValue
-                                ? convertToAutocompleteValue(column.prevValue, column.multiple)
-                                : []
-                            }
+                            {...field}
+                            options={column.options || []}
+                            getOptionLabel={(option) => option.title}
+                            onChange={(_, value) => {
+                              field.onChange(value?.value || ""); // Set the 'value' on selection
+                            }}
+                            defaultValue={column.prevValue ?
+                              convertToAutocompleteValue(column.prevValue, column.multiple)
+                              : column.multiple ? [] : null}
+
                             renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                label={dictionary(header)}
-                                placeholder={dictionary(header)}
-                                required={!column.optional}
-                                {...register(column.accessorKey as string)}
+                              <TextField {...params}
+                                label={dictionary(column.header)}
+                                error={errors[column.accessorKey as string] ? true : false}
                               />
                             )}
                           />
@@ -165,11 +153,12 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
                           name={column.accessorKey as string}
                           control={control}
                           key={column!.accessorKey as string}
+                          defaultValue={column?.prevValue || 0}
                           render={({ field, fieldState }) => (
                             <Box sx={{ display: "flex", alignItems: "center" }}>
                               <Typography variant="body2">{dictionary(header)}</Typography>
                               <Switch
-                                defaultChecked={column?.prevValue}
+                                defaultChecked={column?.prevValue || false}
                                 inputProps={{ "aria-label": "controlled" }}
                                 {...field}
                                 onChange={(e) => {
@@ -592,7 +581,7 @@ function convertFromAutoCompleteOptions(
   if (Array.isArray(arg)) {
     return arg.map((option) => option.value); // Return the array of values
   } else {
-    return arg.value; // Return the value as a string
+    return arg.value // Return the value as a string
   }
 }
 
