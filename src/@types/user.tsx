@@ -1,5 +1,5 @@
 import { makeTableApiResponseZodSchema } from "@/components/SharedTable/utils";
-import { z, ZodNull } from "zod";
+import { z } from "zod";
 
 export enum RolesEnum {
   ADMIN = "ADMIN",
@@ -8,7 +8,7 @@ export enum RolesEnum {
   // USER = "USER"
 }
 
-export const userZodSchema = z.object({
+export const userZodScheme = z.object({
   id: z.number(),
   name: z.string(),
   email: z.string().email(),
@@ -21,13 +21,13 @@ export const userZodSchema = z.object({
   updated_at: z.string(),
 });
 
-export type User = z.infer<typeof userZodSchema>;
+export type User = z.infer<typeof userZodScheme>;
 
 export type UserContextType = {
   user: User[];
 };
 
 export const UsersTableApiResponseZodSchema =
-  makeTableApiResponseZodSchema(userZodSchema)
+  makeTableApiResponseZodSchema(userZodScheme)
 
 export type UsersTableApiResponse = z.infer<typeof UsersTableApiResponseZodSchema>;

@@ -1,99 +1,49 @@
-import { DashboardLayout } from '@/layouts/dashboard/layout';
-import Head from 'next/head';
-import { useTranslation } from 'react-i18next';
-import { Box, Button, Container, Stack, Typography } from '@mui/material';
-import { DepartmentMangementSearch } from '@/sections/department-mangement/department-mangement-search';
-import { usePageUtilities } from '@/hooks/use-page-utilities';
-import DepartmentContextProvider from '@/contexts/departmentContext';
-import GroupContextProvider from '@/contexts/group-context';
-import useAlert from '@/hooks/useAlert';
-import React, { useEffect, useMemo, useState } from 'react';
-import { useSelection } from '@/hooks/use-selection';
-import { WordMangementTable } from '@/sections/department-mangement/word-mangement-table';
-import ConfirmationPopup from '@/components/confirmation-popup';
-import DepartmentForm from '@/@forms/department';
-import { useTemplates } from '@/hooks/use-templates';
-import { TemplateMangementSearch } from '@/sections/template-mangement/template-mangement-search';
-import { TemplateMangementTable } from '@/sections/template-mangement/template-mangement-table';
-import TemplatesContextProvider from '@/contexts/template-context';
-import TemplateForm from '@/@forms/template';
-import FieldsForm from '@/@forms/fields';
+import Head from "next/head";
+import { Box, Container, Stack, Typography } from "@mui/material";
+import { DashboardLayout } from "../../layouts/dashboard/layout";
+import UserContextProvider from "@/contexts/user-context";
+import GroupContextProvider from "@/contexts/group-context";
+import { dictionary } from "@/configs/i18next";
+import SharedTable from "@/components/SharedTable";
+import { UsersTableApiResponse, UsersTableApiResponseZodSchema } from "@/@types/user";
+import axiosClient from "@/configs/axios-client";
+import { safeApiCall } from "@/utils";
+import { toFormData } from "axios";
+import { TemplatesTableApiResponse as BaseTemplatesTableApiResponse, TemplatesTableApiResponse, templatesTableApiResponseZodSchema } from "@/@types/template";
 
 const Page = () => {
-  const { t } = useTranslation();
-  const templateContext = useTemplates();
-  const { showAlert, renderForAlert } = useAlert();
-  const [editMode, setEditMode] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [openField, setOpenField] = useState(false);
-  const [record, setRecord] = useState<any>(null);
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
-  const [openConfirm, setOpenConfirm] = useState(false);
-  const onClose = () => {
-    setOpen(false);
-  };
-  const { handlePageChange, handleRowsPerPageChange, handleSearch, controller } =
-    usePageUtilities();
-
-  const templatesIds: any[] | undefined = useMemo(
-    () => templateContext?.templates?.map((template: any) => template.id),
-    [templateContext?.templates]
-  );
-
-  const templatesSelection = useSelection(templatesIds);
-
-  useEffect(() => {
-    templateContext?.fetchTemplates(controller.page, controller.rowsPerPage, controller.filter);
-  }, [controller])
-
-  const handleSubmit = async (formdata: any) => {
-    if (editMode) {
-      // departmentContext?.EditUser(formdata);
-      showAlert(t("Templates has been edited successfully").toString(), "success");
-    } else {
-      templateContext?.addTemplate(formdata);
-      showAlert(t("Templates has been added successfully").toString(), "success");
+  const endpoint = "/templates";
+  const getDataFn = async (endpointWithPaginationParams: string) => {
+    const { data: response } = await safeApiCall<TemplatesTableApiResponse>({
+      axiosFn: () => axiosClient.get(endpointWithPaginationParams),
+      validationSchema: templatesTableApiResponseZodSchema,
+    });
+    const modifiedData = response.data.map((item) => {
+      return {
+        ...item,
+        category_title_ar: item.category?.title_ar,
+        category_title_en: item.category?.title_en,
+      };
     }
-    (async () => {
-      await setEditMode(false);
-      await setRecord({});
-    })();
-    // setOpen(false);
+    );
+    return {
+      ...response,
+      data: modifiedData,
+    }
   };
 
-  const handleEditTemplate = (role: any) => {
-    setRecord(role);
-    setEditMode(true);
-    setOpen(true);
-  };
+  // type TemplatesTableApiResponse = BaseTemplatesTableApiResponse["data"] & {
+  //   category_name_ar: string;
+  //   category_name_en: string;
+  // }
 
-  const handleEditEditTemplate = (role: any) => {
-    setRecord(role);
-    setEditMode(true);
-    setOpenField(true);
-  };
-
-  const handleAddTemplate = () => {
-    setEditMode(false);
-    setRecord({});
-    setOpen(true);
-  };
-
-  const handleDeleteTEmplate = (role_id: string) => {
-    setSelectedTemplateId(role_id);
-    setOpenConfirm(true);
-  };
-
-  const DeleteTemplate = () => {
-    setOpenConfirm(false);
-    templateContext?.suspendTemplate(selectedTemplateId);
-    showAlert(t("Template has been deleted successfully").toString(), "success");
-  };
 
   return (
     <>
       <Head>
-        <title>{t("Templates management")} | {t('app_name')}</title>
+        <title>
+          {dictionary("Templates management")} | {dictionary("app_name")}
+        </title>
       </Head>
       <Box
         component="main"
@@ -103,80 +53,118 @@ const Page = () => {
         }}
       >
         <Container maxWidth="xl">
-          <ConfirmationPopup
-            message={"Are you sure to delete this User?"}
-            confirmFuntion={DeleteTemplate}
-            open={openConfirm}
-            setOpen={setOpenConfirm}
-          />
           <Stack spacing={3}>
-            <Stack direction="row" justifyContent="space-between" spacing={4}>
-              <Stack spacing={1}>
-                <Typography variant="h4">{t("Templates management")}</Typography>
-              </Stack>
-              <Button
-                onClick={() => {
-                  handleAddTemplate();
-                }}
-                variant="contained"
-                sx={{ borderRadius: 0.5 }}
-              >
-                {t("Add")}
-              </Button>
-            </Stack>
-            <TemplateMangementSearch
-              onSearchChange={handleSearch}
+            <Typography variant="h4">{dictionary("Templates management")}</Typography>
+            <SharedTable<TemplatesTableApiResponse["data"]>
+              endpoint={endpoint}
+              getDataFn={
+                ({
+                  url: endpoint + "/index",
+                  functionToPassUrl: getDataFn,
+                })
+              }
+              addRowMutationFn={(values) => {
+                return axiosClient.post(`${endpoint}/store`, toFormData(values));
+              }}
+              editRowMutationFn={({ id, newData }) => {
+                return axiosClient.post(`${endpoint}/update/${id}`,
+                  toFormData({
+                    ...newData,
+                    _method: "PATCH",
+                  }),
+                );
+              }}
+              deleteRowMutationFn={(itemToDelete) => {
+                return axiosClient.delete(`${endpoint}/delete/${itemToDelete.id}`);
+              }}
+              identifyItemToBeDeletedBy="title_ar"
+              pageIndexParam="page"
+              pageSizeParam="paginate"
+              enableRowActions
+              enableAddNewRow
+              easyColumns={[
+                "id",
+                "icon",
+                "title_ar",
+                "title_en",
+                "description_ar",
+                "description_en",
+                // @ts-ignore
+                "category_title_ar",
+                // @ts-ignore
+                "category_title_en",
+                "is_active",
+                "created_at",
+                "updated_at",
+              ]}
+              modalCreateColumns={[
+                {
+                  header: "avatar",
+                  accessorKey: "avatar",
+                  formElementType: "image",
+                  imageBlob: true,
+                  optional: true,
+                },
+                {
+                  header: "Name",
+                  accessorKey: "name",
+                  formElementType: "text",
+                },
+                {
+                  header: "password",
+                  accessorKey: "password",
+                  formElementType: "password",
+                  disableEdit: true,
+                },
+                {
+                  header: "Email",
+                  accessorKey: "email",
+                  formElementType: "email",
+                },
+                {
+                  header: "Phone",
+                  accessorKey: "phone",
+                  formElementType: "phone",
+                },
+                {
+                  header: "Role",
+                  accessorKey: "role",
+                  formElementType: "autocomplete",
+                  options: [
+                    {
+                      title: "ADMIN",
+                      value: "ADMIN",
+                    },
+                    {
+                      title: "CLIENT",
+                      value: "CLIENT",
+                    },
+                  ],
+                },
+                {
+                  header: "Is active",
+                  accessorKey: "is_active",
+                  formElementType: "switch",
+                },
+              ]}
+              initialState={{
+                columnVisibility: {
+                  id: false,
+                }
+              }}
             />
-            {(templateContext == undefined || templateContext?.count > 0) && (
-              <TemplateMangementTable
-                count={templateContext?.count}
-                items={templateContext?.templates}
-                onDeselectAll={templatesSelection.handleDeselectAll}
-                onDeselectOne={templatesSelection.handleDeselectOne}
-                onPageChange={handlePageChange}
-                onRowsPerPageChange={handleRowsPerPageChange}
-                onSelectAll={templatesSelection.handleSelectAll}
-                onSelectOne={templatesSelection.handleSelectOne}
-                openField={handleEditEditTemplate}
-                page={controller.page}
-                rowsPerPage={controller.rowsPerPage}
-                selected={templatesSelection.selected}
-                handleSuspend={templateContext?.suspendTemplate}
-                handleEdit={handleEditTemplate}
-                handleDelete={handleDeleteTEmplate}
-              />
-            )}
           </Stack>
         </Container>
-        <TemplateForm
-          handleSubmit={handleSubmit}
-          editMode={editMode}
-          open={open}
-          onClose={onClose}
-          record={record}
-          formItem={"template"}
-        />
-        <FieldsForm
-          handleSubmit={() => null}
-          editMode={editMode}
-          open={openField}
-          onClose={onClose}
-          record={record}
-          formItem={"fields"}
-        />
       </Box>
-      {renderForAlert()}
     </>
   );
-}
+};
 
 Page.getLayout = (page: any) => (
   <DashboardLayout>
-    <TemplatesContextProvider>
-      <GroupContextProvider>
-        {page}
-      </GroupContextProvider>
-    </TemplatesContextProvider>
+    <UserContextProvider>
+      <GroupContextProvider>{page}</GroupContextProvider>
+    </UserContextProvider>
   </DashboardLayout>
 );
 

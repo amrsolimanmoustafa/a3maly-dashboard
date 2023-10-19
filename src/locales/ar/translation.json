@@ -379,5 +379,8 @@
   "Telephone is invalid": "الهاتف غير صالح",
   "Email is invalid": "البريد الإلكتروني غير صالح",
   "Minimum 8 characters": "الحد الأدنى 8 أحرف",
-  "Words count": "عدد الكلمات"
+  "Words count": "عدد الكلمات",
+  "Icon": "أيقونة",
+  "Category title ar": "اسم التصنيف بالعربية",
+  "Category title en": "اسم التصنيف بالانجليزية"
 }

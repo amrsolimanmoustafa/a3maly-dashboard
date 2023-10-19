@@ -555,6 +555,23 @@ const sharedTableColumns: MRT_ColumnDef<any>[] = [
     size: 50,
   },
   {
+    id: "icon",
+    accessorKey: "icon",
+    header: dictionary("Icon"),
+    enableEditing: false,
+    Cell: ({ row }) => (
+      <Image
+        src={
+          isURL(row.original.logo) ? row.original.logo : "/assets/avatars/avatar-placeholder.webp"
+        }
+        alt={row.original?.name_en ?? "image alt"}
+        width={50}
+        height={50}
+      />
+    ),
+    size: 50,
+  },
+  {
     id: "logo",
     accessorKey: "logo",
     header: dictionary("Logo"),
