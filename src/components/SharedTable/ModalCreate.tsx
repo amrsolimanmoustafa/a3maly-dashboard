@@ -134,10 +134,10 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
                             defaultValue={column.prevValue ?
                               convertToAutocompleteValue(column.prevValue, column.multiple)
                               : column.multiple ? [] : null}
-
                             renderInput={(params) => (
                               <TextField {...params}
                                 label={dictionary(column.header)}
+                                required={!column.optional}
                                 error={errors[column.accessorKey as string] ? true : false}
                               />
                             )}
@@ -148,7 +148,7 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
                   )}
                   {column.formElementType === "switch" && (
                     <>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={12}>
                         <Controller
                           name={column.accessorKey as string}
                           control={control}
