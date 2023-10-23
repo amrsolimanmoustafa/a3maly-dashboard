@@ -39,3 +39,9 @@ export const templateSchemeZodSchema = z.object({
 })
 
 export type TemplateScheme = z.infer<typeof templateSchemeZodSchema>
+
+export type TypeTemplateField = z.infer<typeof templateFieldSchema>
+
+export type TypeTextTemplateField = z.infer<typeof textTemplateFieldSchema>
+
+export type TypeOptionsTemplateField = z.infer<typeof optionsTemplateFieldSchema>

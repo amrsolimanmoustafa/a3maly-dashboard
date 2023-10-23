@@ -1,13 +1,15 @@
-import { TemplateScheme } from '@/@types/scheme';
+import { TemplateScheme, TypeOptionsTemplateField, TypeTemplateField, TypeTextTemplateField } from '@/@types/scheme';
+import { dictionary, TranslatedWord } from '@/configs/i18next';
 import AddIcon from '@mui/icons-material/Add';
-import { Grid, Box, TextField, Tooltip, IconButton } from "@mui/material"
+import { Grid, Box, TextField, Tooltip, IconButton, InputBase, Card, Button, Autocomplete, Menu, MenuItem, Divider, Typography, Stack } from "@mui/material"
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from "react-hook-form"
 import Tabs from './Tabs';
 
 const Scheme = ({
   data,
 }: {
-  data: TemplateScheme[] | null;
+  data: TemplateScheme | null;
 }) => {
   const { register, unregister, handleSubmit, formState: { errors }, control, setValue, getValues } = useForm({
     // resolver: zodResolver(zodValidationSchema),
@@ -23,7 +25,7 @@ const Scheme = ({
   }
 
   interface TextTemplateField extends TemplateField {
-    type: "text";
+    type: "small_text" | "large_text";
     validation: {
       required: boolean;
       minLength?: number;
@@ -59,7 +61,7 @@ const Scheme = ({
     ],
     fields: [
       {
-        type: "text",
+        type: "small_text",
         label_en: "Product Name",
         label_ar: "اسم المنتج",
         name: "product_name",
@@ -72,7 +74,7 @@ const Scheme = ({
         },
       },
       {
-        type: "text",
+        type: "large_text",
         label_en: "Product Description",
         label_ar: "وصف المنتج",
         name: "product_name",
@@ -117,26 +119,126 @@ const Scheme = ({
   //                   />
   //                 </Box>
   //               ))
+  // const textTemplate = new TextTemplateField(
+  //   'Product Name', // label_en
+  //   'اسم المنتج', // label_ar
+  //   'product_name', // name
+  //   'Product Name', // placeholder_en
+  //   'اسم المنتج', // placeholder_ar
+  //   {
+  //     required: true,
+  //     minLength: 3,
+  //     maxLength: 8,
+  //     minRows: 0, // You can adjust this value
+  //   }
+  // );
+  //
+  // const [templateFields, setTemplateFields] = useState<{
+  //   type: "text" | "options";
+  // }[]>([]);
+  //
+  // useEffect(() => {
+  //   setTemplateFields(data?.fields || [])
+  // }, [data])
+  //
+  // const { state, render } = useTemplateField(data?.fields || [])
+  // console.log("data?.fields", data?.fields)
+  //
+  // console.log("data", data)
+  const [anchorEl, setAnchorEl] = useState<any>(null);
+  // const [fields, setFields] = useState<(typeof availableFields | TextTemplateField | OptionsTemplateField)[] | []>([]);
+  const [fields, setFields] = useState<(TextTemplateField | OptionsTemplateField | typeof availableFields[number])[] | []>([]);
+
+  useEffect(() => {
+    // @ts-ignore
+    setFields(data?.fields || [])
+  }, [data])
+
+  const availableFields = [{
+    type: "small_text",
+    label: dictionary("Small Text Field"),
+  },
+  {
+    type: "large_text",
+    label: dictionary("Large Text Field"),
+  },
+  {
+    type: "options",
+    label: dictionary("Options"),
+  }] as const
+
+  const addNewField = (field: typeof availableFields[number]) => {
+    setFields([...fields, field])
+    setAnchorEl(null);
+  }
+
   return (
     <>
-
+      <Grid item xs={12} marginBottom={1}>
+        <Divider />
+      </Grid>
       <Grid item xs={12}>
+        <Button
+          color="primary"
+          startIcon={<AddIcon />}
+          variant="contained"
+          sx={{ borderRadius: 0.5 }}
+          onClick={(e) => setAnchorEl(e.currentTarget)}
+        >
+          {dictionary("Add") + " " + dictionary("Field")}
+        </Button>
+        <Menu
+          id="simple-menu"
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left"
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left"
+          }}
+          keepMounted
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={() => setAnchorEl(null)}
+        >
+          {availableFields.map((field, index: number) => (
+            <MenuItem key={index} onClick={() => addNewField(field)}>
+              {field.label}
+            </MenuItem>
+          ))
+          }
+        </Menu>
+        <Stack spacing={2} marginY={3}>
+          {fields.map((field, index: number) => {
+            return (
+              <Grid item xs={12} key={index}>
+                {field.type === "small_text" && controlledTextField({ field, control })}
+                {field.type === "large_text" && controlledTextField({ field, control })}
+                {field.type === "options" && controlledOptionsField({ field, control })}
+              </Grid>
+            )
+          })}
+        </Stack>
         <Tabs
           tabs={[
             {
               id: "ar",
               label: "Arabic",
               value: "ar",
-              content: <>{data}</>
+              content: <></>
             },
             {
               id: "en",
               label: "English",
               value: "en",
-              content: <>{data}</>
+              content: <>
+                <Box marginY={3}>
+                  asd
+                </Box>
+              </>
             },
           ]}
-
           sideButtons={[
             {
               button: (
@@ -167,12 +269,86 @@ const Scheme = ({
           ]}
         />
       </Grid>
-
-
-
     </>
 
   )
 }
 
 export default Scheme
+
+const TemplateFieldComponentWrapper = ({ children, label }: { children: JSX.Element, label: TranslatedWord }) => {
+  return (
+    <Card
+      sx={{
+        borderRadius: 1,
+        padding: 2,
+        border: "1px solid #e0e0e0",
+      }}
+    >
+      <Typography variant="body2" sx={{ marginBottom: 1 }}>
+        {dictionary(label)}
+      </Typography>
+      {children}
+    </Card>
+  )
+}
+
+
+function controlledTextField({ field, control }: any) {
+  return (
+    <TemplateFieldComponentWrapper
+      label={field.label}
+    >
+      <Controller
+        name={"Label name"}
+        control={control}
+        rules={{
+          required: true,
+          minLength: 3,
+          maxLength: 8,
+        }}
+        render={({ field, fieldState }) => (
+          <Grid item xs={12}
+            sx={{
+              display: "flex",
+              gap: 1,
+              width: "100%",
+            }}
+
+          >
+            <TextField
+              {...field}
+              fullWidth
+              error={fieldState.invalid}
+              helperText={fieldState.invalid
+                ? dictionary("Minimum 8 characters")
+                : ""}
+              required
+              label={dictionary("Field Name")}
+            />
+            <TextField
+              {...field}
+              fullWidth
+              error={fieldState.invalid}
+              helperText={fieldState.invalid
+                ? dictionary("Minimum 8 characters")
+                : ""}
+              required
+              label={dictionary("Field Description")}
+            />
+          </Grid>
+        )}
+      />
+    </TemplateFieldComponentWrapper>
+  )
+}
+function controlledOptionsField(control: any) {
+  return "controlledOptionsField"
+}
+// const CreateTextTemplateField = (props: TypeTextTemplateField) => {
+//   return useTemplateField(props)
+// }
+//
+// const CreateOptionsTemplateField = (props: TypeOptionsTemplateField) => {
+//   return useTemplateField(props)
+// }

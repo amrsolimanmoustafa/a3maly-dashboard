@@ -385,5 +385,11 @@
   "Category title en": "التصنيف بالانجليزية",
   "Category": "التصنيف",
   "Scheme": "المخطط",
-  "Schemes": "المخططات"
+  "Schemes": "المخططات",
+  "Field": "حقل",
+  "Small Text Field": "حقل نصي صغير",
+  "Large Text Field": "حقل نصي كبير",
+  "Options": "خيارات",
+  "Field Name": "اسم الحقل",
+  "Field Description": "وصف الحفل"
 }
