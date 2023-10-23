@@ -111,11 +111,11 @@ const Page = () => {
                   formElementType: "autocomplete",
                   options: [
                     {
-                      title: "ADMIN",
+                      title: "Admin",
                       value: "ADMIN",
                     },
                     {
-                      title: "CLIENT",
+                      title: "Client",
                       value: "CLIENT",
                     },
                   ],

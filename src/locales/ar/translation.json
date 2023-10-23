@@ -381,6 +381,9 @@
   "Minimum 8 characters": "الحد الأدنى 8 أحرف",
   "Words count": "عدد الكلمات",
   "Icon": "أيقونة",
-  "Category title ar": "اسم التصنيف بالعربية",
-  "Category title en": "اسم التصنيف بالانجليزية"
+  "Category title ar": "التصنيف بالعربية",
+  "Category title en": "التصنيف بالانجليزية",
+  "Category": "التصنيف",
+  "Scheme": "المخطط",
+  "Schemes": "المخططات"
 }

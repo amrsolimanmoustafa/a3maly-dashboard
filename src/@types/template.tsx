@@ -1,5 +1,6 @@
 import { makeTableApiResponseZodSchema } from "@/components/SharedTable/utils";
 import { z } from "zod"
+import { templateSchemeZodSchema } from "./scheme";
 
 export const templateZodScheme = z.object({
   id: z.number(),
@@ -7,7 +8,7 @@ export const templateZodScheme = z.object({
   title_en: z.string(),
   description_ar: z.string().or(z.null()),
   description_en: z.string().or(z.null()),
-  schemes: z.array(z.object({ ar: z.string(), en: z.string() })).or(z.null()),
+  schemes: templateSchemeZodSchema.or(z.null()),
   icon: z.string(),
   category_id: z.number(),
   is_active: z.number(),

@@ -10,8 +10,15 @@ import axiosClient from "@/configs/axios-client";
 import { safeApiCall } from "@/utils";
 import { toFormData } from "axios";
 import { TemplatesTableApiResponse as BaseTemplatesTableApiResponse, TemplatesTableApiResponse, templatesTableApiResponseZodSchema } from "@/@types/template";
+import { useEffect, useState } from "react";
+import { Category } from "@/@types/category";
+import Scheme from "@/components/scheme";
 
 const Page = () => {
+  const [categories, setCategories] = useState<{
+    title: string;
+    value: string;
+  }[]>([]);
   const endpoint = "/templates";
   const getDataFn = async (endpointWithPaginationParams: string) => {
     const { data: response } = await safeApiCall<TemplatesTableApiResponse>({
@@ -23,6 +30,7 @@ const Page = () => {
         ...item,
         category_title_ar: item.category?.title_ar,
         category_title_en: item.category?.title_en,
+        category_id: item.category?.title_ar,
       };
     }
     );
@@ -31,6 +39,27 @@ const Page = () => {
       data: modifiedData,
     }
   };
+
+  const getCategories = async () => {
+    const endpoint = "/categories/index";
+    const { data: response } = await axiosClient.get(endpoint);
+    const modifiedData = response.data.map((item: Category) => {
+      return {
+        title: item.title_ar,
+        value: item.id,
+      };
+    }
+    );
+    return modifiedData;
+  };
+
+  useEffect(() => {
+    getCategories().then((data) => {
+      setCategories(data);
+    });
+
+    console.log("categories", categories);
+  }, []);
 
   // type TemplatesTableApiResponse = BaseTemplatesTableApiResponse["data"] & {
   //   category_name_ar: string;
@@ -99,52 +128,53 @@ const Page = () => {
               ]}
               modalCreateColumns={[
                 {
-                  header: "avatar",
-                  accessorKey: "avatar",
+                  header: "Icon",
+                  accessorKey: "icon",
                   formElementType: "image",
                   imageBlob: true,
                   optional: true,
                 },
                 {
-                  header: "Name",
-                  accessorKey: "name",
+                  header: "Title ar",
+                  accessorKey: "title_ar",
                   formElementType: "text",
                 },
                 {
-                  header: "password",
-                  accessorKey: "password",
-                  formElementType: "password",
-                  disableEdit: true,
+                  header: "Title en",
+                  accessorKey: "title_en",
+                  formElementType: "text",
                 },
                 {
-                  header: "Email",
-                  accessorKey: "email",
-                  formElementType: "email",
+                  header: "Description",
+                  accessorKey: "description_ar",
+                  formElementType: "text",
+                  multiline: true,
                 },
                 {
-                  header: "Phone",
-                  accessorKey: "phone",
-                  formElementType: "phone",
+                  header: "Description",
+                  accessorKey: "description_en",
+                  formElementType: "text",
+                  multiline: true,
                 },
                 {
-                  header: "Role",
-                  accessorKey: "role",
+                  header: "Category",
+                  accessorKey: "category_id",
                   formElementType: "autocomplete",
-                  options: [
-                    {
-                      title: "ADMIN",
-                      value: "ADMIN",
-                    },
-                    {
-                      title: "CLIENT",
-                      value: "CLIENT",
-                    },
-                  ],
+                  options: categories,
                 },
                 {
                   header: "Is active",
                   accessorKey: "is_active",
                   formElementType: "switch",
+                },
+                {
+                  header: "Schemes",
+                  accessorKey: "schemes",
+                  customFormElement: (column) => {
+                    return (
+                      <Scheme data={column.prevValue ?? null} />
+                    );
+                  }
                 },
               ]}
               initialState={{

@@ -37,6 +37,7 @@ export interface ModalCreateEditColumnsSchema<T extends Record<string, any>> {
   multiline?: boolean;
   optional?: boolean;
   disableEdit?: boolean;
+  customFormElement?: (column: ModalCreateEditColumnsSchema<T>) => React.ReactNode;
 };
 
 interface ModalCreate<T extends Record<string, any> = {}> {
@@ -56,11 +57,11 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
   onSubmit,
   title,
   mode,
-  formData = false,
+  // formData = false,
 }: ModalCreate<T>) => {
 
   if (mode === "edit") columns = columns.filter((column) => !column.disableEdit);
-  const { register, unregister, handleSubmit, formState: { errors }, control } = useForm({
+  const { unregister, handleSubmit, formState: { errors }, control } = useForm({
     // resolver: zodResolver(zodValidationSchema),
   });
 
@@ -74,6 +75,7 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
       return acc;
     }, {} as Record<string, any>));
 
+
     return () => {
       setValues({});
       setImages([]);
@@ -84,8 +86,6 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
   }, [open]);
 
   const handleFormSubmit = (data: any) => {
-    console.log("data from handleFormSubmit", data);
-    console.log("values from handleFormSubmit", values);
     if (mode === 'add') onSubmit(data);
     else {
       const differentValues = getDifferentValues(prevValues, data);
@@ -118,6 +118,7 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
               console.log("value", value);
               return (
                 <>
+                  {column.customFormElement && column.customFormElement(column)}
                   {column.formElementType === "autocomplete" && (
                     <Grid item xs={12} md={6}>
                       <Controller
@@ -202,9 +203,9 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
                           />
                         )}
                       />
-
                     </Grid>
                   )}
+
                   {(column.formElementType === "phone") && (
                     <Grid item xs={12} md={6}>
                       <Controller

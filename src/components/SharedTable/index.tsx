@@ -562,7 +562,7 @@ const sharedTableColumns: MRT_ColumnDef<any>[] = [
     Cell: ({ row }) => (
       <Image
         src={
-          isURL(row.original.logo) ? row.original.logo : "/assets/avatars/avatar-placeholder.webp"
+          isURL(row.original.icon) ? row.original.icon : "/assets/avatars/avatar-placeholder.webp"
         }
         alt={row.original?.name_en ?? "image alt"}
         width={50}
