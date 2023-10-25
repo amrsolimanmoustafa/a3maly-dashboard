@@ -6,11 +6,11 @@ import { useEffect, useState } from 'react';
 import { Controller, Field, useForm } from "react-hook-form"
 import Tabs from './Tabs';
 
-export type TypeField = {
-  type: "small_text" | "large_text" | "options";
-  label: TranslatedWord;
-  name: string;
-}
+// export type TypeField = {
+//   type: "small_text" | "large_text" | "options";
+//   label: TranslatedWord;
+//   name: string;
+// }
 
 const Scheme = ({
   data,
@@ -107,7 +107,7 @@ const Scheme = ({
   };
 
   const [anchorEl, setAnchorEl] = useState<any>(null);
-  const [fields, setFields] = useState<(TextTemplateField | OptionsTemplateField | TypeField)[] | []>([]);
+  const [fields, setFields] = useState<TemplateScheme["fields"] | []>([]);
 
   useEffect(() => {
     // @ts-ignore
@@ -115,29 +115,34 @@ const Scheme = ({
   }, [data])
 
 
-  const getCountOfElements = (type: TypeField["type"]) => {
+  const getCountOfElements = (type: TemplateScheme["fields"][number]["type"]) => {
     const count = fields.filter((field) => field.type === type).length
     return count
   }
 
 
-  const availableFields: TypeField[] = [{
-    type: "small_text",
-    label: "Small Text Field",
-    name: "small_text_" + getCountOfElements("small_text"),
-  },
-  {
-    type: "large_text",
-    label: "Large Text Field",
-    name: "large_text_" + getCountOfElements("large_text"),
-  },
-  {
-    type: "options",
-    label: "Options",
-    name: "options_" + getCountOfElements("options"),
-  }]
+  const availableFields: {
+    type: TemplateScheme["fields"][number]["type"],
+    label: TranslatedWord,
+    name: string,
+  }[] =
+    [{
+      type: "small_text",
+      label: "Small Text Field",
+      name: "small_text_" + getCountOfElements("small_text"),
+    },
+    {
+      type: "large_text",
+      label: "Large Text Field",
+      name: "large_text_" + getCountOfElements("large_text"),
+    },
+    {
+      type: "options",
+      label: "Options",
+      name: "options_" + getCountOfElements("options"),
+    }]
 
-  const addNewField = (field: TypeField) => {
+  const addNewField = (field: TemplateScheme["fields"][0]) => {
     setFields([...fields, field])
     setAnchorEl(null);
   }
@@ -173,6 +178,7 @@ const Scheme = ({
           onClose={() => setAnchorEl(null)}
         >
           {availableFields.map((field, index: number) => (
+            // @ts-ignore
             <MenuItem key={index} onClick={() => addNewField(field)}>
               {dictionary(field.label)}
             </MenuItem>
@@ -286,18 +292,16 @@ const TemplateFieldComponentWrapper = ({ children, label, onClose, name }: {
       {children}
       <StyledCodeBlock
         code={`{{${name}}}`}
-        language="typescript"
       />
     </Card>
   );
 };
 
-function controlledTextField({ field, control, onClose, required = true }: {
+function controlledTextField({ field, control, onClose }: {
   field: TypeTextTemplateField,
   control: any,
   onClose?: () => void,
   largeText?: boolean,
-  required?: boolean,
 }) {
   const prevValue = field
 
