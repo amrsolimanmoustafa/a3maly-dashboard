@@ -396,5 +396,6 @@
   "Placeholder in English": "وصف توضيحي بالانجليزية",
   "Minimum Characters": "الحد الأدنى من الأحرف",
   "Maximum Characters": "الحد الأقصى لعدد الأحرف",
-  "Is Required": "اجباري"
+  "Is Required": "اجباري",
+  "Option": "خيار"
 }

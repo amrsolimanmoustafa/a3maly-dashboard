@@ -253,7 +253,6 @@ const Scheme = ({
 export default Scheme
 
 import CloseIcon from '@mui/icons-material/Close'; // Import the "X" icon
-import CopyToClipboardButton from './CopyToClipboardButton';
 import StyledCodeBlock from './CodeBlock';
 
 const TemplateFieldComponentWrapper = ({ children, label, onClose, name }: {
@@ -312,20 +311,20 @@ function controlledTextField({ field, control, onClose }: {
     inputType = "text",
     required = true,
   }: {
-    name: string,
-    label: TranslatedWord,
-    inputType?: "text" | "number",
-    defaultValue?: string | number,
-    required?: boolean,
-  }) =>
+    name: string;
+    label: TranslatedWord;
+    inputType?: "text" | "number";
+    defaultValue?: string | number;
+    required?: boolean;
+  }) => (
     <Controller
-      name={name}
+      name={`${field.name}.${name}`}
       control={control}
       defaultValue={defaultValue}
       rules={{
         required: required,
         minLength: 3,
-        maxLength: 12,
+        maxLength: 12, // You can adjust the maximum length as needed
       }}
       render={({ field, fieldState }) => (
         <TextField
@@ -334,38 +333,38 @@ function controlledTextField({ field, control, onClose }: {
           required={required}
           type={inputType}
           error={fieldState.invalid}
-          helperText={fieldState.invalid
-            ? dictionary("Minimum 8 characters")
-            : ""}
+          helperText={fieldState.invalid ? "Minimum 3, Maximum 12 characters" : ""}
           label={dictionary(label)}
         />
       )}
     />
+  );
 
   const baseTextField = {
     label_ar: createTextInput({
-      name: field.name + "_label_ar",
+      name: "label_ar",
       label: "Name in Arabic",
       defaultValue: prevValue?.label_ar ?? "",
     }),
     label_en: createTextInput({
-      name: field.name + "_label_en",
+      name: "label_en",
       label: "Name in English",
       defaultValue: prevValue?.label_en ?? "",
     }),
     placeholder_ar: createTextInput({
-      name: field.name + "_placeholder_ar",
+      name: "placeholder_ar",
       label: "Placeholder in Arabic",
       defaultValue: prevValue?.placeholder_ar ?? "",
       required: false,
     }),
     placeholder_en: createTextInput({
-      name: field.name + "_placeholder_en",
+      name: "placeholder_en",
       label: "Placeholder in English",
       defaultValue: prevValue?.placeholder_en ?? "",
       required: false,
     }),
   }
+
 
   const validationTextField = ({
     required,
@@ -380,24 +379,27 @@ function controlledTextField({ field, control, onClose }: {
       required: <Controller
         name={"required"}
         control={control}
+        defaultValue={prevValue?.validation?.required ?? required}
         render={({ field }) => (
           <FormControlLabel
             {...field}
-            sx={{
-            }}
             label={dictionary("Is Required")}
-            control={<Checkbox defaultChecked />}
+            control={<Checkbox
+              {...field}
+              checked={field.value}
+              onChange={(e) => field.onChange(e.target.checked)}
+            />}
           />
         )}
       />,
       minLength: createTextInput({
-        name: field.name + "_minLength",
+        name: "minLength",
         label: "Minimum Characters",
         defaultValue: prevValue?.validation?.minLength ?? minLength,
         inputType: "number",
       }),
       maxLength: createTextInput({
-        name: field.name + "_maxLength",
+        name: "maxLength",
         label: "Maximum Characters",
         defaultValue: prevValue?.validation?.maxLength ?? maxLength,
         inputType: "number",
@@ -424,7 +426,7 @@ function controlledTextField({ field, control, onClose }: {
   }
 
   const isSmallTextField = field.type === "small_text"
-  const chooseTextField = isSmallTextField ? smallTextField : largeTextField
+  const choosenTextField = isSmallTextField ? smallTextField : largeTextField
 
   return (
     <TemplateFieldComponentWrapper
@@ -444,26 +446,147 @@ function controlledTextField({ field, control, onClose }: {
               width: "100%",
             }}
           >
-            {chooseTextField.label_ar}
-            {chooseTextField.label_en}
-            {chooseTextField.placeholder_ar}
-            {chooseTextField.placeholder_en}
-            {chooseTextField.validation.minLength}
-            {chooseTextField.validation.maxLength}
-            {chooseTextField.validation.required}
+            {choosenTextField.label_ar}
+            {choosenTextField.label_en}
+            {choosenTextField.placeholder_ar}
+            {choosenTextField.placeholder_en}
+            {choosenTextField.validation.minLength}
+            {choosenTextField.validation.maxLength}
+            {choosenTextField.validation.required}
           </Grid>
         )}
       />
     </TemplateFieldComponentWrapper>
   )
 }
-function controlledOptionsField(control: any) {
-  return "controlledOptionsField"
+
+function controlledOptionsField({ field, control, onClose }: {
+  field: TypeOptionsTemplateField,
+  control: any,
+  onClose?: () => void,
+}) {
+  const prevValue = field;
+
+
+  const createTextInput = ({
+    name,
+    label,
+    defaultValue,
+    inputType = "text",
+    required = true,
+  }: {
+    name: string;
+    label: TranslatedWord;
+    inputType?: "text" | "number";
+    defaultValue?: string | number;
+    required?: boolean;
+  }) => (
+    <Controller
+      name={`${field.name}.${name}`}
+      control={control}
+      defaultValue={defaultValue}
+      rules={{
+        required: required,
+        minLength: 3,
+        maxLength: 12, // You can adjust the maximum length as needed
+      }}
+      render={({ field, fieldState }) => (
+        <TextField
+          {...field}
+          fullWidth
+          required={required}
+          type={inputType}
+          error={fieldState.invalid}
+          helperText={fieldState.invalid ? "Minimum 3, Maximum 12 characters" : ""}
+          label={dictionary(label)}
+        />
+      )}
+    />
+  );
+
+
+  const createOptionsInput = ({
+    name,
+    label,
+    defaultValue,
+  }: {
+    name: string;
+    label: TranslatedWord;
+    defaultValue?: string[];
+  }) => (
+    <Controller
+      name={`${field.name}.${name}`}
+      control={control}
+      defaultValue={defaultValue}
+      render={({ field: controlField, fieldState }) => (
+        <Stack spacing={2}>
+          {controlField.value.map((option: string, index: number) => (
+            createTextInput({
+              name: "option_" + index,
+              label: "Option",
+              defaultValue: option,
+              required: false,
+            })
+          ))}
+          <Button
+            color="primary"
+            variant="contained"
+            sx={{ borderRadius: 0.5 }}
+            onClick={() => controlField.onChange([...controlField.value, ""])}
+          >
+            {dictionary("Add") + " " + dictionary("Option")}
+          </Button>
+        </Stack>
+
+      )}
+    />
+  );
+
+  const baseOptionsField = {
+    label_ar: createTextInput({
+      name: "label_ar",
+      label: "Name in Arabic",
+      defaultValue: prevValue?.label_ar ?? "",
+    }),
+    label_en: createTextInput({
+      name: "label_en",
+      label: "Name in English",
+      defaultValue: prevValue?.label_en ?? "",
+    }),
+    options: createOptionsInput({
+      name: "options",
+      label: "Options",
+      defaultValue: prevValue?.options || [],
+    }),
+  };
+
+  return (
+    <TemplateFieldComponentWrapper
+      label="Options"
+      name={field.name}
+      onClose={onClose}
+    >
+      <Controller
+        name={field.name}
+        control={control}
+        render={({ field: fieldProps, fieldState }) => (
+          <Stack spacing={2}>
+            <Grid item xs={12}
+              sx={{
+                display: "grid",
+                gap: 1,
+                gridTemplateColumns: "1fr 1fr",
+                width: "100%",
+              }}
+            >
+              {baseOptionsField.label_ar}
+              {baseOptionsField.label_en}
+            </Grid>
+            <Divider />
+            {baseOptionsField.options}
+          </Stack>
+        )}
+      />
+    </TemplateFieldComponentWrapper>
+  );
 }
-// const CreateTextTemplateField = (props: TypeTextTemplateField) => {
-//   return useTemplateField(props)
-// }
-//
-// const CreateOptionsTemplateField = (props: TypeOptionsTemplateField) => {
-//   return useTemplateField(props)
-// }

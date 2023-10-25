@@ -1,9 +1,16 @@
+import { Snackbar } from "@mui/material";
+import React from "react";
 import CopyToClipboardButton from "./CopyToClipboardButton";
 
 export default function StyledCodeBlock({ code }: {
   code: string,
 }) {
+  const [open, setOpen] = React.useState(false)
   return <pre
+    onClick={() => {
+      navigator.clipboard.writeText(code)
+      setOpen(true)
+    }}
     style={{
       display: 'flex',
       justifyContent: 'space-between',
@@ -17,12 +24,19 @@ export default function StyledCodeBlock({ code }: {
       fontFamily: 'monospace',
       whiteSpace: 'pre-wrap',
       wordWrap: 'break-word',
-      margin: '1em 0'
+      margin: '1em 0',
+      cursor: 'pointer',
     }}
   >
     <code>
       {code}
     </code>
     <CopyToClipboardButton value={code} />
+    <Snackbar
+      open={open}
+      onClose={() => setOpen(false)}
+      autoHideDuration={2000}
+      message="Copied to clipboard"
+    />
   </ pre>
 }
