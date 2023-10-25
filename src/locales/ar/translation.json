@@ -391,5 +391,10 @@
   "Large Text Field": "حقل نصي كبير",
   "Options": "خيارات",
   "Field Name": "اسم الحقل",
-  "Field Description": "وصف الحفل"
+  "Field Description": "وصف الحفل",
+  "Placeholder in Arabic": "وصف توضيحي بالعربية",
+  "Placeholder in English": "وصف توضيحي بالانجليزية",
+  "Minimum Characters": "الحد الأدنى من الأحرف",
+  "Maximum Characters": "الحد الأقصى لعدد الأحرف",
+  "Is Required": "اجباري"
 }

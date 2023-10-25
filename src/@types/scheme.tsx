@@ -9,7 +9,7 @@ const templateFieldSchema = z.object({
 })
 
 const textTemplateFieldSchema = templateFieldSchema.extend({
-  type: z.literal("text"),
+  type: z.literal("small_text").or(z.literal("large_text")),
   validation: z.object({
     required: z.boolean(),
     minLength: z.number().optional(),

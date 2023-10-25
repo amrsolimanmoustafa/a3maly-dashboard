@@ -1,10 +1,16 @@
 import { TemplateScheme, TypeOptionsTemplateField, TypeTemplateField, TypeTextTemplateField } from '@/@types/scheme';
 import { dictionary, TranslatedWord } from '@/configs/i18next';
 import AddIcon from '@mui/icons-material/Add';
-import { Grid, Box, TextField, Tooltip, IconButton, InputBase, Card, Button, Autocomplete, Menu, MenuItem, Divider, Typography, Stack } from "@mui/material"
+import { Grid, Box, TextField, Tooltip, IconButton, InputBase, Card, Button, Autocomplete, Menu, MenuItem, Divider, Typography, Stack, Switch, Checkbox, FormControlLabel } from "@mui/material"
 import { useEffect, useState } from 'react';
-import { Controller, useForm } from "react-hook-form"
+import { Controller, Field, useForm } from "react-hook-form"
 import Tabs from './Tabs';
+
+export type TypeField = {
+  type: "small_text" | "large_text" | "options";
+  label: TranslatedWord;
+  name: string;
+}
 
 const Scheme = ({
   data,
@@ -14,7 +20,6 @@ const Scheme = ({
   const { register, unregister, handleSubmit, formState: { errors }, control, setValue, getValues } = useForm({
     // resolver: zodResolver(zodValidationSchema),
   });
-  console.log("column", data);
 
   interface TemplateField {
     label_ar: string;
@@ -101,73 +106,38 @@ const Scheme = ({
     ],
   };
 
-  // data?.map((scheme: { ar: string }, index: number) => (
-  //                 <Box marginY={3} key={index}>
-  //                   <Controller
-  //                     name={`schemes[${index}].ar`}
-  //                     control={control}
-  //                     defaultValue={scheme.ar}
-  //                     render={({ field }) => (
-  //                       <TextField
-  //                         {...field}
-  //                         label={`Arabic Scheme ${index + 1}`}
-  //                         fullWidth
-  //                         multiline
-  //                         minRows={3}
-  //                       />
-  //                     )}
-  //                   />
-  //                 </Box>
-  //               ))
-  // const textTemplate = new TextTemplateField(
-  //   'Product Name', // label_en
-  //   'اسم المنتج', // label_ar
-  //   'product_name', // name
-  //   'Product Name', // placeholder_en
-  //   'اسم المنتج', // placeholder_ar
-  //   {
-  //     required: true,
-  //     minLength: 3,
-  //     maxLength: 8,
-  //     minRows: 0, // You can adjust this value
-  //   }
-  // );
-  //
-  // const [templateFields, setTemplateFields] = useState<{
-  //   type: "text" | "options";
-  // }[]>([]);
-  //
-  // useEffect(() => {
-  //   setTemplateFields(data?.fields || [])
-  // }, [data])
-  //
-  // const { state, render } = useTemplateField(data?.fields || [])
-  // console.log("data?.fields", data?.fields)
-  //
-  // console.log("data", data)
   const [anchorEl, setAnchorEl] = useState<any>(null);
-  // const [fields, setFields] = useState<(typeof availableFields | TextTemplateField | OptionsTemplateField)[] | []>([]);
-  const [fields, setFields] = useState<(TextTemplateField | OptionsTemplateField | typeof availableFields[number])[] | []>([]);
+  const [fields, setFields] = useState<(TextTemplateField | OptionsTemplateField | TypeField)[] | []>([]);
 
   useEffect(() => {
     // @ts-ignore
     setFields(data?.fields || [])
   }, [data])
 
-  const availableFields = [{
+
+  const getCountOfElements = (type: TypeField["type"]) => {
+    const count = fields.filter((field) => field.type === type).length
+    return count
+  }
+
+
+  const availableFields: TypeField[] = [{
     type: "small_text",
-    label: dictionary("Small Text Field"),
+    label: "Small Text Field",
+    name: "small_text_" + getCountOfElements("small_text"),
   },
   {
     type: "large_text",
-    label: dictionary("Large Text Field"),
+    label: "Large Text Field",
+    name: "large_text_" + getCountOfElements("large_text"),
   },
   {
     type: "options",
-    label: dictionary("Options"),
-  }] as const
+    label: "Options",
+    name: "options_" + getCountOfElements("options"),
+  }]
 
-  const addNewField = (field: typeof availableFields[number]) => {
+  const addNewField = (field: TypeField) => {
     setFields([...fields, field])
     setAnchorEl(null);
   }
@@ -204,18 +174,19 @@ const Scheme = ({
         >
           {availableFields.map((field, index: number) => (
             <MenuItem key={index} onClick={() => addNewField(field)}>
-              {field.label}
+              {dictionary(field.label)}
             </MenuItem>
           ))
           }
         </Menu>
         <Stack spacing={2} marginY={3}>
           {fields.map((field, index: number) => {
+            const onClose = () => setFields(fields.filter((_, i) => i !== index))
             return (
               <Grid item xs={12} key={index}>
-                {field.type === "small_text" && controlledTextField({ field, control })}
-                {field.type === "large_text" && controlledTextField({ field, control })}
-                {field.type === "options" && controlledOptionsField({ field, control })}
+                {field.type === "small_text" && controlledTextField({ field, control, onClose })}
+                {field.type === "large_text" && controlledTextField({ field, control, onClose })}
+                {field.type === "options" && controlledOptionsField({ field, control, onClose })}
               </Grid>
             )
           })}
@@ -261,7 +232,6 @@ const Scheme = ({
                         <AddIcon />
                       </IconButton>
                     </Tooltip>
-
                   </Box>
                 </>
               ),
@@ -276,66 +246,207 @@ const Scheme = ({
 
 export default Scheme
 
-const TemplateFieldComponentWrapper = ({ children, label }: { children: JSX.Element, label: TranslatedWord }) => {
+import CloseIcon from '@mui/icons-material/Close'; // Import the "X" icon
+import CopyToClipboardButton from './CopyToClipboardButton';
+import StyledCodeBlock from './CodeBlock';
+
+const TemplateFieldComponentWrapper = ({ children, label, onClose, name }: {
+  children: JSX.Element,
+  label: TranslatedWord,
+  name: string,
+  onClose?: () => void
+}) => {
   return (
     <Card
       sx={{
         borderRadius: 1,
         padding: 2,
         border: "1px solid #e0e0e0",
+        position: 'relative',
       }}
     >
+      <Box
+        onClick={onClose}
+        sx={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          zIndex: 1,
+          background: '#fff',
+          padding: 1,
+          borderRadius: '50%',
+          cursor: 'pointer',
+        }}
+      >
+        <CloseIcon sx={{ fontSize: 16 }} color="primary" />
+      </Box>
       <Typography variant="body2" sx={{ marginBottom: 1 }}>
         {dictionary(label)}
       </Typography>
       {children}
+      <StyledCodeBlock
+        code={`{{${name}}}`}
+        language="typescript"
+      />
     </Card>
-  )
-}
+  );
+};
 
+function controlledTextField({ field, control, onClose, required = true }: {
+  field: TypeTextTemplateField,
+  control: any,
+  onClose?: () => void,
+  largeText?: boolean,
+  required?: boolean,
+}) {
+  const prevValue = field
 
-function controlledTextField({ field, control }: any) {
+  const createTextInput = ({
+    name,
+    label,
+    defaultValue,
+    inputType = "text",
+    required = true,
+  }: {
+    name: string,
+    label: TranslatedWord,
+    inputType?: "text" | "number",
+    defaultValue?: string | number,
+    required?: boolean,
+  }) =>
+    <Controller
+      name={name}
+      control={control}
+      defaultValue={defaultValue}
+      rules={{
+        required: required,
+        minLength: 3,
+        maxLength: 12,
+      }}
+      render={({ field, fieldState }) => (
+        <TextField
+          {...field}
+          fullWidth
+          required={required}
+          type={inputType}
+          error={fieldState.invalid}
+          helperText={fieldState.invalid
+            ? dictionary("Minimum 8 characters")
+            : ""}
+          label={dictionary(label)}
+        />
+      )}
+    />
+
+  const baseTextField = {
+    label_ar: createTextInput({
+      name: field.name + "_label_ar",
+      label: "Name in Arabic",
+      defaultValue: prevValue?.label_ar ?? "",
+    }),
+    label_en: createTextInput({
+      name: field.name + "_label_en",
+      label: "Name in English",
+      defaultValue: prevValue?.label_en ?? "",
+    }),
+    placeholder_ar: createTextInput({
+      name: field.name + "_placeholder_ar",
+      label: "Placeholder in Arabic",
+      defaultValue: prevValue?.placeholder_ar ?? "",
+      required: false,
+    }),
+    placeholder_en: createTextInput({
+      name: field.name + "_placeholder_en",
+      label: "Placeholder in English",
+      defaultValue: prevValue?.placeholder_en ?? "",
+      required: false,
+    }),
+  }
+
+  const validationTextField = ({
+    required,
+    minLength,
+    maxLength,
+  }: {
+    required: boolean,
+    minLength?: number,
+    maxLength?: number,
+  }) => ({
+    validation: {
+      required: <Controller
+        name={"required"}
+        control={control}
+        render={({ field }) => (
+          <FormControlLabel
+            {...field}
+            sx={{
+            }}
+            label={dictionary("Is Required")}
+            control={<Checkbox defaultChecked />}
+          />
+        )}
+      />,
+      minLength: createTextInput({
+        name: field.name + "_minLength",
+        label: "Minimum Characters",
+        defaultValue: prevValue?.validation?.minLength ?? minLength,
+        inputType: "number",
+      }),
+      maxLength: createTextInput({
+        name: field.name + "_maxLength",
+        label: "Maximum Characters",
+        defaultValue: prevValue?.validation?.maxLength ?? maxLength,
+        inputType: "number",
+      }),
+    }
+  })
+
+  const smallTextField = {
+    ...baseTextField,
+    ...validationTextField({
+      required: true,
+      minLength: 3,
+      maxLength: 8,
+    })
+  }
+
+  const largeTextField = {
+    ...baseTextField,
+    ...validationTextField({
+      required: true,
+      minLength: 24,
+      maxLength: 300,
+    })
+  }
+
+  const isSmallTextField = field.type === "small_text"
+  const chooseTextField = isSmallTextField ? smallTextField : largeTextField
+
   return (
     <TemplateFieldComponentWrapper
-      label={field.label}
+      label={isSmallTextField ? "Small Text Field" : "Large Text Field"}
+      name={field.name}
+      onClose={onClose}
     >
       <Controller
-        name={"Label name"}
+        name={field.name}
         control={control}
-        rules={{
-          required: true,
-          minLength: 3,
-          maxLength: 8,
-        }}
-        render={({ field, fieldState }) => (
+        render={({ field: fieldProps, fieldState }) => (
           <Grid item xs={12}
             sx={{
-              display: "flex",
+              display: "grid",
               gap: 1,
+              gridTemplateColumns: "1fr 1fr",
               width: "100%",
             }}
-
           >
-            <TextField
-              {...field}
-              fullWidth
-              error={fieldState.invalid}
-              helperText={fieldState.invalid
-                ? dictionary("Minimum 8 characters")
-                : ""}
-              required
-              label={dictionary("Field Name")}
-            />
-            <TextField
-              {...field}
-              fullWidth
-              error={fieldState.invalid}
-              helperText={fieldState.invalid
-                ? dictionary("Minimum 8 characters")
-                : ""}
-              required
-              label={dictionary("Field Description")}
-            />
+            {chooseTextField.label_ar}
+            {chooseTextField.label_en}
+            {chooseTextField.placeholder_ar}
+            {chooseTextField.placeholder_en}
+            {chooseTextField.validation.minLength}
+            {chooseTextField.validation.maxLength}
+            {chooseTextField.validation.required}
           </Grid>
         )}
       />
