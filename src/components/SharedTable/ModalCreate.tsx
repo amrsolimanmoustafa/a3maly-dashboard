@@ -20,7 +20,7 @@ import {
 import { DatePicker } from "@mui/x-date-pickers";
 import { MRT_ColumnDef } from "material-react-table";
 import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, ControllerRenderProps, FieldValues, useForm } from "react-hook-form";
 import ReactImageUploading from "react-images-uploading";
 import { MuiTelInput, matchIsValidTel } from "mui-tel-input";
 // @ts-ignore
@@ -37,7 +37,7 @@ export interface ModalCreateEditColumnsSchema<T extends Record<string, any>> {
   multiline?: boolean;
   optional?: boolean;
   disableEdit?: boolean;
-  customFormElement?: (column: ModalCreateEditColumnsSchema<T>) => React.ReactNode;
+  customFormElement?: (field: ControllerRenderProps<FieldValues, string>) => React.ReactNode;
 };
 
 interface ModalCreate<T extends Record<string, any> = {}> {
@@ -118,7 +118,17 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
               console.log("value", value);
               return (
                 <>
-                  {column.customFormElement && column.customFormElement(column)}
+                  {column.customFormElement && (
+                    <Controller
+                      name={column.accessorKey as string}
+                      control={control}
+                      defaultValue={column?.prevValue}
+                      render={({ field, fieldState }) =>
+                        // @ts-ignore
+                        column?.customFormElement?.(field) as React.ReactNode
+                      }
+                    />
+                  )}
                   {column.formElementType === "autocomplete" && (
                     <Grid item xs={12} md={6}>
                       <Controller

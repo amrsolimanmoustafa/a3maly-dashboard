@@ -1,18 +1,17 @@
-import Head from "next/head";
-import { Box, Container, Stack, Typography } from "@mui/material";
-import { DashboardLayout } from "../../layouts/dashboard/layout";
-import UserContextProvider from "@/contexts/user-context";
-import GroupContextProvider from "@/contexts/group-context";
-import { dictionary } from "@/configs/i18next";
-import SharedTable from "@/components/SharedTable";
-import { UsersTableApiResponse, UsersTableApiResponseZodSchema } from "@/@types/user";
-import axiosClient from "@/configs/axios-client";
-import { safeApiCall } from "@/utils";
-import { toFormData } from "axios";
-import { TemplatesTableApiResponse as BaseTemplatesTableApiResponse, TemplatesTableApiResponse, templatesTableApiResponseZodSchema } from "@/@types/template";
-import { useEffect, useState } from "react";
 import { Category } from "@/@types/category";
+import { TemplatesTableApiResponse, templatesTableApiResponseZodSchema } from "@/@types/template";
 import Scheme from "@/components/scheme";
+import SharedTable from "@/components/SharedTable";
+import axiosClient from "@/configs/axios-client";
+import { dictionary } from "@/configs/i18next";
+import GroupContextProvider from "@/contexts/group-context";
+import UserContextProvider from "@/contexts/user-context";
+import { safeApiCall } from "@/utils";
+import { Box, Container, Stack, Typography } from "@mui/material";
+import { toFormData } from "axios";
+import Head from "next/head";
+import { useEffect, useState } from "react";
+import { DashboardLayout } from "../../layouts/dashboard/layout";
 
 const Page = () => {
   const [categories, setCategories] = useState<{
@@ -57,15 +56,7 @@ const Page = () => {
     getCategories().then((data) => {
       setCategories(data);
     });
-
-    console.log("categories", categories);
   }, []);
-
-  // type TemplatesTableApiResponse = BaseTemplatesTableApiResponse["data"] & {
-  //   category_name_ar: string;
-  //   category_name_en: string;
-  // }
-
 
   return (
     <>
@@ -170,9 +161,9 @@ const Page = () => {
                 {
                   header: "Schemes",
                   accessorKey: "schemes",
-                  customFormElement: (column) => {
+                  customFormElement: (field) => {
                     return (
-                      <Scheme data={column.prevValue ?? null} />
+                      <Scheme field={field} />
                     );
                   }
                 },

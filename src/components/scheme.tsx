@@ -1,21 +1,16 @@
-import { TemplateScheme, TypeOptionsTemplateField, TypeTemplateField, TypeTextTemplateField } from '@/@types/scheme';
+import { TypeOptionsTemplateField, TypeTextTemplateField } from '@/@types/scheme';
 import { dictionary, TranslatedWord } from '@/configs/i18next';
 import AddIcon from '@mui/icons-material/Add';
-import { Grid, Box, TextField, Tooltip, IconButton, InputBase, Card, Button, Autocomplete, Menu, MenuItem, Divider, Typography, Stack, Switch, Checkbox, FormControlLabel } from "@mui/material"
+import { Box, Button, Card, Checkbox, Divider, FormControlLabel, Grid, IconButton, Menu, MenuItem, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import { useEffect, useState } from 'react';
-import { Controller, Field, useForm } from "react-hook-form"
+import { Controller, ControllerRenderProps, FieldValues, useForm } from "react-hook-form";
 import Tabs from './Tabs';
 
-// export type TypeField = {
-//   type: "small_text" | "large_text" | "options";
-//   label: TranslatedWord;
-//   name: string;
-// }
-
 const Scheme = ({
-  data,
+  field,
 }: {
-  data: TemplateScheme | null;
+  // data: TemplateScheme | null;
+  field: ControllerRenderProps<FieldValues, string>;
 }) => {
   const { register, unregister, handleSubmit, formState: { errors }, control, setValue, getValues } = useForm({
     // resolver: zodResolver(zodValidationSchema),
@@ -109,11 +104,6 @@ const Scheme = ({
   const [anchorEl, setAnchorEl] = useState<any>(null);
   const [fields, setFields] = useState<TemplateScheme["fields"] | []>([]);
 
-  useEffect(() => {
-    // @ts-ignore
-    setFields(data?.fields || [])
-  }, [data])
-
 
   const getCountOfElements = (type: TemplateScheme["fields"][number]["type"]) => {
     const count = fields.filter((field) => field.type === type).length
@@ -146,6 +136,70 @@ const Scheme = ({
     setFields([...fields, field])
     setAnchorEl(null);
   }
+
+  const [textVariants, setTextVariants] = useState<TemplateTextVariant[]>([])
+  const removeTextVariant = (index: number) => {
+    setTextVariants(textVariants.filter((_, i) => i !== index))
+  }
+
+  const addNewTextVariant = () => {
+    setTextVariants([...textVariants, {
+      ar: "",
+      en: "",
+    }])
+  }
+
+  useEffect(() => {
+    // @ts-ignore
+    setFields(field?.value?.fields ?? [])
+    setTextVariants(field?.value?.template_text_variants ?? [])
+  }, [field?.value])
+
+  // const schemes = getValues()
+  // console.log(schemes)
+
+  const createTextInput = ({
+    name,
+    label,
+    defaultValue,
+    inputType = "text",
+    required = true,
+    minRows = 3,
+    multiline = false
+  }: {
+    name: string;
+    label?: TranslatedWord;
+    inputType?: "text" | "number";
+    defaultValue?: string | number;
+    required?: boolean;
+    minRows: number;
+    multiline: boolean;
+  }) => (
+    <Controller
+      name={`${name}`}
+      control={control}
+      defaultValue={defaultValue}
+      rules={{
+        required: required,
+        minLength: 3,
+        maxLength: 12,
+      }}
+      render={({ field, fieldState }) => (
+        <TextField
+          {...field}
+          fullWidth
+          required={required}
+          type={inputType}
+          error={fieldState.invalid}
+          helperText={fieldState.invalid ? "Minimum 3, Maximum 12 characters" : ""}
+          multiline={multiline}
+          label={label ? dictionary(label) : ""}
+          minRows={minRows}
+        />
+      )}
+    />
+  );
+
 
   return (
     <>
@@ -203,7 +257,30 @@ const Scheme = ({
               id: "ar",
               label: "Arabic",
               value: "ar",
-              content: <></>
+              content:
+                <>
+                  {textVariants.map((variant, index) => (
+                    <Box key={index} marginY={3}>
+                      <TemplateFieldComponentWrapper
+                        label='Scheme'
+                        name={`template_text_variants[${index}].ar`}
+                        onClose={() => removeTextVariant(index)}
+                        codeBlock={false}
+                      >
+                        {
+                          createTextInput({
+                            name: `template_text_variants[${index}].ar`,
+                            defaultValue: variant.ar,
+                            required: false,
+                            inputType: "text",
+                            minRows: 3,
+                            multiline: true
+                          })
+                        }
+                      </TemplateFieldComponentWrapper>
+                    </Box>
+                  ))}
+                </>
             },
             {
               id: "en",
@@ -234,7 +311,7 @@ const Scheme = ({
                       arrow
                       title="Add Scheme"
                     >
-                      <IconButton onClick={() => { }}>
+                      <IconButton onClick={addNewTextVariant}>
                         <AddIcon />
                       </IconButton>
                     </Tooltip>
@@ -255,11 +332,12 @@ export default Scheme
 import CloseIcon from '@mui/icons-material/Close'; // Import the "X" icon
 import StyledCodeBlock from './CodeBlock';
 
-const TemplateFieldComponentWrapper = ({ children, label, onClose, name }: {
+const TemplateFieldComponentWrapper = ({ children, label, onClose, name, codeBlock = true }: {
   children: JSX.Element,
   label: TranslatedWord,
   name: string,
-  onClose?: () => void
+  onClose?: () => void,
+  codeBlock?: boolean
 }) => {
   return (
     <Card
@@ -289,9 +367,14 @@ const TemplateFieldComponentWrapper = ({ children, label, onClose, name }: {
         {dictionary(label)}
       </Typography>
       {children}
-      <StyledCodeBlock
-        code={`{{${name}}}`}
-      />
+      {
+        codeBlock && (
+          <StyledCodeBlock
+            code={`{{${name}}}`}
+          />
+
+        )
+      }
     </Card>
   );
 };
@@ -379,7 +462,7 @@ function controlledTextField({ field, control, onClose }: {
       required: <Controller
         name={"required"}
         control={control}
-        defaultValue={prevValue?.validation?.required ?? required}
+        defaultValue={(prevValue?.validation?.required === 1 ? true : false) ?? true}
         render={({ field }) => (
           <FormControlLabel
             {...field}
@@ -387,7 +470,7 @@ function controlledTextField({ field, control, onClose }: {
             control={<Checkbox
               {...field}
               checked={field.value}
-              onChange={(e) => field.onChange(e.target.checked)}
+              onChange={(e) => field.onChange(e.target.checked ? 1 : 0)}
             />}
           />
         )}

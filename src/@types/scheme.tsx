@@ -11,7 +11,7 @@ const templateFieldSchema = z.object({
 const textTemplateFieldSchema = templateFieldSchema.extend({
   type: z.literal("small_text").or(z.literal("large_text")),
   validation: z.object({
-    required: z.boolean(),
+    required: z.number(),
     minLength: z.number().optional(),
     maxLength: z.number().optional(),
     minRows: z.number().optional()
@@ -21,7 +21,7 @@ const textTemplateFieldSchema = templateFieldSchema.extend({
 const optionsTemplateFieldSchema = templateFieldSchema.extend({
   type: z.literal("options"),
   validation: z.object({
-    required: z.boolean()
+    required: z.number()
   }),
   options: z.array(z.string())
 })
