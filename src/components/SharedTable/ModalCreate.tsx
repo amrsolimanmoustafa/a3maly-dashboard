@@ -1,4 +1,5 @@
 import { dictionary, TranslatedWord } from "@/configs/i18next";
+import { DevTool } from "@hookform/devtools";
 import { AddPhotoAlternate } from "@mui/icons-material";
 import {
   Autocomplete,
@@ -20,7 +21,7 @@ import {
 import { DatePicker } from "@mui/x-date-pickers";
 import { MRT_ColumnDef } from "material-react-table";
 import { useEffect, useState } from "react";
-import { Controller, ControllerRenderProps, FieldValues, useForm } from "react-hook-form";
+import { Control, Controller, ControllerRenderProps, FieldValues, useForm, UseFormUnregister } from "react-hook-form";
 import ReactImageUploading from "react-images-uploading";
 import { MuiTelInput, matchIsValidTel } from "mui-tel-input";
 // @ts-ignore
@@ -37,7 +38,17 @@ export interface ModalCreateEditColumnsSchema<T extends Record<string, any>> {
   multiline?: boolean;
   optional?: boolean;
   disableEdit?: boolean;
-  customFormElement?: (field: ControllerRenderProps<FieldValues, string>) => React.ReactNode;
+  customFormElement?: ({
+    field,
+    control,
+    fieldState,
+    unregister,
+  }: {
+    field: ControllerRenderProps<FieldValues, string>;
+    control: Control<FieldValues, any>,
+    fieldState: any,
+    unregister: UseFormUnregister<FieldValues>
+  }) => React.ReactNode;
 };
 
 interface ModalCreate<T extends Record<string, any> = {}> {
@@ -61,7 +72,7 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
 }: ModalCreate<T>) => {
 
   if (mode === "edit") columns = columns.filter((column) => !column.disableEdit);
-  const { unregister, handleSubmit, formState: { errors }, control } = useForm({
+  const { unregister, handleSubmit, formState: { errors }, control, register, trigger } = useForm({
     // resolver: zodResolver(zodValidationSchema),
   });
 
@@ -125,7 +136,12 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
                       defaultValue={column?.prevValue}
                       render={({ field, fieldState }) =>
                         // @ts-ignore
-                        column?.customFormElement?.(field) as React.ReactNode
+                        column?.customFormElement?.({
+                          field,
+                          control,
+                          fieldState,
+                          unregister,
+                        }) as React.ReactNode
                       }
                     />
                   )}
@@ -345,6 +361,10 @@ export const ModalCreate = <T extends Record<any, any> = {}>({
             })}
           </Grid>
         </DialogContent>
+
+        {process.env.NODE_ENV === "development" && (
+          <DevTool control={control} />
+        )}
 
         <DialogActions sx={{ p: "1.25rem" }}>
           <Button color="primary" type="submit" variant="contained">

@@ -23,3 +23,5 @@ export const isURL = (input: string): boolean => {
   const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
   return urlPattern.test(input);
 };
+
+export const numberToBoolean = (input: number): boolean => input === 1;

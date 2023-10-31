@@ -161,9 +161,10 @@ const Page = () => {
                 {
                   header: "Schemes",
                   accessorKey: "schemes",
-                  customFormElement: (field) => {
+                  customFormElement: ({ field, control, fieldState, unregister }) => {
+                    console.log(field);
                     return (
-                      <Scheme field={field} />
+                      <Scheme parentControl={control} parentField={field} unregister={unregister} />
                     );
                   }
                 },
