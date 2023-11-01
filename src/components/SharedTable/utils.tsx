@@ -24,4 +24,7 @@ export const isURL = (input: string): boolean => {
   return urlPattern.test(input);
 };
 
-export const numberToBoolean = (input: number): boolean => input === 1;
+export const stringNumberToBoolean = (input?: string): boolean | undefined => {
+  if (input === undefined) return undefined;
+  return input === "1" ? true : false;
+}
