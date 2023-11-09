@@ -397,5 +397,16 @@
   "Minimum Characters": "الحد الأدنى من الأحرف",
   "Maximum Characters": "الحد الأقصى لعدد الأحرف",
   "Is Required": "اجباري",
-  "Option": "خيار"
+  "Option": "خيار",
+  "What do you want to about": "ماذا تريد ان تتحدث عن",
+  "Project": "مشروع",
+  "Product": "منتج",
+  "Service": "خدمه",
+  "Product Description": "وصف المشورع",
+  "Creativity Level": "مستوي الابداع",
+  "Low": "منخفض",
+  "High": "مرتفع",
+  "Target Audience": "الجمهور المستهدف",
+  "Option 1": "الخيار الاول",
+  "Option 2": "الخيار الثاني"
 }

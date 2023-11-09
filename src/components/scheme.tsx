@@ -109,7 +109,52 @@ const Scheme = ({
   // };
   //
   const [anchorEl, setAnchorEl] = useState<any>(null);
-  const [fields, setFields] = useState<TemplateScheme["fields"] | []>([]);
+  const dummyFields: TemplateScheme["fields"] = [
+    {
+      name: "talk_about",
+      label_ar: dictionary("What do you want to about"),
+      label_en: "What do you want to talk about",
+      type: "options",
+      validation: {
+        required: 1
+      },
+      options: [dictionary("Product"), dictionary("Service"), dictionary("Brand")],
+    } as OptionsTemplateField,
+    {
+      name: "details",
+      label_ar: dictionary("Details"),
+      label_en: "Details",
+      type: "large_text",
+      placeholder_ar: dictionary("Details"),
+      placeholder_en: "Details",
+      validation: {
+        required: 1,
+        minLength: 24,
+        maxLength: 300,
+      },
+    } as TextTemplateField,
+    {
+      name: "target_audience",
+      label_ar: dictionary("Target Audience"),
+      label_en: "Target Audience",
+      validation: {
+        required: 1,
+      },
+      options: [dictionary("Option 1"), dictionary("Option 2")],
+    } as OptionsTemplateField,
+    {
+      name: "creativity_level",
+      label_ar: dictionary("Creativity Level"),
+      label_en: "Creativity Level",
+      type: "options",
+      validation: {
+        required: 1,
+      },
+      options: [dictionary("Low"), dictionary("Medium"), dictionary("High")],
+    } as OptionsTemplateField,
+
+  ]
+  const [fields, setFields] = useState<TemplateScheme["fields"]>(dummyFields);
 
 
   const getCountOfElements = (type: TemplateScheme["fields"][number]["type"]) => {
@@ -127,11 +172,6 @@ const Scheme = ({
       type: "small_text",
       label: "Small Text Field",
       name: "small_text_" + getCountOfElements("small_text"),
-      // validation: {
-      //   required: 1,
-      //   minLength: 3,
-      //   maxLength: 8,
-      // },
     },
     {
       type: "large_text",
@@ -186,9 +226,12 @@ const Scheme = ({
 
   }
 
+  const isPrevoiusField = parentField.value?.fields?.length > 0
   useEffect(() => {
     // @ts-ignore
-    setFields(parentField?.value?.fields ?? [])
+    if (isPrevoiusField) {
+      setFields(parentField.value?.fields ?? [])
+    }
     setTextVariants(parentField?.value?.template_text_variants ?? [])
   }, [parentField?.value])
 
