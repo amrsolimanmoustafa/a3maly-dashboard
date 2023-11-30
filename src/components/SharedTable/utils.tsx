@@ -12,7 +12,7 @@ export const makeTableApiResponseZodSchema = <T extends z.AnyZodObject>(data: T)
     z.object({
       from: z.number().or(z.null()),
       last_page: z.number(),
-      per_page: z.string(),
+      per_page: z.number(),
       to: z.number().or(z.null()),
       total: z.number(),
       data: z.array(data),
