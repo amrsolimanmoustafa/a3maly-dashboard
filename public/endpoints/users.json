@@ -1,0 +1,48 @@
+{
+  "status": true,
+  "message": "تم انشاء البيانات بنجاح",
+  "data": {
+    "current_page": 1,
+    "data": [
+      {
+        "id": 9,
+        "name": "osama",
+        "email": "osama@osama.com",
+        "email_verified_at": null,
+        "phone": "01064628968",
+        "avatar": null,
+        "is_active": 1,
+        "role": "ADMIN",
+        "created_at": "2023-09-26T03:16:30.000000Z",
+        "updated_at": "2023-09-26T03:16:30.000000Z"
+      }
+    ],
+    "first_page_url": "http://127.0.0.1:8000/admin/users/index?page=1",
+    "from": 1,
+    "last_page": 1,
+    "last_page_url": "http://127.0.0.1:8000/admin/users/index?page=1",
+    "links": [
+      {
+        "url": null,
+        "label": "&laquo; السابق",
+        "active": false
+      },
+      {
+        "url": "http://127.0.0.1:8000/admin/users/index?page=1",
+        "label": "1",
+        "active": true
+      },
+      {
+        "url": null,
+        "label": "التالي &raquo;",
+        "active": false
+      }
+    ],
+    "next_page_url": null,
+    "path": "http://127.0.0.1:8000/admin/users/index",
+    "per_page": "10",
+    "prev_page_url": null,
+    "to": 1,
+    "total": 1
+  }
+}

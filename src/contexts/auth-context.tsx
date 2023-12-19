@@ -4,6 +4,10 @@ import React from "react";
 import axiosClient from "../configs/axios-client";
 import { IShippingOffice } from "@/@types/shipping-office";
 import { UserType } from "@/@types/auth-user";
+import { User, userZodScheme } from "@/@types/user";
+import { z } from "zod";
+import { Box, Typography } from "@mui/material";
+import { objectToFormData, safeApiCall } from "@/utils";
 
 type ActionType = { type: string; payload: any };
 
@@ -18,13 +22,13 @@ type initialValue = {
   isAuthenticated: boolean;
   isLoading: boolean;
   user: any;
-  signIn: (username: string, password: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<boolean>;
   signOut: () => Promise<void>;
-  uploadImg: (file:any) => void;
-  uploadLogo: (file:any) => void;
-  updateInfo: (body:any) => Promise<boolean>;
-  updateOfficeInfo: (body:any) => Promise<boolean>;
-  updateEmail: (formData:any) => Promise<boolean>;
+  uploadImg: (file: any) => void;
+  uploadLogo: (file: any) => void;
+  updateInfo: (body: any) => Promise<boolean>;
+  updateOfficeInfo: (body: any) => Promise<boolean>;
+  updateEmail: (formData: any) => Promise<boolean>;
   changePassword: (old_password: string, new_password: string) => Promise<boolean>;
 };
 
@@ -43,13 +47,13 @@ const handlers = {
       ...// if payload (user) is provided, then is authenticated
       (user
         ? {
-            isAuthenticated: true,
-            isLoading: false,
-            user,
-          }
+          isAuthenticated: true,
+          isLoading: false,
+          user,
+        }
         : {
-            isLoading: false,
-          }),
+          isLoading: false,
+        }),
     };
   },
   [HANDLERS.CHANGE_INFO]: (state: any, action: { payload: any }) => {
@@ -88,7 +92,7 @@ export const AuthContext = createContext<initialValue | undefined>(undefined);
 
 export const AuthProvider = ({ children }: any) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [authUser, setAuthUser] = useState<UserType | null>(null);
+  const [authUser, setAuthUser] = useState<User | null>(null);
   const initialized = useRef(false);
 
   const initialize = async () => {
@@ -111,7 +115,7 @@ export const AuthProvider = ({ children }: any) => {
       //todo get user from session
       const storageItem = sessionStorage.getItem("user");
       if (storageItem) {
-        const user: UserType = JSON.parse(storageItem) as UserType;
+        const user = JSON.parse(storageItem)
         setAuthUser(user);
         dispatch({
           type: HANDLERS.INITIALIZE,
@@ -128,20 +132,20 @@ export const AuthProvider = ({ children }: any) => {
   useEffect(() => {
     initialize();
   }, []);
-  const hasRoles = (roles: string[] | undefined): boolean => {
-    //todo check roles in backend
-    // return authUser == null? false : authUser.roles.includes(role);
-    if (!authUser) return false;
-    if (!roles) return false;
-    if (authUser.roles == undefined) return false;
-    let hasRole = false;
-    authUser.roles.forEach((role) => {
-      if (roles.includes(role)) {
-        hasRole = true;
-      }
-    });
-    return hasRole;
-  };
+  // const hasRoles = (roles: string[] | undefined): boolean => {
+  //   //todo check roles in backend
+  //   // return authUser == null? false : authUser.roles.includes(role);
+  //   if (!authUser) return false;
+  //   if (!roles) return false;
+  //   if (authUser.role == undefined) return false;
+  //   let hasRole = false;
+  //   authUser.role.forEach((role) => {
+  //     if (roles.includes(role)) {
+  //       hasRole = true;
+  //     }
+  //   });
+  //   return hasRole;
+  // };
 
   const changePassword = async (old_password: string, new_password: string) => {
     try {
@@ -153,10 +157,10 @@ export const AuthProvider = ({ children }: any) => {
         payload: res.data.data,
       });
       return true;
-    
-  }catch (error: any) {
-    return error.response;
-  }
+
+    } catch (error: any) {
+      return error.response;
+    }
   };
 
   const updateInfo = async (body: any) => {
@@ -176,27 +180,27 @@ export const AuthProvider = ({ children }: any) => {
       return error.response;
     }
   };
-  const updateOfficeInfo = async (body: any) => {
-    try {
-      const res = await axiosClient.put("/profile/update-info", body);
-      console.log(res);
-      if (res.status == 201 || res.status == 200) {
-        if(authUser){
-          authUser.shipping_office.name = body.name
-          authUser.shipping_office.phone = body.phone
-          window.sessionStorage.setItem("user", JSON.stringify(authUser));
-          setAuthUser(authUser);
-        }
-        dispatch({
-          type: HANDLERS.CHANGE_INFO,
-          payload: authUser,
-        });
-        return true;
-      }
-    } catch (error: any) {
-      return error.response;
-    }
-  };
+  // const updateOfficeInfo = async (body: any) => {
+  //   try {
+  //     const res = await axiosClient.put("/profile/update-info", body);
+  //     console.log(res);
+  //     if (res.status == 201 || res.status == 200) {
+  //       if (authUser) {
+  //         authUser.shipping_office.name = body.name
+  //         authUser.shipping_office.phone = body.phone
+  //         window.sessionStorage.setItem("user", JSON.stringify(authUser));
+  //         setAuthUser(authUser);
+  //       }
+  //       dispatch({
+  //         type: HANDLERS.CHANGE_INFO,
+  //         payload: authUser,
+  //       });
+  //       return true;
+  //     }
+  //   } catch (error: any) {
+  //     return error.response;
+  //   }
+  // };
   const updateEmail = async (user: UserType) => {
     try {
       const res = await axiosClient.put("/profile/update-email", {
@@ -216,11 +220,11 @@ export const AuthProvider = ({ children }: any) => {
     }
   };
 
-  const uploadImg = async (file:any) => {
+  const uploadImg = async (file: any) => {
     try {
       const formData = new FormData();
-      formData.append('avatarFile', file,file.name);
-      const res = await axiosClient.post('/profile/update-avatar',formData);
+      formData.append('avatarFile', file, file.name);
+      const res = await axiosClient.post('/profile/update-avatar', formData);
       if (res.status == 201 || res.status == 200) {
         window.sessionStorage.setItem("user", JSON.stringify(res.data.data));
         setAuthUser(res.data.data);
@@ -237,11 +241,11 @@ export const AuthProvider = ({ children }: any) => {
       console.error('An error occurred during avatar upload', error);
     }
   }
-  const uploadLogo = async (file:any) => {
+  const uploadLogo = async (file: any) => {
     try {
       const formData = new FormData();
-      formData.append('avatarFile', file,file.name);
-      const res = await axiosClient.post('/profile/update-logo',formData);
+      formData.append('avatarFile', file, file.name);
+      const res = await axiosClient.post('/profile/update-logo', formData);
       if (res.status == 201 || res.status == 200) {
         window.sessionStorage.setItem("user", JSON.stringify(res.data.data));
         setAuthUser(res.data.data);
@@ -259,35 +263,42 @@ export const AuthProvider = ({ children }: any) => {
     }
   }
 
-  const signIn = async (username: string, password: string) => {
-    // const res = await axiosClient.post("/auth/signin", { username, password });
+  const AuthLoginApiResponseZodSchema = z.object({
+    data: z.object({
+      access_token: z.string(),
+      expires_in: z.number(),
+      token_type: z.string(),
+      user: userZodScheme,
+    }),
+    message: z.string(),
+    status: z.boolean(),
+  });
 
-    if(username !== 'admin' && password !== "admin"){
-      throw new Error("Please check your username and password");
+  type AuthLoginApiResponse = z.infer<typeof AuthLoginApiResponseZodSchema>;
+
+  const signIn = async (email: string, password: string) => {
+    const res = await safeApiCall({
+      axiosFn: () => axiosClient.post("/auth/login", objectToFormData({ email, password })),
+      // validationSchema: AuthLoginApiResponseZodSchema,
+    })
+
+    const data: AuthLoginApiResponse["data"] = res.data;
+    const user = data.user;
+
+    if (data.access_token == undefined) {
+      throw new Error("Email or password is incorrect");
     }
-      const user: any = {
-        id: " data.id",
-        name: "data.fullname",
-        username: "data.username",
-        email: "data.email",
-        account: "data.account",
 
-        phone: "data.phone",
-        avatar: "data.avatar",
-        branch_id: "data.branch_id",
-      }
-
-
-      window.sessionStorage.setItem("authenticated", "true");
-      window.sessionStorage.setItem("token"," data.access_token");
-      window.sessionStorage.setItem("user", JSON.stringify(user));
-      axiosClient.defaults.headers.common["Authorization"] = `Bearer ${"data.access_token"}`;
-      axiosClient.defaults.headers.common["Authorization"] = `Bearer ${"data.access_token"}`;
-      setAuthUser(user);
-      dispatch({
-        type: HANDLERS.SIGN_IN,
-        payload: user,
-      });
+    window.sessionStorage.setItem("authenticated", "true");
+    window.sessionStorage.setItem("token", data.access_token);
+    window.sessionStorage.setItem("user", JSON.stringify(user));
+    axiosClient.defaults.headers.common["Authorization"] = `Bearer ` + data.access_token;
+    setAuthUser(user);
+    dispatch({
+      type: HANDLERS.SIGN_IN,
+      payload: user,
+    });
+    return true;
   };
 
   const signOut = () => {
@@ -317,7 +328,7 @@ export const AuthProvider = ({ children }: any) => {
         uploadImg,
         uploadLogo,
         updateInfo,
-        updateOfficeInfo,
+        // updateOfficeInfo,
         updateEmail,
         changePassword
       }}

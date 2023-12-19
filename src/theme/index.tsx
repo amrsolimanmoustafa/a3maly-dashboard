@@ -1,4 +1,4 @@
-import { Components, createTheme as createMuiTheme, Palette, PaletteOptions, Shadows, Theme } from '@mui/material';
+import { Components, createTheme as createMuiTheme, Palette, Shadows, Theme } from '@mui/material';
 import { createPalette } from './create-palette';
 import { createComponents } from './create-components';
 import { createShadows } from './create-shadows';
@@ -8,9 +8,9 @@ import { TypographyOptions } from '@mui/material/styles/createTypography';
 export function createTheme() {
   const palette: Palette = createPalette();
   const components: Components<Omit<Theme, 'components'>> = createComponents(palette);
-  const shadows :Shadows = createShadows;
+  const shadows: Shadows = createShadows;
   const typography: TypographyOptions | ((palette: Palette) => TypographyOptions) = createTypography;
-  
+
   return createMuiTheme({
     direction: 'rtl',
     breakpoints: {

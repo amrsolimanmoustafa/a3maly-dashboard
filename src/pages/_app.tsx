@@ -13,8 +13,10 @@ import ContextProvider from "@/contexts/ContextProvider";
 import axiosClient from "@/configs/axios-client";
 import { I18nextProvider } from "react-i18next";
 import i18n from "@/configs/i18next";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const clientSideEmotionCache = createEmotionCache();
 
+export const queryClient = new QueryClient();
 const SplashScreen = () => null;
 
 const App = (props: { Component: any; emotionCache?: any; pageProps: any }) => {
@@ -41,17 +43,18 @@ const App = (props: { Component: any; emotionCache?: any; pageProps: any }) => {
       </Head>
       <I18nextProvider i18n={i18n}>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <ContextProvider>
-            <ThemeProvider theme={theme}>
-              <CssBaseline />
-              <AuthConsumer>
-
-                {(auth: any) =>
-                  auth.isLoading ? <SplashScreen /> : getLayout(<Component {...pageProps} />)
-                }
-              </AuthConsumer>
-            </ThemeProvider>
-          </ContextProvider>
+          <QueryClientProvider client={queryClient}>
+            <ContextProvider>
+              <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <AuthConsumer>
+                  {(auth: any) =>
+                    auth.isLoading ? <SplashScreen /> : getLayout(<Component {...pageProps} />)
+                  }
+                </AuthConsumer>
+              </ThemeProvider>
+            </ContextProvider>
+          </QueryClientProvider>
         </LocalizationProvider>
       </I18nextProvider>
     </CacheProvider>

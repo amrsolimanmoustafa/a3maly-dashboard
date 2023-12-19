@@ -1,94 +1,30 @@
-import { usePageUtilities } from '@/hooks/use-page-utilities'
-import { DashboardLayout } from '../layouts/dashboard/layout'
-import { useTranslation } from 'react-i18next'
-import Head from 'next/head'
-import { useMemo, useState } from 'react'
-import useAlert from '@/hooks/useAlert'
-import { useSelection } from '@/hooks/use-selection'
-import { Box, Button, Container, Stack, Typography } from '@mui/material'
-import BasicTable from "@/components/basic-table"
-import ConfirmationPopup from '@/components/confirmation-popup'
-import PackageForm from '@/@forms/package'
+import { DashboardLayout } from "../layouts/dashboard/layout";
+import Head from "next/head";
+import { Box, Container, Stack, Typography } from "@mui/material";
+import { dictionary } from "@/configs/i18next";
+import { UsersTableApiResponse } from "@/@types/user";
+import SharedTable from "@/components/SharedTable";
+import axiosClient from "@/configs/axios-client";
+import { PlanTableApiResponse, PlanTableApiResponseZodSchema } from "@/@types/plan";
+import { safeApiCall } from "@/utils";
+import { toFormData } from "axios";
+
 const Page = () => {
-  const { t } = useTranslation()
-  const headers : any = [
-    { name:t('Name En'), value:'name_en' },
-    { name:t('Name Ar'), value:'name_ar' },
-    { name:t('Price'), value:'price' },
-    { name:t('No of Words'), value:'words' },
-  ]
-  const { showAlert, renderForAlert } = useAlert()
-  const [editMode, setEditMode] = useState(false)
-  const [open, setOpen] = useState(false)
-  const [openConfirm, setOpenConfirm] = useState(false)
-  const [record, setRecord] = useState<any>(null)
-  const [selectedRecord, setSelectedRecord] = useState<any>(null)
-  const [packages, setPackages] = useState<any>({ 
-    data: [
-      {
-        id: 1,
-        name_en: "package one",
-        name_ar: "الباكدج الاول",
-        price: 10,
-        words: 1500,
-      },
-      {
-        id: 2,
-        name_en: "package Two",
-        name_ar: "الباكدج الثاني",
-        price: 18,
-        words: 3000,
-      }
-    ],
-    meta: {
-    count: 2
-  } })
-  const packageIds: any[] | undefined = useMemo(
-    () => packages.data?.map((item: any) => item.id),
-    [packages.data]
-  )
-  const packagesSelection = useSelection(packageIds)
-  const { handlePageChange, handleRowsPerPageChange, handleSearch, controller } =
-    usePageUtilities()
+  const endpoint = "/plans";
+  const getDataFn = async (endpointWithPaginationParams: string) => {
+    const res = await safeApiCall<UsersTableApiResponse>({
+      axiosFn: () => axiosClient.get(endpointWithPaginationParams),
+      validationSchema: PlanTableApiResponseZodSchema,
+    });
+    return res.data;
+  };
 
-  const handleEditRecord = (role: any) => {
-    setRecord(role)
-    setEditMode(true)
-    setOpen(true)
-  }
-
-  const handleAddRecord = () => {
-    setEditMode(false)
-    setRecord({})
-    setOpen(true)
-  }
-
-  const handleDeleteRecord = (id: string) => {
-    setSelectedRecord(id)
-    setOpenConfirm(true)
-  }
-
-  const DeleteRecord = () => {
-    setOpenConfirm(false)
-    setPackages(packages.filter((item : any) => item.id !== selectedRecord))
-    showAlert(t("Package has been deleted successfully").toString(), "success")
-  }
-  const handleSubmit = async (formdata: any) => {
-    if (editMode) {
-      showAlert(t("Package has been edited successfully").toString(), "success")
-    } else {
-      showAlert(t("Package has been added successfully").toString(), "success")
-    }
-    (async () => {
-      await setEditMode(false)
-      await setRecord({})
-    })()
-    // setOpen(false)
-  }
   return (
     <>
       <Head>
-        <title>{t("Package Management")} | {t('app_name')}</title>
+        <title>
+          {dictionary("Package Management")} | {dictionary("app_name")}
+        </title>
       </Head>
       <Box
         component="main"
@@ -98,57 +34,102 @@ const Page = () => {
         }}
       >
         <Container maxWidth="xl">
-          <ConfirmationPopup
-            message={"Are you sure to delete this User?"}
-            confirmFuntion={DeleteRecord}
-            open={openConfirm}
-            setOpen={setOpenConfirm}
-          />
           <Stack spacing={3}>
-            <Stack direction="row" justifyContent="space-between" spacing={4}>
-              <Stack spacing={1}>
-                <Typography variant="h4">{t("Package Management")}</Typography>
-              </Stack>
-              <Button
-                onClick={() => {
-                  handleAddRecord()
-                }}
-                variant="contained"
-                sx={{ borderRadius: 0.5 }}
-              >
-                {t("Add")}
-              </Button>
-            </Stack>
-            <BasicTable
-              headers={headers}
-              items={packages.data}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-              count={packages.meta?.count}
-              page={controller.page}
-              rowsPerPage={controller.rowsPerPage}
-              // onSelectAll={packagesSelection.handleSelectAll}
-              // onSelectOne={packagesSelection.handleSelectOne}
-              // onDeselectAll={packagesSelection.handleDeselectAll}
-              // onDeselectOne={packagesSelection.handleDeselectOne}
-              // selected={packagesSelection.selected}
-              // selectable
-              actions= {{handleEdit: handleEditRecord, handleDelete: handleDeleteRecord}}
+            <Typography variant="h4">{dictionary("Package Management")}</Typography>
+            <SharedTable<PlanTableApiResponse["data"]>
+              endpoint={endpoint}
+              getDataFn={{
+                url: endpoint + "/index",
+                functionToPassUrl: getDataFn,
+              }}
+              addRowMutationFn={(values) => {
+                return axiosClient.post(`${endpoint}/store`, toFormData(values));
+              }}
+              editRowMutationFn={({ id, newData }) => {
+                return axiosClient.post(`${endpoint}/update/${id}`, {
+                  ...toFormData({
+                    ...newData,
+                    _method: "PATCH",
+                  }),
+                });
+              }}
+              deleteRowMutationFn={(itemToDelete) => {
+                return axiosClient.delete(`${endpoint}/delete/${itemToDelete.id}`);
+              }}
+              identifyItemToBeDeletedBy="title_ar"
+              pageIndexParam="page"
+              pageSizeParam="paginate"
+              enableRowActions
+              enableAddNewRow
+              easyColumns={[
+                "id",
+                "title_ar",
+                "title_en",
+                "price_monthly",
+                "price_annually",
+                "features_ar",
+                "features_en",
+                "words_count",
+                "created_at",
+                "updated_at",
+              ]}
+              modalCreateColumns={[
+                {
+                  header: "Title ar",
+                  accessorKey: "title_ar",
+                  formElementType: "text",
+                },
+                {
+                  header: "Title en",
+                  accessorKey: "title_en",
+                  formElementType: "text",
+                },
+                {
+                  header: "Price monthly",
+                  accessorKey: "price_monthly",
+                  formElementType: "price",
+                },
+                {
+                  header: "Price annually",
+                  accessorKey: "price_annually",
+                  formElementType: "price",
+                },
+                {
+                  header: "Features ar",
+                  accessorKey: "features_ar",
+                  formElementType: "text",
+                  multiline: true,
+                },
+                {
+                  header: "Features en",
+                  accessorKey: "features_en",
+                  formElementType: "text",
+                  multiline: true,
+                },
+                {
+                  header: "Words count",
+                  accessorKey: "words_count",
+                  formElementType: "number",
+                },
+                {
+                  header: "Days Count",
+                  accessorKey: "days_count",
+                  formElementType: "number",
+                },
+              ]}
+              initialState={{
+                columnVisibility: {
+                  id: false,
+                },
+              }}
             />
           </Stack>
         </Container>
-        <PackageForm
-          handleSubmit={handleSubmit}
-          editMode={editMode}
-          open={open}
-          onClose={() => setOpen(false)}
-          record={record}
-        />
       </Box>
-      {renderForAlert()}
+      {/* {renderForAlert()} */}
     </>
-  )
-}
+  );
+};
 
 Page.getLayout = (page: any) => <DashboardLayout>{page}</DashboardLayout>
 
