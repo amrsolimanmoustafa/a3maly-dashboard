@@ -1,13 +1,13 @@
-import { DashboardLayout } from '../layouts/dashboard/layout'
-import Head from 'next/head'
-import { Box, Container, Stack, Typography } from '@mui/material'
-import { dictionary } from '@/configs/i18next'
-import { UsersTableApiResponse } from '@/@types/user'
-import SharedTable from '@/components/SharedTable'
-import axiosClient from '@/configs/axios-client'
-import { PlanTableApiResponse, PlanTableApiResponseZodSchema } from '@/@types/plan'
-import { safeApiCall } from '@/utils'
-import { toFormData } from 'axios'
+import { DashboardLayout } from "../layouts/dashboard/layout";
+import Head from "next/head";
+import { Box, Container, Stack, Typography } from "@mui/material";
+import { dictionary } from "@/configs/i18next";
+import { UsersTableApiResponse } from "@/@types/user";
+import SharedTable from "@/components/SharedTable";
+import axiosClient from "@/configs/axios-client";
+import { PlanTableApiResponse, PlanTableApiResponseZodSchema } from "@/@types/plan";
+import { safeApiCall } from "@/utils";
+import { toFormData } from "axios";
 
 const Page = () => {
   const endpoint = "/plans";
@@ -22,7 +22,9 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>{dictionary("Package Management")} | {dictionary('app_name')}</title>
+        <title>
+          {dictionary("Package Management")} | {dictionary("app_name")}
+        </title>
       </Head>
       <Box
         component="main"
@@ -36,12 +38,10 @@ const Page = () => {
             <Typography variant="h4">{dictionary("Package Management")}</Typography>
             <SharedTable<PlanTableApiResponse["data"]>
               endpoint={endpoint}
-              getDataFn={
-                ({
-                  url: endpoint + "/index",
-                  functionToPassUrl: getDataFn,
-                })
-              }
+              getDataFn={{
+                url: endpoint + "/index",
+                functionToPassUrl: getDataFn,
+              }}
               addRowMutationFn={(values) => {
                 return axiosClient.post(`${endpoint}/store`, toFormData(values));
               }}
@@ -111,11 +111,16 @@ const Page = () => {
                   accessorKey: "words_count",
                   formElementType: "number",
                 },
+                {
+                  header: "Days Count",
+                  accessorKey: "days_count",
+                  formElementType: "number",
+                },
               ]}
               initialState={{
                 columnVisibility: {
                   id: false,
-                }
+                },
               }}
             />
           </Stack>
@@ -123,8 +128,8 @@ const Page = () => {
       </Box>
       {/* {renderForAlert()} */}
     </>
-  )
-}
+  );
+};
 
 Page.getLayout = (page: any) => <DashboardLayout>{page}</DashboardLayout>
 

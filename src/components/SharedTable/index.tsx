@@ -41,39 +41,45 @@ import { AxiosResponse } from "axios";
 type TSharedTableData = {
   data: Array<Record<string, any>>;
   total: number;
-}
+};
 
-type SharedTableProps<T extends TSharedTableData> = Omit<MaterialReactTableProps<T["data"]>, "data" | "columns">
-  & {
-    columns?: MRT_ColumnDef<T>[];
-    data?: T[];
-    easyColumns?: Array<keyof T["data"][0]>;
-    nativeColumns?: MRT_ColumnDef<T>[];
-    endpoint: string;
-    customColumnOrder?: MRT_ColumnDef<T>["accessorKey"][];
-    columnVisibility?: Partial<Record<NonNullable<MRT_ColumnDef<T>["accessorKey"]>, boolean>>;
-    actions?: Partial<MRT_ColumnDef<T>>[];
-    modalCreateColumns?: ModalCreateEditColumnsSchema<T>[];
-    // modalCreateEditColumns?: ModalCreateEditColumnsSchema<T>[];
-    zodValidationSchema?: ZodSchema<T>;
-    enableAddNewRow?: boolean;
+type SharedTableProps<T extends TSharedTableData> = Omit<
+  MaterialReactTableProps<T["data"]>,
+  "data" | "columns"
+> & {
+  columns?: MRT_ColumnDef<T>[];
+  data?: T[];
+  easyColumns?: Array<keyof T["data"][0]>;
+  nativeColumns?: MRT_ColumnDef<T>[];
+  endpoint: string;
+  customColumnOrder?: MRT_ColumnDef<T>["accessorKey"][];
+  columnVisibility?: Partial<Record<NonNullable<MRT_ColumnDef<T>["accessorKey"]>, boolean>>;
+  actions?: Partial<MRT_ColumnDef<T>>[];
+  modalCreateColumns?: ModalCreateEditColumnsSchema<T>[];
+  modalCreateEditColumns?: ModalCreateEditColumnsSchema<T>[];
+  zodValidationSchema?: ZodSchema<T>;
+  enableAddNewRow?: boolean;
 
-    previewData?: {
-      data: any[];
-    };
-    getDataFn: ({
-      url: string,
-      functionToPassUrl: (url: string) => Promise<any>
-    })
-    addRowMutationFn: MutationFunction<AxiosResponse<any, any>, Record<string, any>>
-    editRowMutationFn: MutationFunction<AxiosResponse<any, any>, { id: string, newData: Record<string, any> }>
-    deleteRowMutationFn: (itemToDelete: T["data"][0]) => Promise<AxiosResponse<any, any>>
-    identifyItemToBeDeletedBy: keyof T["data"][0]
-    pageIndexParam?: string;
-    pageSizeParam?: string;
+  previewData?: {
+    data: any[];
   };
-
-
+  getDataFn: {
+    url: string;
+    functionToPassUrl: (url: string) => Promise<any>;
+  };
+  addRowMutationFn: MutationFunction<AxiosResponse<any, any>, Record<string, any>>;
+  editRowMutationFn: MutationFunction<
+    AxiosResponse<any, any>,
+    {
+      id: string;
+      newData: Record<string, any>;
+    }
+  >;
+  deleteRowMutationFn: (itemToDelete: T["data"][0]) => Promise<AxiosResponse<any, any>>;
+  identifyItemToBeDeletedBy: keyof T["data"][0];
+  pageIndexParam?: string;
+  pageSizeParam?: string;
+};
 
 const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => {
   const {
@@ -111,20 +117,20 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
       // const endpointURL = new URL(endpoint);
       // endpointURL.searchParams.set(props.pageIndexParam, `${pagination.pageIndex + 1}`);
       // endpointURL.searchParams.set(props.pageSizeParam, `${pagination.pageSize}`);
-      const paginationParams = `?${props.pageIndexParam}=${pagination.pageIndex + 1}&${props.pageSizeParam}=${pagination.pageSize}`
+      const paginationParams = `?${props.pageIndexParam}=${pagination.pageIndex + 1}&${
+        props.pageSizeParam
+      }=${pagination.pageSize}`;
       //page=1&paginate=10&name=test&sortBy=name&sort=DESC
       //page=1&paginate=10&email=ahmed&email=desc&globalSearch=sasd
-      const filtersParams = columnFilters.map((filter) => `&${filter.id}=${filter.value}`).join("")
-      const sortingParams = sorting.map((sort) => `&sortBy=${sort.id}&sort=${sort.desc ? "DESC" : "ASC"}`).join("")
-      const globalFilterParams = `&globalSearch=${globalFilter}`
+      const filtersParams = columnFilters.map((filter) => `&${filter.id}=${filter.value}`).join("");
+      const sortingParams = sorting
+        .map((sort) => `&sortBy=${sort.id}&sort=${sort.desc ? "DESC" : "ASC"}`)
+        .join("");
+      const globalFilterParams = `&globalSearch=${globalFilter}`;
       return props.getDataFn.functionToPassUrl(
-        props.getDataFn.url +
-        paginationParams +
-        filtersParams +
-        sortingParams +
-        globalFilterParams
-      )
-    }
+        props.getDataFn.url + paginationParams + filtersParams + sortingParams + globalFilterParams,
+      );
+    },
 
     //   ?? (async () => {
     //   if (previewData) {
@@ -144,7 +150,6 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
     //   }
     //   throw new Error("endpoint is not provided");
     // })
-    ,
     {
       keepPreviousData: true,
     },
@@ -157,9 +162,11 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
   }>({});
 
   const addNewRow = useMutation({
-    mutationFn: props.addRowMutationFn ?? ((values: Record<string, any>) => {
-      return axiosClient.post(endpoint, values);
-    }),
+    mutationFn:
+      props.addRowMutationFn ??
+      ((values: Record<string, any>) => {
+        return axiosClient.post(endpoint, values);
+      }),
     onMutate: async () => {
       await queryClient.cancelQueries(tableIdentifier);
     },
@@ -173,13 +180,12 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
   });
 
   const deleteRow = useMutation({
-    mutationFn: props.deleteRowMutationFn
+    mutationFn: props.deleteRowMutationFn,
     //   ?? ((id: string) => {
     //   const deleteURL = new URL(endpoint);
     //   deleteURL.search = "";
     //   return axiosClient.delete(`${deleteURL.toString()}${id}`);
     // })
-    ,
     onMutate: async () => {
       await queryClient.cancelQueries(tableIdentifier);
     },
@@ -233,7 +239,9 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
   type RowToDelete = T["data"][0] | null;
   const [rowToDelete, setRowToDelete] = useState<RowToDelete | null>(null);
   const handleDeleteRow = useCallback(() => {
-    if (!rowToDelete) throw new Error("rowToDelete can't be null");
+    if (!rowToDelete) {
+      throw new Error("rowToDelete can't be null");
+    }
     deleteRow.mutate(rowToDelete);
     setIsModalDeleteOpen(false);
   }, [setIsModalDeleteOpen, rowToDelete, deleteRow]);
@@ -272,20 +280,22 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
-  let autoGeneratedColumns = null
+  let autoGeneratedColumns = null;
   if (!props?.columns && data?.data[0] && !props?.easyColumns) {
     const keys = Object.keys(data?.data[0] ?? {});
-    autoGeneratedColumns = keys.map((key) => defaultColumn(key, fromKeyToHeader(key) as TranslatedWord));
+    autoGeneratedColumns = keys.map((key) =>
+      defaultColumn(key, fromKeyToHeader(key) as TranslatedWord),
+    );
     autoGeneratedColumns = [...autoGeneratedColumns, ...(actions ?? [])];
   }
 
-  let thisEasyColumns = null
+  let thisEasyColumns = null;
   if (props?.easyColumns) {
     thisEasyColumns =
       props?.easyColumns?.map(
         (column) =>
-          sharedTableColumns.find((sharedColumn) => sharedColumn.accessorKey === column) ?? defaultColumn(column as string, fromKeyToHeader(column as string) as TranslatedWord)
+          sharedTableColumns.find((sharedColumn) => sharedColumn.accessorKey === column) ??
+          defaultColumn(column as string, fromKeyToHeader(column as string) as TranslatedWord),
       ) ?? [];
     thisEasyColumns = [...thisEasyColumns, ...(actions ?? [])];
   }
@@ -305,7 +315,7 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
       <MaterialReactTable
         // actions
         positionActionsColumn="last"
-        // @ts-ignore
+        // @ts-ignores
         renderRowActionMenuItems={({ row, table }) => [
           <MenuItem
             key="edit"
@@ -355,9 +365,9 @@ const SharedTable = <T extends TSharedTableData>(props: SharedTableProps<T>) => 
         muiToolbarAlertBannerProps={
           isError
             ? {
-              color: "error",
-              children: "Error loading data",
-            }
+                color: "error",
+                children: "Error loading data",
+              }
             : undefined
         }
         onColumnFiltersChange={setColumnFilters}
